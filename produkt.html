@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="sv" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emendion | Produktinformation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        emendion: {
+                            dark: '#020617',    // Slate 950 (Background)
+                            card: '#0f172a',    // Slate 900
+                            border: '#1e293b',  // Slate 800
+                            text: '#94a3b8',    // Slate 400
+                            accent: '#0ea5e9'   // Sky 500 (Tech Blue)
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+        .thumbnail.active { border-color: #0ea5e9; opacity: 1; }
+        .thumbnail { opacity: 0.6; transition: all 0.2s; }
+        .thumbnail:hover { opacity: 1; }
+    </style>
+</head>
+<body class="antialiased selection:bg-emendion-accent selection:text-white flex flex-col min-h-screen">
+
+    <header class="bg-emendion-dark/80 backdrop-blur-md border-b border-emendion-border sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logotyp / Länk tillbaka -->
+                <a href="index.html" class="flex-shrink-0 flex items-center group transition-opacity hover:opacity-80">
+                    <svg class="h-8 w-8 text-emendion-accent group-hover:shadow-[0_0_15px_rgba(14,165,233,0.5)] transition-shadow rounded-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    <span class="ml-3 text-2xl font-bold tracking-widest uppercase text-white">Emendion</span>
+                </a>
+                
+                <!-- Tillbaka till butik -->
+                <a href="index.html" class="text-sm font-semibold tracking-widest text-emendion-text hover:text-white uppercase flex items-center gap-2 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Tillbaka
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        
+        <!-- Breadcrumb -->
+        <nav class="flex text-xs font-medium text-emendion-text uppercase tracking-widest mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-2">
+                <li><a href="index.html" class="hover:text-emendion-accent transition-colors">Butik</a></li>
+                <li><span class="mx-2">/</span></li>
+                <li><a href="#" class="hover:text-emendion-accent transition-colors">Kollektion</a></li>
+                <li><span class="mx-2">/</span></li>
+                <li class="text-white" id="bc-product-name">Emendion Model X</li>
+            </ol>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-24">
+            
+            <!-- Vänster: Bildgalleri -->
+            <div class="flex flex-col gap-4">
+                <!-- Huvudbild -->
+                <div class="aspect-square bg-emendion-card border border-emendion-border rounded-sm overflow-hidden relative group">
+                    <img id="main-product-image" src="https://placehold.co/1000x1000/0f172a/0ea5e9?text=Huvudbild+1" alt="Produktbild" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                </div>
+                
+                <!-- Miniatyrbilder -->
+                <div class="grid grid-cols-4 gap-4">
+                    <button onclick="changeImage(this, 'https://placehold.co/1000x1000/0f172a/0ea5e9?text=Huvudbild+1')" class="thumbnail active aspect-square bg-emendion-card border-2 border-emendion-accent rounded-sm overflow-hidden focus:outline-none">
+                        <img src="https://placehold.co/200x200/0f172a/0ea5e9?text=1" alt="Thumb 1" class="w-full h-full object-cover">
+                    </button>
+                    <button onclick="changeImage(this, 'https://placehold.co/1000x1000/1e293b/ffffff?text=Detaljbild+2')" class="thumbnail aspect-square bg-emendion-card border-2 border-transparent rounded-sm overflow-hidden focus:outline-none">
+                        <img src="https://placehold.co/200x200/1e293b/ffffff?text=2" alt="Thumb 2" class="w-full h-full object-cover">
+                    </button>
+                    <button onclick="changeImage(this, 'https://placehold.co/1000x1000/1e293b/ffffff?text=Vinkel+3')" class="thumbnail aspect-square bg-emendion-card border-2 border-transparent rounded-sm overflow-hidden focus:outline-none">
+                        <img src="https://placehold.co/200x200/1e293b/ffffff?text=3" alt="Thumb 3" class="w-full h-full object-cover">
+                    </button>
+                    <button onclick="changeImage(this, 'https://placehold.co/1000x1000/1e293b/ffffff?text=Material+4')" class="thumbnail aspect-square bg-emendion-card border-2 border-transparent rounded-sm overflow-hidden focus:outline-none">
+                        <img src="https://placehold.co/200x200/1e293b/ffffff?text=4" alt="Thumb 4" class="w-full h-full object-cover">
+                    </button>
+                </div>
+            </div>
+
+            <!-- Höger: Produktinformation & Köp -->
+            <div class="flex flex-col justify-center">
+                <span class="text-emendion-accent font-bold tracking-widest uppercase text-sm mb-3">Premium Edition</span>
+                <h1 id="product-title" class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight uppercase">Emendion Model X</h1>
+                
+                <div class="flex items-baseline gap-4 mb-6">
+                    <span id="product-price" class="text-3xl font-bold text-white">4 500 kr</span>
+                    <span class="text-sm text-emendion-text line-through">5 200 kr</span>
+                </div>
+
+                <p class="text-emendion-text text-base md:text-lg mb-8 leading-relaxed">
+                    Nästa generations utrustning för den moderna användaren. Tillverkad med rymdklassad aluminium och utrustad med vår senaste processor för blixtsnabb respons och oöverträffad hållbarhet.
+                </p>
+
+                <!-- Antal & Knapp -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                    <div class="flex items-center bg-emendion-card border border-emendion-border rounded-sm h-14">
+                        <button onclick="updateQty(-1)" class="px-5 text-emendion-text hover:text-white transition-colors h-full flex items-center justify-center focus:outline-none">-</button>
+                        <input type="number" id="qty" value="1" min="1" max="10" readonly class="w-12 bg-transparent text-center text-white font-bold h-full border-none focus:ring-0 outline-none p-0">
+                        <button onclick="updateQty(1)" class="px-5 text-emendion-text hover:text-white transition-colors h-full flex items-center justify-center focus:outline-none">+</button>
+                    </div>
+                    
+                    <button id="add-to-cart-btn" onclick="triggerAddToCart()" class="flex-1 bg-white text-emendion-dark hover:bg-emendion-accent hover:text-white h-14 px-8 flex items-center justify-center gap-3 rounded-sm font-bold uppercase tracking-widest transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emendion-accent focus:ring-offset-2 focus:ring-offset-emendion-dark relative overflow-hidden group">
+                        <span id="btn-text" class="relative z-10 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            Lägg i varukorg
+                        </span>
+                        <!-- Hover effekt bakgrund -->
+                        <div class="absolute inset-0 bg-emendion-accent transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out"></div>
+                    </button>
+                </div>
+
+                <!-- Små fördelar -->
+                <div class="grid grid-cols-2 gap-4 pt-6 border-t border-emendion-border">
+                    <div class="flex items-center gap-3 text-sm text-emendion-text">
+                        <svg class="w-5 h-5 text-emendion-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span>I lager. Redo att skickas.</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-emendion-text">
+                        <svg class="w-5 h-5 text-emendion-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Global leverans</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-emendion-text">
+                        <svg class="w-5 h-5 text-emendion-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        <span>Säker krypterad betalning</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sektioner för Detaljer, Specifikationer & Frakt -->
+        <div class="border-t border-emendion-border pt-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+            
+            <!-- Beskrivning -->
+            <div class="md:col-span-1">
+                <h2 class="text-xl font-bold text-white uppercase tracking-wider mb-6 flex items-center gap-3">
+                    <span class="w-8 h-[2px] bg-emendion-accent inline-block"></span>
+                    Produktinfo
+                </h2>
+                <div class="prose prose-invert prose-p:text-emendion-text prose-p:leading-relaxed text-sm">
+                    <p class="mb-4">
+                        Emendion Model X är designad för de som kräver det absoluta toppskiktet av teknisk innovation. Vårt ingenjörsteam har spenderat år med att förfina varje komponent för att skapa en enhet som inte bara möter, utan överträffar förväntningarna.
+                    </p>
+                    <p>
+                        Med dess minimalistiska exteriör i anodiserat aluminium döljer den ett kraftpaket av prestanda. Det avancerade kylsystemet garanterar att enheten presterar optimalt även under tung belastning, vilket gör den perfekt för både professionella miljöer och krävande entusister.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Specifikationer -->
+            <div class="md:col-span-1">
+                <h2 class="text-xl font-bold text-white uppercase tracking-wider mb-6 flex items-center gap-3">
+                    <span class="w-8 h-[2px] bg-emendion-accent inline-block"></span>
+                    Teknisk Spec
+                </h2>
+                <ul class="divide-y divide-emendion-border border-y border-emendion-border text-sm">
+                    <li class="py-3 flex justify-between">
+                        <span class="text-emendion-text">Material</span>
+                        <span class="font-medium text-white">Aerospace Aluminium</span>
+                    </li>
+                    <li class="py-3 flex justify-between">
+                        <span class="text-emendion-text">Processor</span>
+                        <span class="font-medium text-white">Quantum Core v2</span>
+                    </li>
+                    <li class="py-3 flex justify-between">
+                        <span class="text-emendion-text">Vikt</span>
+                        <span class="font-medium text-white">1.2 kg</span>
+                    </li>
+                    <li class="py-3 flex justify-between">
+                        <span class="text-emendion-text">Batteritid</span>
+                        <span class="font-medium text-white">Upp till 48 timmar</span>
+                    </li>
+                    <li class="py-3 flex justify-between">
+                        <span class="text-emendion-text">Anslutning</span>
+                        <span class="font-medium text-white">USB-C, Bluetooth 5.3</span>
+                    </li>
+                    <li class="py-3 flex justify-between border-b-0">
+                        <span class="text-emendion-text">Vattentålighet</span>
+                        <span class="font-medium text-white">IP68</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Frakt & Returer -->
+            <div class="md:col-span-1">
+                <h2 class="text-xl font-bold text-white uppercase tracking-wider mb-6 flex items-center gap-3">
+                    <span class="w-8 h-[2px] bg-emendion-accent inline-block"></span>
+                    Internationell Frakt
+                </h2>
+                <div class="bg-emendion-card border border-emendion-border p-6 rounded-sm">
+                    <p class="text-sm text-emendion-text mb-4 leading-relaxed">
+                        Emendion levererar över hela världen. Alla internationella försändelser spåras fullt ut och skickas via våra premiumpartners (DHL, FedEx).
+                    </p>
+                    <ul class="space-y-4 mb-6">
+                        <li class="flex items-start gap-3 text-sm text-emendion-text">
+                            <svg class="w-5 h-5 text-emendion-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div>
+                                <strong class="block text-white">Standardfrakt EU/Globalt</strong>
+                                <span>3-7 arbetsdagar.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-emendion-text">
+                            <svg class="w-5 h-5 text-emendion-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                            <div>
+                                <strong class="block text-white">Tullar & Avgifter</strong>
+                                <span>För leveranser utanför EU täcks inte lokala tullavgifter av det pris som anges i kassan.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-emendion-text">
+                            <svg class="w-5 h-5 text-emendion-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z"></path></svg>
+                            <div>
+                                <strong class="block text-white">30 Dagars Returrätt</strong>
+                                <span>Returnera i originalskick för full återbetalning (fraktkostnad tillkommer).</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-emendion-card border-t border-emendion-border mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center text-sm text-emendion-text">
+            <div class="flex items-center gap-2 mb-4 md:mb-0">
+                <svg class="h-5 w-5 text-emendion-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                </svg>
+                <span class="font-bold tracking-widest uppercase text-white">Emendion</span>
+            </div>
+            <div>&copy; 2026 Emendion Tech. Alla rättigheter förbehållna.</div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification (Hidden by default) -->
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white text-emendion-dark px-6 py-4 shadow-[0_10px_40px_rgba(14,165,233,0.3)] z-50 flex items-center gap-4 transition-all duration-300 translate-y-24 opacity-0 border-l-4 border-emendion-accent rounded-sm">
+        <div class="bg-emendion-accent text-white p-1 rounded-full">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <div>
+            <p class="font-bold text-sm uppercase tracking-wide">Tillagd i varukorg</p>
+            <p class="text-xs text-slate-500 font-medium">Produkten har lagts till framgångsrikt.</p>
+        </div>
+    </div>
+
+    <script>
+        // Läs in eventuell produktdata från URL om man kommer från startsidan (Frivillig funktionalitet)
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            // Här skulle man normalt hämta från en databas/array baserat på ID,
+            // men för denna template behåller vi placeholder-datan om inget ID skickas,
+            // annars kan du uppdatera DOM-elementen här via JS.
+        });
+
+        // Hantera bildgalleri
+        function changeImage(element, src) {
+            // Ändra huvudbild
+            const mainImg = document.getElementById('main-product-image');
+            mainImg.style.opacity = '0.5'; // Snabb fade-effekt
+            setTimeout(() => {
+                mainImg.src = src;
+                mainImg.style.opacity = '1';
+            }, 150);
+
+            // Uppdatera aktiv klass på miniatyrer
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach(t => {
+                t.classList.remove('active', 'border-emendion-accent');
+                t.classList.add('border-transparent');
+            });
+            
+            element.classList.add('active', 'border-emendion-accent');
+            element.classList.remove('border-transparent');
+        }
+
+        // Hantera antal
+        function updateQty(change) {
+            const input = document.getElementById('qty');
+            let val = parseInt(input.value) + change;
+            if (val < 1) val = 1;
+            if (val > 10) val = 10;
+            input.value = val;
+        }
+
+        // Visuell interaktion: Lägg till i varukorg
+        function triggerAddToCart() {
+            const btn = document.getElementById('add-to-cart-btn');
+            const btnText = document.getElementById('btn-text');
+            const qty = document.getElementById('qty').value;
+            const originalContent = btnText.innerHTML;
+
+            // Avaktivera knapp under animering
+            btn.disabled = true;
+            
+            // Ändra utseende (Visuell bekräftelse)
+            btn.classList.remove('bg-white', 'text-emendion-dark', 'hover:bg-emendion-accent');
+            btn.classList.add('bg-green-500', 'text-white', 'border-green-500');
+            
+            // Dölj hover-effekten under success-läget
+            const hoverBg = btn.querySelector('.bg-emendion-accent');
+            if(hoverBg) hoverBg.style.display = 'none';
+
+            btnText.innerHTML = `
+                <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Tillagd (${qty} st)
+            `;
+
+            // Visa Toast
+            showToast();
+
+            // Återställ knapp efter 2.5 sekunder
+            setTimeout(() => {
+                btn.classList.remove('bg-green-500', 'text-white', 'border-green-500');
+                btn.classList.add('bg-white', 'text-emendion-dark', 'hover:bg-emendion-accent');
+                if(hoverBg) hoverBg.style.display = '';
+                btnText.innerHTML = originalContent;
+                btn.disabled = false;
+                
+                // I en riktig applikation hade vi skickat en händelse via localStorage eller 
+                // ett state management system tillbaka till index.html (Varukorgen).
+            }, 2500);
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

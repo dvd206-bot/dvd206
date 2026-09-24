@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Svensk E-handel | Premiumprodukter</title>
+    <title>Emendion | Official Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -14,51 +14,53 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        primary: '#4F46E5', // Indigo 600
-                        primaryHover: '#4338CA', // Indigo 700
+                        emendion: {
+                            DEFAULT: '#0f172a', // Slate 900
+                            light: '#1e293b',   // Slate 800
+                            accent: '#38bdf8'   // Light blue for tech vibe
+                        }
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Extra custom styling för rullningslister och mjuka animationer */
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .cart-slide { transition: transform 0.3s ease-in-out; }
+        .cart-slide { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .cart-hidden { transform: translateX(100%); }
         .cart-visible { transform: translateX(0); }
-        .modal-fade { transition: opacity 0.3s ease-in-out; }
         
-        /* Göm scrollbar men behåll funktionalitet i varukorgen */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .input-error { border-color: #ef4444; background-color: #fef2f2; }
+        .input-error { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        
+        /* Modern hover effect för produktkort */
+        .product-card-hover:hover .product-img { transform: scale(1.05); }
     </style>
 </head>
-<body class="text-slate-800 antialiased relative overflow-x-hidden min-h-screen flex flex-col">
+<body class="text-slate-800 antialiased relative overflow-x-hidden min-h-screen flex flex-col selection:bg-emendion-accent selection:text-emendion">
 
-    <!-- Navbar -->
-    <header class="bg-white shadow-sm sticky top-0 z-40">
+    <header class="bg-emendion text-white shadow-lg sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="flex justify-between items-center h-20">
                 <!-- Logotyp -->
                 <div class="flex-shrink-0 flex items-center cursor-pointer">
-                    <svg class="h-8 w-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    <svg class="h-8 w-8 text-emendion-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
                     </svg>
-                    <span class="ml-2 text-xl font-bold text-slate-900 tracking-tight">NordicStore</span>
+                    <span class="ml-3 text-2xl font-bold tracking-widest uppercase">Emendion</span>
                 </div>
                 
-                <!-- Varukorg-knapp -->
-                <button onclick="toggleCart()" class="relative p-2 rounded-full hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
-                    <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                <!-- Varukorg -->
+                <button onclick="toggleCart()" class="relative p-2 rounded-full hover:bg-emendion-light transition-colors focus:outline-none focus:ring-2 focus:ring-emendion-accent">
+                    <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
-                    <!-- Badge för antal varor -->
-                    <span id="cart-badge" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-500 rounded-full hidden">
+                    <!-- Badge -->
+                    <span id="cart-badge" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-emendion-accent rounded-full hidden">
                         0
                     </span>
                 </button>
@@ -66,255 +68,263 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="text-center mb-12">
-            <h1 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">Våra Utvalda Produkter</h1>
-            <p class="mt-4 text-lg text-slate-600">Upptäck vår samling av kvalitetsprodukter designade för din vardag.</p>
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+        <div class="mb-12 border-l-4 border-emendion-accent pl-4">
+            <h1 class="text-3xl font-extrabold text-emendion uppercase tracking-wide">Kollektion</h1>
+            <p class="mt-2 text-slate-500">Klicka på en produkt för mer information eller lägg direkt i varukorgen.</p>
         </div>
 
         <!-- Produktgrid (Populeras av JS) -->
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             <!-- Produkter laddas här -->
         </div>
     </main>
 
-    <!-- Sidfot -->
-    <footer class="bg-white border-t border-slate-200 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex justify-center text-slate-500 text-sm">
-            &copy; 2026 NordicStore AB. Alla rättigheter förbehållna. (Simulerad E-handel)
+    <footer class="bg-emendion-light text-slate-400 mt-auto border-t border-emendion">
+        <div class="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center text-sm">
+            <div class="flex items-center mb-4 md:mb-0">
+                <svg class="h-6 w-6 text-emendion-accent mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                </svg>
+                <span class="font-bold tracking-widest uppercase text-slate-200">Emendion</span>
+            </div>
+            <div>&copy; 2026 Emendion. Alla rättigheter förbehållna.</div>
         </div>
     </footer>
 
-    <!-- Varukorg Sidebar (Overlay & Panel) -->
-    <div id="cart-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
+    <div id="cart-overlay" class="fixed inset-0 bg-emendion bg-opacity-70 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
     
-    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 cart-slide cart-hidden flex flex-col pointer-events-auto">
-        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-            <h2 class="text-lg font-semibold text-slate-900">Din Varukorg</h2>
-            <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-600 focus:outline-none">
+    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 cart-slide cart-hidden flex flex-col pointer-events-auto border-l border-slate-200">
+        <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
+            <h2 class="text-xl font-bold text-emendion tracking-wide uppercase">Varukorg</h2>
+            <button onclick="toggleCart()" class="text-slate-400 hover:text-emendion transition-colors focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
 
-        <!-- Varukorgens innehåll -->
-        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 no-scrollbar space-y-6">
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 no-scrollbar space-y-4 bg-slate-50">
             <!-- Fylls på dynamiskt -->
-            <div id="empty-cart-message" class="text-center text-slate-500 mt-10">
-                <svg class="w-16 h-16 mx-auto mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            <div id="empty-cart-message" class="text-center text-slate-400 mt-20 flex flex-col items-center">
+                <svg class="w-20 h-20 mb-6 text-slate-200" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                 </svg>
-                <p>Din varukorg är tom.</p>
+                <p class="text-lg">Din varukorg är tom.</p>
             </div>
         </div>
 
-        <!-- Varukorg Footer (Summering & Knapp) -->
-        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
-            <div class="flex justify-between text-base font-medium text-slate-900 mb-4">
-                <p>Totalt</p>
+        <div class="px-6 py-6 border-t border-slate-100 bg-white">
+            <div class="flex justify-between text-lg font-bold text-emendion mb-6">
+                <p>Totalt belopp</p>
                 <p id="cart-total">0 kr</p>
             </div>
-            <p class="text-sm text-slate-500 mb-4">Frakt och skatter beräknas i kassan.</p>
-            <button id="checkout-btn" onclick="openCheckout()" class="w-full bg-primary hover:bg-primaryHover text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <button id="checkout-btn" onclick="openCheckout()" class="w-full bg-emendion hover:bg-emendion-light text-white px-6 py-4 rounded-none tracking-widest uppercase font-semibold shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                 Gå till kassan
             </button>
         </div>
     </div>
 
-    <!-- Utcheckningsmodal -->
-    <div id="checkout-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center">
+    <div id="checkout-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900 bg-opacity-70 backdrop-blur-sm" onclick="closeCheckout()"></div>
+        <div class="absolute inset-0 bg-emendion bg-opacity-90 backdrop-blur-md" onclick="closeCheckout()"></div>
         
         <!-- Modal Innehåll -->
-        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl z-10 overflow-hidden m-4 max-h-[90vh] flex flex-col relative transform transition-all">
+        <div class="bg-white w-full max-w-4xl rounded-none shadow-2xl z-10 overflow-hidden flex flex-col md:flex-row relative max-h-[95vh]">
             
-            <button onclick="closeCheckout()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 z-20 focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
+            <button onclick="closeCheckout()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 z-20 focus:outline-none bg-white/50 rounded-full p-1">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
-            <!-- Checkout Formulär container -->
-            <div id="checkout-content" class="overflow-y-auto no-scrollbar">
-                <div class="p-6 sm:p-8">
-                    <div class="flex items-center space-x-3 mb-6">
-                        <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                        </svg>
-                        <h2 class="text-2xl font-bold text-slate-900">Säker Kassa</h2>
+            <!-- Vänster sida: Orderöversikt (Visas på desktop) -->
+            <div class="hidden md:flex md:w-1/3 bg-slate-50 border-r border-slate-200 flex-col p-8">
+                <h2 class="text-xl font-bold text-emendion mb-6 uppercase tracking-wide border-b pb-4">Din Order</h2>
+                <div id="checkout-summary-items" class="flex-1 overflow-y-auto space-y-4 mb-6">
+                    <!-- Fylls i via JS -->
+                </div>
+                <div class="border-t border-slate-200 pt-4 mt-auto">
+                    <div class="flex justify-between text-lg font-bold text-emendion">
+                        <span>Att betala</span>
+                        <span id="checkout-total">0 kr</span>
                     </div>
+                </div>
+            </div>
 
-                    <form id="payment-form" onsubmit="processPayment(event)" class="space-y-6" novalidate>
+            <!-- Höger sida: Formulär -->
+            <div id="checkout-content" class="w-full md:w-2/3 overflow-y-auto no-scrollbar relative">
+                <div class="p-6 sm:p-10">
+                    <h2 class="text-2xl font-bold text-emendion mb-8 uppercase tracking-wider">Internationell Kassa</h2>
+
+                    <form id="payment-form" onsubmit="processPayment(event)" class="space-y-8" novalidate>
                         
-                        <!-- Orderöversikt (Kort) -->
-                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex justify-between items-center">
-                            <span class="text-slate-600 font-medium">Att betala:</span>
-                            <span id="checkout-total" class="text-xl font-bold text-slate-900">0 kr</span>
-                        </div>
-
-                        <!-- Leveransinformation -->
                         <div>
-                            <h3 class="text-lg font-semibold text-slate-800 border-b pb-2 mb-4">Leveransinformation</h3>
-                            <div class="grid grid-cols-1 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Fullständigt namn</label>
-                                    <input type="text" id="name" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow" placeholder="Anna Andersson">
-                                    <p class="text-xs text-red-500 mt-1 hidden error-msg">Vänligen ange ditt namn.</p>
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">1. Kontakt & Leverans</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="md:col-span-2">
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Fullständigt Namn *</label>
+                                    <input type="text" id="fullname" required class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">E-postadress</label>
-                                    <input type="email" id="email" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow" placeholder="anna@exempel.se">
-                                    <p class="text-xs text-red-500 mt-1 hidden error-msg">Vänligen ange en giltig e-postadress.</p>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">E-postadress *</label>
+                                    <input type="email" id="email" required class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Gatuadress</label>
-                                    <input type="text" id="address" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow" placeholder="Storgatan 1">
-                                    <p class="text-xs text-red-500 mt-1 hidden error-msg">Vänligen ange din adress.</p>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Telefonnummer *</label>
+                                    <input type="tel" id="phone" required class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Gatuadress *</label>
+                                    <input type="text" id="address" required class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Stad / Ort *</label>
+                                    <input type="text" id="city" required class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Delstat / Län / Region</label>
+                                    <input type="text" id="state" class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Postnummer / Zip *</label>
+                                    <input type="text" id="zip" required class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Land *</label>
+                                    <select id="country" required class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none appearance-none">
+                                        <option value="" disabled selected>Välj land...</option>
+                                        <option value="SE">Sverige</option>
+                                        <option value="NO">Norge</option>
+                                        <option value="DK">Danmark</option>
+                                        <option value="FI">Finland</option>
+                                        <option value="DE">Tyskland</option>
+                                        <option value="GB">Storbritannien</option>
+                                        <option value="US">USA</option>
+                                        <option value="CA">Kanada</option>
+                                        <option value="OTHER">Övriga världen</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Betalningsinformation -->
-                        <div>
-                            <h3 class="text-lg font-semibold text-slate-800 border-b pb-2 mb-4">Betalningsmetod</h3>
-                            <div class="space-y-4">
+                        <div class="border-t border-slate-200 pt-8">
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">2. Säker Betalning</h3>
+                            <div class="space-y-5">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Kortnummer</label>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Kortnummer *</label>
                                     <div class="relative">
-                                        <input type="text" id="card" required pattern="[0-9]{16}" maxlength="16" class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow" placeholder="0000 0000 0000 0000">
-                                        <svg class="w-6 h-6 text-slate-400 absolute left-3 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                    </div>
-                                    <p class="text-xs text-red-500 mt-1 hidden error-msg">Kortnumret måste vara 16 siffror.</p>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-700 mb-1">Giltighetstid</label>
-                                        <input type="text" id="expiry" required pattern="(0[1-9]|1[0-2])\/[0-9]{2}" placeholder="MM/ÅÅ" maxlength="5" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow">
-                                        <p class="text-xs text-red-500 mt-1 hidden error-msg">Format MM/ÅÅ.</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-700 mb-1">CVC</label>
-                                        <input type="text" id="cvc" required pattern="[0-9]{3,4}" placeholder="123" maxlength="4" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow">
-                                        <p class="text-xs text-red-500 mt-1 hidden error-msg">Ange 3-4 siffror.</p>
+                                        <input type="text" id="card" required pattern="[0-9]{16}" maxlength="16" class="w-full pl-12 pr-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none" placeholder="0000 0000 0000 0000">
+                                        <svg class="w-6 h-6 text-slate-400 absolute left-4 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Säkerhetsindikator -->
-                            <div class="mt-4 flex items-center justify-center space-x-2 text-xs text-slate-500">
-                                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                <span>SSL / 256-bitars krypterad anslutning</span>
+                                <div class="grid grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Giltighetstid (MM/ÅÅ) *</label>
+                                        <input type="text" id="expiry" required pattern="(0[1-9]|1[0-2])\/[0-9]{2}" placeholder="MM/ÅÅ" maxlength="5" class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">CVC *</label>
+                                        <input type="text" id="cvc" required pattern="[0-9]{3,4}" placeholder="123" maxlength="4" class="w-full px-4 py-3 border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emendion-accent focus:border-transparent outline-none transition-all rounded-none">
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <button type="submit" id="submit-payment-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg transition-transform transform active:scale-95 flex justify-center items-center">
-                            Slutför Köp
+                        <p id="form-error-msg" class="text-red-500 text-sm font-semibold hidden">Vänligen fyll i alla obligatoriska fält korrekt.</p>
+
+                        <button type="submit" id="submit-payment-btn" class="w-full bg-emendion hover:bg-emendion-light text-white px-6 py-4 rounded-none font-bold uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] flex justify-center items-center mt-8">
+                            Bekräfta & Betala
                         </button>
                     </form>
                 </div>
             </div>
 
-            <!-- Framgångsmeddelande (Gömts inledningsvis) -->
-            <div id="success-message" class="hidden p-8 text-center flex flex-col items-center justify-center space-y-4 py-16">
-                <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+            <div id="success-message" class="hidden absolute inset-0 bg-white z-20 flex-col items-center justify-center p-8 text-center h-full w-full">
+                <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-6">
+                    <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
-                <h2 class="text-3xl font-bold text-slate-900">Tack för din beställning!</h2>
-                <p class="text-slate-600 text-lg">Din betalning har genomförts säkert.<br>En orderbekräftelse har skickats till din e-post.</p>
-                <button onclick="closeCheckoutAndReset()" class="mt-8 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                    Fortsätt handla
+                <h2 class="text-4xl font-extrabold text-emendion mb-4 uppercase tracking-wide">Order Bekräftad</h2>
+                <p class="text-slate-500 text-lg mb-8 max-w-md">Tack för ditt köp. En orderbekräftelse har skickats till din e-post. Vi förbereder din leverans.</p>
+                <button onclick="closeCheckoutAndReset()" class="bg-emendion-light hover:bg-emendion text-white px-8 py-3 uppercase tracking-widest font-semibold transition-colors">
+                    Stäng
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. Datamodeller ---
+        // --- 1. Produktmallar ---
+        // Byt ut text, pris och image-länkar här för att lägga till dina egna produkter.
         const products = [
             {
-                id: 1,
-                name: "Trådlösa Hörlurar Pro",
-                description: "Fantastiskt ljud med aktiv brusreducering och 30 timmars batteritid. Perfekt för pendling och kontor.",
-                price: 1499,
-                image: "https://placehold.co/600x400/4F46E5/ffffff?text=H%C3%B6rlurar+Pro",
-                category: "Ljud"
+                id: "item-001",
+                name: "[Ditt Produktnamn 1]",
+                description: "[Här kan du skriva en kort beskrivning av din produkt. Byt ut bilden mot din egen produktbild.]",
+                price: 1000,
+                image: "https://placehold.co/800x800/1e293b/ffffff?text=L%C3%A4gg+in+bild+h%C3%A4r"
             },
             {
-                id: 2,
-                name: "Smartklocka Active",
-                description: "Spåra din träning, hjärtfrekvens och sömn i realtid. Vattentät design med AMOLED-skärm.",
-                price: 1999,
-                image: "https://placehold.co/600x400/0f172a/ffffff?text=Smartklocka",
-                category: "Elektronik"
+                id: "item-002",
+                name: "[Ditt Produktnamn 2]",
+                description: "[Här kan du skriva en kort beskrivning av din produkt. Byt ut bilden mot din egen produktbild.]",
+                price: 2500,
+                image: "https://placehold.co/800x800/1e293b/ffffff?text=L%C3%A4gg+in+bild+h%C3%A4r"
             },
             {
-                id: 3,
-                name: "Powerbank 10000mAh",
-                description: "Kompakt bärbar laddare med snabbladdning. Ladda din smartphone upp till 3 gånger på en laddning.",
-                price: 399,
-                image: "https://placehold.co/600x400/10b981/ffffff?text=Powerbank",
-                category: "Tillbehör"
-            },
-            {
-                id: 4,
-                name: "Termosflaska Premium 0.5L",
-                description: "Dubbelväggig vakuumisolering i rostfritt stål. Håller drycken iskall i 24h eller rykande varm i 12h.",
-                price: 249,
-                image: "https://placehold.co/600x400/f59e0b/ffffff?text=Termosflaska",
-                category: "Livsstil"
-            },
-            {
-                id: 5,
-                name: "Ergonomisk Kontorsmus",
-                description: "Minskar belastningen på handleden vid långa arbetsdagar. Trådlös anslutning och ställbar känslighet.",
-                price: 599,
-                image: "https://placehold.co/600x400/8b5cf6/ffffff?text=Ergonomisk+Mus",
-                category: "Datorer"
+                id: "item-003",
+                name: "[Ditt Produktnamn 3]",
+                description: "[Här kan du skriva en kort beskrivning av din produkt. Byt ut bilden mot din egen produktbild.]",
+                price: 500,
+                image: "https://placehold.co/800x800/1e293b/ffffff?text=L%C3%A4gg+in+bild+h%C3%A4r"
             }
         ];
 
         let cart = [];
         let isCartOpen = false;
 
-        // --- 2. Rendera produkter ---
+        // --- 2. Rendera produkter (med länk och separat köpknapp) ---
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
 
             products.forEach(product => {
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col';
+                card.className = 'product-card-hover bg-white flex flex-col border border-slate-200 hover:shadow-2xl transition-all duration-300';
                 
                 card.innerHTML = `
-                    <div class="relative overflow-hidden aspect-video bg-slate-100">
-                        <img src="${product.image}" alt="${product.name}" class="object-cover w-full h-full transform hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur text-xs font-semibold px-3 py-1 rounded-full text-slate-700 shadow-sm">
-                            ${product.category}
+                    <!-- Hela övre delen är en länk som öppnas i ny flik -->
+                    <a href="product.html?id=${product.id}" target="_blank" class="block flex-grow relative overflow-hidden group cursor-pointer">
+                        <div class="aspect-square bg-slate-100 overflow-hidden border-b border-slate-100">
+                            <img src="${product.image}" alt="${product.name}" class="product-img object-cover w-full h-full transition-transform duration-700 ease-out">
                         </div>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">${product.name}</h3>
-                        <p class="text-slate-600 text-sm flex-grow mb-6 line-clamp-3">${product.description}</p>
-                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
-                            <span class="text-2xl font-extrabold text-slate-900">${product.price} <span class="text-base font-medium text-slate-500">kr</span></span>
-                            <button onclick="addToCart(${product.id})" class="bg-slate-900 hover:bg-primary text-white p-3 rounded-xl transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" aria-label="Lägg till i varukorg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                            </button>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-emendion mb-2 tracking-wide">${product.name}</h3>
+                            <p class="text-slate-500 text-sm line-clamp-2">${product.description}</p>
                         </div>
+                    </a>
+                    
+                    <!-- Nedre delen innehåller pris och Lägg till-knapp -->
+                    <div class="px-6 pb-6 pt-0 flex items-end justify-between mt-auto bg-white relative z-10">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Pris</span>
+                            <span class="text-2xl font-extrabold text-emendion">${product.price.toLocaleString('sv-SE')} <span class="text-sm font-medium">kr</span></span>
+                        </div>
+                        <button onclick="addToCart('${product.id}')" class="bg-emendion-light hover:bg-emendion-accent hover:text-emendion text-white p-3 rounded-none transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emendion" title="Lägg i varukorg">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                        </button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // --- 3. Varukorg Logik ---
+        // --- 3. Varukorgshantering ---
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
@@ -326,9 +336,8 @@
                 cart.push({ ...product, quantity: 1 });
             }
             
-            // Visuell feedback om cart inte är öppen
             if(!isCartOpen) {
-                showToast(`Lade till ${product.name} i varukorgen`);
+                showToast(`${product.name} tillagd i varukorgen`);
             }
             
             updateCartUI();
@@ -351,17 +360,19 @@
             }
         }
 
-        // --- 4. Uppdatera Varukorg UI ---
+        // --- 4. Uppdatera UI för Varukorg & Kassa ---
         function updateCartUI() {
             const container = document.getElementById('cart-items-container');
             const emptyMessage = document.getElementById('empty-cart-message');
             const totalElement = document.getElementById('cart-total');
+            const checkoutTotal = document.getElementById('checkout-total');
+            const checkoutSummary = document.getElementById('checkout-summary-items');
             const badge = document.getElementById('cart-badge');
             const checkoutBtn = document.getElementById('checkout-btn');
 
-            // Rensa tidigare items (men behåll empty-message)
-            const items = container.querySelectorAll('.cart-item-row');
-            items.forEach(item => item.remove());
+            // Rensa DOM
+            container.querySelectorAll('.cart-item-row').forEach(item => item.remove());
+            if(checkoutSummary) checkoutSummary.innerHTML = '';
 
             let total = 0;
             let totalItems = 0;
@@ -376,37 +387,55 @@
                 badge.classList.remove('hidden');
 
                 cart.forEach(item => {
-                    total += item.price * item.quantity;
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
                     totalItems += item.quantity;
 
+                    // Bygg rad för varukorg (Sidebar)
                     const div = document.createElement('div');
-                    div.className = 'cart-item-row flex items-center gap-4 bg-white p-4 rounded-xl border border-slate-100 shadow-sm';
+                    div.className = 'cart-item-row flex items-center gap-4 bg-white p-4 border border-slate-100 shadow-sm';
                     div.innerHTML = `
-                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md bg-slate-100">
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover bg-slate-100 border border-slate-200">
                         <div class="flex-1">
-                            <h4 class="text-sm font-bold text-slate-900">${item.name}</h4>
-                            <p class="text-primary font-medium text-sm">${item.price} kr</p>
+                            <h4 class="text-sm font-bold text-emendion">${item.name}</h4>
+                            <p class="text-slate-500 font-medium text-sm mt-1">${item.price.toLocaleString('sv-SE')} kr</p>
                             
-                            <div class="flex items-center mt-2 bg-slate-50 w-fit rounded-lg border border-slate-200">
-                                <button onclick="changeQuantity(${item.id}, -1)" class="px-2 py-1 text-slate-500 hover:text-slate-800 focus:outline-none">-</button>
-                                <span class="px-2 text-sm font-medium text-slate-700 min-w-[1.5rem] text-center">${item.quantity}</span>
-                                <button onclick="changeQuantity(${item.id}, 1)" class="px-2 py-1 text-slate-500 hover:text-slate-800 focus:outline-none">+</button>
+                            <div class="flex items-center mt-3 border border-slate-200 w-fit">
+                                <button onclick="changeQuantity('${item.id}', -1)" class="px-3 py-1 bg-slate-50 hover:bg-slate-200 text-slate-600 transition-colors">-</button>
+                                <span class="px-3 py-1 text-sm font-bold text-emendion min-w-[2rem] text-center">${item.quantity}</span>
+                                <button onclick="changeQuantity('${item.id}', 1)" class="px-3 py-1 bg-slate-50 hover:bg-slate-200 text-slate-600 transition-colors">+</button>
                             </div>
                         </div>
-                        <button onclick="removeFromCart(${item.id})" class="p-2 text-slate-300 hover:text-red-500 transition-colors focus:outline-none" aria-label="Ta bort">
+                        <button onclick="removeFromCart('${item.id}')" class="p-2 text-slate-300 hover:text-red-500 transition-colors" title="Ta bort">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     `;
                     container.appendChild(div);
+
+                    // Bygg rad för Checkout Summary (om synlig)
+                    if(checkoutSummary) {
+                        const sumDiv = document.createElement('div');
+                        sumDiv.className = 'flex items-center gap-3 bg-white p-3 border border-slate-200';
+                        sumDiv.innerHTML = `
+                            <img src="${item.image}" class="w-12 h-12 object-cover bg-slate-100 border border-slate-200">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-bold text-emendion truncate">${item.name}</p>
+                                <p class="text-xs text-slate-500">Antal: ${item.quantity}</p>
+                            </div>
+                            <div class="text-sm font-bold text-emendion whitespace-nowrap">${itemTotal.toLocaleString('sv-SE')} kr</div>
+                        `;
+                        checkoutSummary.appendChild(sumDiv);
+                    }
                 });
             }
 
-            totalElement.textContent = `${total.toLocaleString('sv-SE')} kr`;
-            document.getElementById('checkout-total').textContent = `${total.toLocaleString('sv-SE')} kr`;
+            const formattedTotal = `${total.toLocaleString('sv-SE')} kr`;
+            totalElement.textContent = formattedTotal;
+            if(checkoutTotal) checkoutTotal.textContent = formattedTotal;
             badge.textContent = totalItems;
         }
 
-        // --- 5. UI Toggles ---
+        // --- 5. Toggles & UI Hantering ---
         function toggleCart() {
             isCartOpen = !isCartOpen;
             const overlay = document.getElementById('cart-overlay');
@@ -414,12 +443,11 @@
             
             if (isCartOpen) {
                 overlay.classList.remove('hidden');
-                // Liten delay för transition
                 setTimeout(() => {
                     overlay.classList.remove('opacity-0');
                     panel.classList.remove('cart-hidden');
                     panel.classList.add('cart-visible');
-                    document.body.style.overflow = 'hidden'; // Förhindra bakgrundsscroll
+                    document.body.style.overflow = 'hidden';
                 }, 10);
             } else {
                 overlay.classList.add('opacity-0');
@@ -429,21 +457,23 @@
                 
                 setTimeout(() => {
                     overlay.classList.add('hidden');
-                }, 300); // Matcha transition duration
+                }, 300);
             }
         }
 
         function openCheckout() {
             if (cart.length === 0) return;
-            toggleCart(); // Stäng varukorgen först
+            toggleCart(); // Stäng sidebar
             
             const modal = document.getElementById('checkout-modal');
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
             
-            // Återställ vy om den var stängd på 'success' senast
+            // Återställ ifall success view visas
             document.getElementById('checkout-content').classList.remove('hidden');
             document.getElementById('success-message').classList.add('hidden');
+            document.getElementById('success-message').classList.remove('flex');
+            updateCartUI(); // Uppdatera orderöversikt i modalen
         }
 
         function closeCheckout() {
@@ -454,53 +484,42 @@
         
         function closeCheckoutAndReset() {
             closeCheckout();
-            cart = []; // Töm varukorg
+            cart = []; 
             updateCartUI();
             document.getElementById('payment-form').reset();
             clearValidation();
         }
 
-        // Liten toast notification istället för alert()
         function showToast(message) {
             const toast = document.createElement('div');
-            toast.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl z-[70] transform transition-all duration-300 translate-y-10 opacity-0';
-            toast.textContent = message;
+            toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-emendion text-white px-6 py-3 shadow-2xl z-[70] transition-all duration-300 translate-y-20 opacity-0 border border-slate-700 font-medium tracking-wide flex items-center gap-3';
+            toast.innerHTML = `<svg class="w-5 h-5 text-emendion-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ${message}`;
             document.body.appendChild(toast);
             
+            setTimeout(() => toast.classList.remove('translate-y-20', 'opacity-0'), 10);
             setTimeout(() => {
-                toast.classList.remove('translate-y-10', 'opacity-0');
-            }, 10);
-            
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-10');
+                toast.classList.add('opacity-0', 'translate-y-20');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        // --- 6. Formulär & Betalning ---
+        // --- 6. Formulär & Validering ---
         
-        // Håller koll på input för realtidsvalidering av kort
+        // Auto-formattering för kort & utgångsdatum
         document.getElementById('expiry').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, ''); // Ta bort icke-siffror
-            if (value.length > 2) {
-                value = value.substring(0,2) + '/' + value.substring(2,4);
-            }
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) value = value.substring(0,2) + '/' + value.substring(2,4);
             e.target.value = value;
         });
         
         document.getElementById('card').addEventListener('input', function (e) {
-            e.target.value = e.target.value.replace(/\D/g, ''); // Endast siffror
+            e.target.value = e.target.value.replace(/\D/g, '');
         });
 
         function clearValidation() {
-            const inputs = document.querySelectorAll('#payment-form input');
-            inputs.forEach(input => {
-                input.classList.remove('input-error');
-                const errorMsg = input.nextElementSibling;
-                if(errorMsg && errorMsg.classList.contains('error-msg')) {
-                    errorMsg.classList.add('hidden');
-                }
-            });
+            const inputs = document.querySelectorAll('#payment-form input, #payment-form select');
+            inputs.forEach(input => input.classList.remove('input-error'));
+            document.getElementById('form-error-msg').classList.add('hidden');
         }
 
         function processPayment(event) {
@@ -510,49 +529,41 @@
             const form = event.target;
             let isValid = true;
             
-            // Anpassad validering med visuell feedback
-            const inputs = form.querySelectorAll('input[required]');
+            const inputs = form.querySelectorAll('input[required], select[required]');
             inputs.forEach(input => {
                 if (!input.checkValidity()) {
                     isValid = false;
                     input.classList.add('input-error');
-                    const errorMsg = input.nextElementSibling;
-                    if(errorMsg && errorMsg.classList.contains('error-msg')) {
-                        errorMsg.classList.remove('hidden');
-                    }
                 }
             });
 
             if (!isValid) {
-                // Skaka-effekt eller bara stoppa
+                document.getElementById('form-error-msg').classList.remove('hidden');
                 return;
             }
 
-            // Simulera betalningsprocess
+            // Simulera Laddning & Betalning
             const btn = document.getElementById('submit-payment-btn');
             const originalText = btn.innerHTML;
-            
             btn.disabled = true;
-            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Bearbetar säkert...`;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Autentiserar...`;
 
             setTimeout(() => {
-                // Succé
                 btn.disabled = false;
                 btn.innerHTML = originalText;
                 
-                // Göm formulär, visa succémeddelande
+                // Visa success
                 document.getElementById('checkout-content').classList.add('hidden');
                 document.getElementById('success-message').classList.remove('hidden');
-                
-            }, 1500); // Simulerar 1.5s nätverksanrop
+                document.getElementById('success-message').classList.add('flex');
+            }, 2000);
         }
 
-        // --- 7. Uppstart ---
+        // --- 7. Initiering ---
         document.addEventListener('DOMContentLoaded', () => {
             renderProducts();
-            updateCartUI(); // Initiera tom varukorg
+            updateCartUI();
         });
-
     </script>
 </body>
 </html>
