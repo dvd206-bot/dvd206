@@ -1,608 +1,558 @@
 <!DOCTYPE html>
-<html lang="sv" class="h-full">
+<html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Företagsväxter | Växter och Fruktkorgar till företag</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              green: '#006848',
-              greenDark: '#004d35',
-              greenLight: '#e6f3ee',
-              bubble: '#1d1d1f'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Svensk E-handel | Premiumprodukter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        primaryHover: '#4338CA', // Indigo 700
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
-
-  <style>
-    /* Talbubblans pekande triangel mot trädet på höger sida */
-    @media (min-width: 1024px) {
-      .speech-bubble::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        right: -18px;
-        transform: translateY(-50%);
-        border-width: 14px 0 14px 18px;
-        border-style: solid;
-        border-color: transparent transparent transparent #1d1d1f;
-        display: block;
-      }
-    }
-    
-    /* Mjuk toning för herobilden */
-    .hero-bg-wash {
-      background: radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.4) 0%, rgba(244, 246, 248, 0.85) 75%, #e5e9ec 100%);
-    }
-
-    /* Mjuk övergång för kort */
-    .category-card {
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .category-card:hover {
-      background-color: #fafbfc;
-      transform: translateY(-2px);
-    }
-  </style>
-</head>
-
-<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col selection:bg-brand-green selection:text-white">
-
-  <!-- 1. TOPPMENY (HEADER) -->
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-20">
+    </script>
+    <style>
+        /* Extra custom styling för rullningslister och mjuka animationer */
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .cart-slide { transition: transform 0.3s ease-in-out; }
+        .cart-hidden { transform: translateX(100%); }
+        .cart-visible { transform: translateX(0); }
+        .modal-fade { transition: opacity 0.3s ease-in-out; }
         
-        <!-- Logotyp -->
-        <a href="#" class="flex items-center space-x-3 group">
-          <!-- Grön växtikon -->
-          <div class="w-10 h-10 rounded-md bg-brand-green flex items-center justify-center text-white shadow-sm flex-shrink-0">
-            <svg class="w-6 h-6 transform group-hover:scale-110 transition-transform duration-200" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12c0 3.7 2.01 6.94 5 8.65V19c0-.55.45-1 1-1h1.5c.28 0 .5-.22.5-.5v-2c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v2c0 .28.22.5.5.5H16c.55 0 1 .45 1 1v1.65c2.99-1.71 5-4.95 5-8.65 0-5.52-4.48-10-10-10zm-1 5.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v3.2l2.3-1.33c.72-.42 1.64-.17 2.06.55.42.72.17 1.64-.55 2.06L14.5 13l2.81 1.62c.72.42.97 1.34.55 2.06-.42.72-1.34.97-2.06.55L13.5 16v3.2c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5V16l-2.3 1.23c-.72.42-1.64.17-2.06-.55-.42-.72-.17-1.64.55-2.06L9.5 13l-2.81-1.62c-.72-.42-.97-1.34-.55-2.06.42-.72 1.34-.97 2.06-.55L10.5 10.7V7.5z"/>
-            </svg>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-xl sm:text-2xl font-black tracking-tight text-gray-900 leading-none">FÖRETAGSVÄXTER</span>
-            <span class="text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] text-gray-600 mt-1 uppercase">VÄXTER OCH FRUKTKORGAR</span>
-          </div>
-        </a>
+        /* Göm scrollbar men behåll funktionalitet i varukorgen */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .input-error { border-color: #ef4444; background-color: #fef2f2; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased relative overflow-x-hidden min-h-screen flex flex-col">
 
-        <!-- Desktop Navigation -->
-        <nav class="hidden lg:flex items-center space-x-1 xl:space-x-3">
-          <!-- Aktiv Hem-länk med grön rundad pillerknapp -->
-          <a href="#" class="bg-brand-green text-white px-5 py-1.5 rounded-full text-sm font-semibold tracking-wider uppercase transition shadow-sm hover:bg-brand-greenDark">
-            HEM
-          </a>
-          <a href="#kategorier" class="px-3.5 py-1.5 text-sm font-bold tracking-wider text-gray-800 hover:text-brand-green uppercase transition">
-            VÄXTER
-          </a>
-          <a href="#kategorier" class="px-3.5 py-1.5 text-sm font-bold tracking-wider text-gray-800 hover:text-brand-green uppercase transition">
-            FRUKT
-          </a>
-          <a href="#kategorier" class="px-3.5 py-1.5 text-sm font-bold tracking-wider text-gray-800 hover:text-brand-green uppercase transition">
-            DRYCK
-          </a>
-          <a href="#kategorier" class="px-3.5 py-1.5 text-sm font-bold tracking-wider text-gray-800 hover:text-brand-green uppercase transition">
-            GÅVOGRAM
-          </a>
-          <a href="#kategorier" class="px-3.5 py-1.5 text-sm font-bold tracking-wider text-gray-800 hover:text-brand-green uppercase transition">
-            JUICEMASKINER
-          </a>
+    <!-- Navbar -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logotyp -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer">
+                    <svg class="h-8 w-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span class="ml-2 text-xl font-bold text-slate-900 tracking-tight">NordicStore</span>
+                </div>
+                
+                <!-- Varukorg-knapp -->
+                <button onclick="toggleCart()" class="relative p-2 rounded-full hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                    <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <!-- Badge för antal varor -->
+                    <span id="cart-badge" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-500 rounded-full hidden">
+                        0
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-          <!-- Skiljesträck och sekundära länkar -->
-          <div class="h-6 w-[1px] bg-gray-300 mx-2"></div>
-
-          <button onclick="openModal('Kontakt & Support')" class="text-sm font-semibold text-brand-green hover:underline px-2 transition">
-            Kontakt
-          </button>
-          <button onclick="openModal('Om Företagsväxter')" class="text-sm font-semibold text-brand-green hover:underline px-2 transition">
-            Om oss
-          </button>
-        </nav>
-
-        <!-- Mobil hamburgarmeny -->
-        <div class="lg:hidden flex items-center">
-          <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 rounded-lg text-gray-700 hover:text-brand-green hover:bg-gray-100 focus:outline-none" aria-label="Meny">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">Våra Utvalda Produkter</h1>
+            <p class="mt-4 text-lg text-slate-600">Upptäck vår samling av kvalitetsprodukter designade för din vardag.</p>
         </div>
 
-      </div>
-    </div>
+        <!-- Produktgrid (Populeras av JS) -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Produkter laddas här -->
+        </div>
+    </main>
 
-    <!-- Mobilmeny utdragbar -->
-    <div id="mobile-menu" class="hidden lg:hidden border-t border-gray-200 bg-white px-4 pt-3 pb-6 space-y-2">
-      <a href="#" class="block bg-brand-green text-white px-4 py-2 rounded-lg text-sm font-bold">HEM</a>
-      <a href="#kategorier" class="block px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50 rounded-lg">VÄXTER</a>
-      <a href="#kategorier" class="block px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50 rounded-lg">FRUKT</a>
-      <a href="#kategorier" class="block px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50 rounded-lg">DRYCK</a>
-      <a href="#kategorier" class="block px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50 rounded-lg">GÅVOGRAM</a>
-      <a href="#kategorier" class="block px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50 rounded-lg">JUICEMASKINER</a>
-      <div class="pt-3 border-t border-gray-100 flex gap-4">
-        <button onclick="openModal('Kontakt')" class="text-sm font-bold text-brand-green">Kontakt</button>
-        <button onclick="openModal('Om oss')" class="text-sm font-bold text-brand-green">Om oss</button>
-      </div>
-    </div>
-  </header>
+    <!-- Sidfot -->
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex justify-center text-slate-500 text-sm">
+            &copy; 2026 NordicStore AB. Alla rättigheter förbehållna. (Simulerad E-handel)
+        </div>
+    </footer>
 
-  <!-- 2. HERO SEKTION MED PRATBUBBLA OCH TRÄD -->
-  <section class="relative bg-gradient-to-b from-[#e7edf0] via-[#edf2f5] to-[#f4f7f8] overflow-hidden border-b border-gray-200">
+    <!-- Varukorg Sidebar (Overlay & Panel) -->
+    <div id="cart-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
     
-    <!-- Ljus, subtil bakgrund med fönster/kontorskänsla -->
-    <div class="absolute inset-0 opacity-20 pointer-events-none">
-      <div class="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 cart-slide cart-hidden flex flex-col pointer-events-auto">
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+            <h2 class="text-lg font-semibold text-slate-900">Din Varukorg</h2>
+            <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-600 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Varukorgens innehåll -->
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 no-scrollbar space-y-6">
+            <!-- Fylls på dynamiskt -->
+            <div id="empty-cart-message" class="text-center text-slate-500 mt-10">
+                <svg class="w-16 h-16 mx-auto mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+                <p>Din varukorg är tom.</p>
+            </div>
+        </div>
+
+        <!-- Varukorg Footer (Summering & Knapp) -->
+        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+            <div class="flex justify-between text-base font-medium text-slate-900 mb-4">
+                <p>Totalt</p>
+                <p id="cart-total">0 kr</p>
+            </div>
+            <p class="text-sm text-slate-500 mb-4">Frakt och skatter beräknas i kassan.</p>
+            <button id="checkout-btn" onclick="openCheckout()" class="w-full bg-primary hover:bg-primaryHover text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Gå till kassan
+            </button>
+        </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-20 relative">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[380px] sm:min-h-[440px]">
+    <!-- Utcheckningsmodal -->
+    <div id="checkout-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900 bg-opacity-70 backdrop-blur-sm" onclick="closeCheckout()"></div>
         
-        <!-- Vänster kolumn: Svart pratbubbla (Callout box) -->
-        <div class="lg:col-span-5 z-20 flex justify-center lg:justify-start">
-          <div class="speech-bubble relative bg-[#1d1d1f] text-white rounded-3xl p-6 sm:p-8 shadow-2xl max-w-md w-full border border-gray-800">
+        <!-- Modal Innehåll -->
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl z-10 overflow-hidden m-4 max-h-[90vh] flex flex-col relative transform transition-all">
             
-            <h1 class="text-2xl sm:text-3xl font-normal leading-tight tracking-tight">
-              Beställ <span class="font-extrabold text-white underline decoration-brand-green decoration-4 underline-offset-4">gratis</span><br>
-              växtinredningsförslag!
-            </h1>
-
-            <p class="text-gray-300 text-xs sm:text-sm mt-4 leading-relaxed font-light">
-              Olika växter kräver olika ljusförhållanden. Beställ ett gratis växtinredningsförslag hos oss, så kommer vi ut till er arbetsplats.
-            </p>
-
-            <!-- Klickbar knapp som öppnar formuläret direkt -->
-            <div class="mt-6 pt-2">
-              <button onclick="openModal('Gratis Växtinredningsförslag')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm px-6 py-3 rounded-full transition-all duration-200 shadow-lg hover:shadow-emerald-900/30">
-                <span>Boka kostnadsfritt besök</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            <button onclick="closeCheckout()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 z-20 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
-              </button>
+            </button>
+
+            <!-- Checkout Formulär container -->
+            <div id="checkout-content" class="overflow-y-auto no-scrollbar">
+                <div class="p-6 sm:p-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                        <h2 class="text-2xl font-bold text-slate-900">Säker Kassa</h2>
+                    </div>
+
+                    <form id="payment-form" onsubmit="processPayment(event)" class="space-y-6" novalidate>
+                        
+                        <!-- Orderöversikt (Kort) -->
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex justify-between items-center">
+                            <span class="text-slate-600 font-medium">Att betala:</span>
+                            <span id="checkout-total" class="text-xl font-bold text-slate-900">0 kr</span>
+                        </div>
+
+                        <!-- Leveransinformation -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-800 border-b pb-2 mb-4">Leveransinformation</h3>
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Fullständigt namn</label>
+                                    <input type="text" id="name" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow" placeholder="Anna Andersson">
+                                    <p class="text-xs text-red-500 mt-1 hidden error-msg">Vänligen ange ditt namn.</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">E-postadress</label>
+                                    <input type="email" id="email" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow" placeholder="anna@exempel.se">
+                                    <p class="text-xs text-red-500 mt-1 hidden error-msg">Vänligen ange en giltig e-postadress.</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Gatuadress</label>
+                                    <input type="text" id="address" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow" placeholder="Storgatan 1">
+                                    <p class="text-xs text-red-500 mt-1 hidden error-msg">Vänligen ange din adress.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Betalningsinformation -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-800 border-b pb-2 mb-4">Betalningsmetod</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Kortnummer</label>
+                                    <div class="relative">
+                                        <input type="text" id="card" required pattern="[0-9]{16}" maxlength="16" class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow" placeholder="0000 0000 0000 0000">
+                                        <svg class="w-6 h-6 text-slate-400 absolute left-3 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                    </div>
+                                    <p class="text-xs text-red-500 mt-1 hidden error-msg">Kortnumret måste vara 16 siffror.</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Giltighetstid</label>
+                                        <input type="text" id="expiry" required pattern="(0[1-9]|1[0-2])\/[0-9]{2}" placeholder="MM/ÅÅ" maxlength="5" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow">
+                                        <p class="text-xs text-red-500 mt-1 hidden error-msg">Format MM/ÅÅ.</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">CVC</label>
+                                        <input type="text" id="cvc" required pattern="[0-9]{3,4}" placeholder="123" maxlength="4" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary focus:border-primary outline-none transition-shadow">
+                                        <p class="text-xs text-red-500 mt-1 hidden error-msg">Ange 3-4 siffror.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Säkerhetsindikator -->
+                            <div class="mt-4 flex items-center justify-center space-x-2 text-xs text-slate-500">
+                                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                <span>SSL / 256-bitars krypterad anslutning</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submit-payment-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg transition-transform transform active:scale-95 flex justify-center items-center">
+                            Slutför Köp
+                        </button>
+                    </form>
+                </div>
             </div>
 
-          </div>
+            <!-- Framgångsmeddelande (Gömts inledningsvis) -->
+            <div id="success-message" class="hidden p-8 text-center flex flex-col items-center justify-center space-y-4 py-16">
+                <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-bold text-slate-900">Tack för din beställning!</h2>
+                <p class="text-slate-600 text-lg">Din betalning har genomförts säkert.<br>En orderbekräftelse har skickats till din e-post.</p>
+                <button onclick="closeCheckoutAndReset()" class="mt-8 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                    Fortsätt handla
+                </button>
+            </div>
         </div>
-
-        <!-- Höger kolumn: Det stora, frodiga bonsaiträdet -->
-        <div class="lg:col-span-7 relative flex items-center justify-center lg:justify-end">
-          
-          <!-- Ljuseffekt bakom trädet -->
-          <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-white/70 rounded-full blur-3xl pointer-events-none -z-0"></div>
-
-          <!-- Träd Illustration / Bildkomposition -->
-          <div class="relative z-10 w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[540px] transform hover:scale-[1.01] transition-transform duration-500">
-            
-            <svg class="w-full h-auto drop-shadow-[0_25px_35px_rgba(0,0,0,0.18)]" viewBox="0 0 500 460" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Kruka / Bas med stenbeläggning -->
-              <ellipse cx="270" cy="430" rx="140" ry="22" fill="#000000" opacity="0.12" filter="blur(6px)"/>
-              <ellipse cx="270" cy="425" rx="110" ry="16" fill="#475569"/>
-              <ellipse cx="270" cy="422" rx="100" ry="12" fill="#64748b"/>
-              <ellipse cx="270" cy="419" rx="90" ry="8" fill="#e2e8f0"/>
-
-              <!-- Stam och knotiga grenar -->
-              <path d="M260 418 C250 360, 290 320, 270 260 C250 200, 310 160, 280 90 C250 90, 230 140, 245 210 C255 260, 220 330, 235 418 Z" fill="#4a3728"/>
-              <path d="M245 220 C200 190, 160 170, 120 180 C145 195, 185 215, 230 250 Z" fill="#3b2b1f"/>
-              <path d="M275 250 C320 220, 370 210, 420 200 C380 225, 335 250, 290 280 Z" fill="#3b2b1f"/>
-              <path d="M270 160 C300 130, 345 120, 385 105 C345 125, 310 145, 280 180 Z" fill="#3b2b1f"/>
-              <path d="M255 130 C220 100, 180 95, 140 100 C175 115, 210 130, 240 155 Z" fill="#4a3728"/>
-
-              <!-- Barktextur & högdagrar -->
-              <path d="M255 410 C248 350, 280 320, 262 260" stroke="#715138" stroke-width="4" stroke-linecap="round"/>
-              <path d="M265 240 C280 200, 290 150, 275 100" stroke="#715138" stroke-width="3" stroke-linecap="round"/>
-
-              <!-- Bladkluster: Lager 1 (Mörkt skugggrönt) -->
-              <circle cx="120" cy="170" r="48" fill="#0d4022"/>
-              <circle cx="150" cy="140" r="55" fill="#124928"/>
-              <circle cx="390" cy="190" r="50" fill="#0d4022"/>
-              <circle cx="360" cy="160" r="55" fill="#124928"/>
-              <circle cx="280" cy="75" r="65" fill="#0e4324"/>
-              <circle cx="330" cy="90" r="55" fill="#124928"/>
-              <circle cx="210" cy="85" r="55" fill="#104626"/>
-
-              <!-- Bladkluster: Lager 2 (Frodig mellangrön) -->
-              <circle cx="125" cy="165" r="40" fill="#186337"/>
-              <circle cx="160" cy="135" r="48" fill="#1e7341"/>
-              <circle cx="385" cy="185" r="42" fill="#186337"/>
-              <circle cx="350" cy="155" r="48" fill="#1e7341"/>
-              <circle cx="280" cy="70" r="55" fill="#1a6d3c"/>
-              <circle cx="325" cy="85" r="48" fill="#22834b"/>
-              <circle cx="215" cy="80" r="48" fill="#1e7341"/>
-
-              <!-- Bladkluster: Lager 3 (Solbelysta löv / Highlights) -->
-              <circle cx="115" cy="155" r="28" fill="#2d9a5b"/>
-              <circle cx="150" cy="125" r="34" fill="#38ab68"/>
-              <circle cx="375" cy="175" r="30" fill="#2d9a5b"/>
-              <circle cx="340" cy="145" r="34" fill="#38ab68"/>
-              <circle cx="270" cy="55" r="40" fill="#38ab68"/>
-              <circle cx="315" cy="70" r="32" fill="#48bf7a"/>
-              <circle cx="205" cy="70" r="32" fill="#38ab68"/>
-
-              <!-- Små detaljlöv i ytterkanterna -->
-              <ellipse cx="90" cy="170" rx="14" ry="8" transform="rotate(-20 90 170)" fill="#48bf7a"/>
-              <ellipse cx="140" cy="105" rx="12" ry="7" transform="rotate(25 140 105)" fill="#5ccd8f"/>
-              <ellipse cx="430" cy="195" rx="15" ry="9" transform="rotate(30 430 195)" fill="#48bf7a"/>
-              <ellipse cx="370" cy="80" rx="14" ry="8" transform="rotate(-35 370 80)" fill="#5ccd8f"/>
-              <ellipse cx="260" cy="30" rx="15" ry="9" transform="rotate(10 260 30)" fill="#5ccd8f"/>
-            </svg>
-
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Paginering / Karusell-prickar i botten -->
-      <div class="flex items-center justify-center space-x-2 pt-6 pb-2">
-        <button onclick="setSlide(0)" class="slide-dot w-2.5 h-2.5 rounded-full bg-gray-700 transition-all duration-300" aria-label="Slide 1"></button>
-        <button onclick="setSlide(1)" class="slide-dot w-2.5 h-2.5 rounded-full bg-gray-700 transition-all duration-300" aria-label="Slide 2"></button>
-        <button onclick="setSlide(2)" class="slide-dot w-2.5 h-2.5 rounded-full bg-gray-700 transition-all duration-300" aria-label="Slide 3"></button>
-        <button onclick="setSlide(3)" class="slide-dot w-2.5 h-2.5 rounded-full border border-gray-400 bg-transparent transition-all duration-300" aria-label="Slide 4"></button>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- 3. KATEGORIER: 4-KOLUMNS VIT BOX MED TUNNA SKILJELINJER -->
-  <section id="kategorier" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 mb-16 relative z-30 w-full">
-    
-    <div class="bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.07)] border border-gray-200 overflow-hidden">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
-        
-        <!-- Kategori 1: Växter -->
-        <div onclick="selectCategory('Växter')" class="category-card p-8 flex flex-col items-center justify-between text-center cursor-pointer group">
-          <div class="h-36 sm:h-44 w-full flex items-center justify-center p-2">
-            <!-- Bordsarrangemang / Kruka med växter -->
-            <svg class="h-32 w-auto max-w-full transform group-hover:scale-105 transition-transform duration-300" viewBox="0 0 200 150" fill="none">
-              <!-- Skål/Kruka -->
-              <ellipse cx="100" cy="130" rx="60" ry="10" fill="#000" opacity="0.1"/>
-              <path d="M40 100 C40 130, 160 130, 160 100 Z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
-              <ellipse cx="100" cy="100" rx="60" ry="12" fill="#f8fafc"/>
-              <ellipse cx="100" cy="102" rx="55" ry="9" fill="#e2e8f0"/>
-              <!-- Växter & grässtrån -->
-              <path d="M100 100 C90 60, 60 40, 50 30 C75 45, 95 70, 100 100 Z" fill="#15803d"/>
-              <path d="M100 100 C110 50, 140 30, 150 20 C130 40, 110 65, 100 100 Z" fill="#16a34a"/>
-              <path d="M100 100 C95 40, 100 20, 105 10 C108 30, 105 60, 100 100 Z" fill="#22c55e"/>
-              <path d="M85 100 C70 70, 75 50, 70 35 C85 55, 90 75, 85 100 Z" fill="#15803d"/>
-              <path d="M115 100 C125 75, 120 50, 130 40 C120 60, 115 80, 115 100 Z" fill="#16a34a"/>
-              <!-- Breda blad -->
-              <ellipse cx="75" cy="85" rx="18" ry="10" transform="rotate(-25 75 85)" fill="#166534"/>
-              <ellipse cx="125" cy="85" rx="18" ry="10" transform="rotate(25 125 85)" fill="#15803d"/>
-              <ellipse cx="90" cy="78" rx="14" ry="8" transform="rotate(-10 90 78)" fill="#22c55e"/>
-              <ellipse cx="110" cy="78" rx="14" ry="8" transform="rotate(10 110 78)" fill="#4ade80"/>
-            </svg>
-          </div>
-          <h2 class="text-xl font-bold text-gray-900 mt-4 group-hover:text-brand-green transition-colors">
-            Växter
-          </h2>
-          <p class="text-xs text-gray-500 mt-1">Kontorsväxter & skötselavtal</p>
-        </div>
-
-        <!-- Kategori 2: Frukt -->
-        <div onclick="selectCategory('Frukt')" class="category-card p-8 flex flex-col items-center justify-between text-center cursor-pointer group">
-          <div class="h-36 sm:h-44 w-full flex items-center justify-center p-2">
-            <!-- Trälåda med färsk frukt -->
-            <svg class="h-32 w-auto max-w-full transform group-hover:scale-105 transition-transform duration-300" viewBox="0 0 200 150" fill="none">
-              <!-- Skugga -->
-              <ellipse cx="100" cy="132" rx="65" ry="8" fill="#000" opacity="0.12"/>
-              <!-- Frukter bakom lådkanten -->
-              <!-- Bananer -->
-              <path d="M60 85 C65 65, 85 55, 105 60" stroke="#facc15" stroke-width="8" stroke-linecap="round"/>
-              <path d="M65 90 C70 70, 90 60, 110 65" stroke="#eab308" stroke-width="7" stroke-linecap="round"/>
-              <!-- Äpplen och apelsiner -->
-              <circle cx="125" cy="75" r="16" fill="#ea580c"/>
-              <circle cx="105" cy="80" r="15" fill="#dc2626"/>
-              <circle cx="85" cy="82" r="14" fill="#65a30d"/>
-              <circle cx="140" cy="85" r="12" fill="#ca8a04"/>
-              <!-- Vindruvor -->
-              <circle cx="70" cy="70" r="6" fill="#581c87"/>
-              <circle cx="78" cy="68" r="6" fill="#6b21a8"/>
-              <circle cx="74" cy="75" r="6" fill="#7e22ce"/>
-              <circle cx="82" cy="74" r="5" fill="#581c87"/>
-              <!-- Trälåda / Crate -->
-              <rect x="35" y="85" width="130" height="42" rx="3" fill="#855d3f" stroke="#5c3e27" stroke-width="2"/>
-              <!-- Brädor i lådan -->
-              <line x1="35" y1="99" x2="165" y2="99" stroke="#5c3e27" stroke-width="2"/>
-              <line x1="35" y1="113" x2="165" y2="113" stroke="#5c3e27" stroke-width="2"/>
-              <!-- Vertikala hörnreglar -->
-              <rect x="35" y="85" width="8" height="42" fill="#6d482f"/>
-              <rect x="157" y="85" width="8" height="42" fill="#6d482f"/>
-              <rect x="96" y="85" width="8" height="42" fill="#6d482f"/>
-            </svg>
-          </div>
-          <h2 class="text-xl font-bold text-gray-900 mt-4 group-hover:text-brand-green transition-colors">
-            Frukt
-          </h2>
-          <p class="text-xs text-gray-500 mt-1">Ekologiska fruktkorgar till jobbet</p>
-        </div>
-
-        <!-- Kategori 3: Dryck -->
-        <div onclick="selectCategory('Dryck')" class="category-card p-8 flex flex-col items-center justify-between text-center cursor-pointer group">
-          <div class="h-36 sm:h-44 w-full flex items-center justify-center p-2">
-            <!-- Glas med fräscht kallt vatten och is -->
-            <svg class="h-32 w-auto max-w-full transform group-hover:scale-105 transition-transform duration-300" viewBox="0 0 200 150" fill="none">
-              <!-- Skugga -->
-              <ellipse cx="100" cy="132" rx="30" ry="6" fill="#000" opacity="0.1"/>
-              <!-- Glas kontur -->
-              <path d="M78 40 L84 125 C85 128, 115 128, 116 125 L122 40 Z" fill="#f0f9ff" stroke="#93c5fd" stroke-width="2.5" opacity="0.8"/>
-              <!-- Vattenyta -->
-              <ellipse cx="100" cy="55" rx="18" ry="4" fill="#38bdf8" opacity="0.5"/>
-              <!-- Vatteninnehåll -->
-              <path d="M82 55 L85 122 C86 125, 114 125, 115 122 L118 55 C112 58, 88 58, 82 55 Z" fill="#0284c7" opacity="0.25"/>
-              <!-- Isbitar -->
-              <rect x="90" y="65" width="16" height="16" rx="2" fill="#e0f2fe" stroke="#bae6fd" stroke-width="1.5" opacity="0.8" transform="rotate(15 90 65)"/>
-              <rect x="96" y="85" width="14" height="14" rx="2" fill="#e0f2fe" stroke="#bae6fd" stroke-width="1.5" opacity="0.8" transform="rotate(-20 96 85)"/>
-              <!-- Ljusreflektion på glaset -->
-              <line x1="84" y1="45" x2="88" y2="120" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
-            </svg>
-          </div>
-          <h2 class="text-xl font-bold text-gray-900 mt-4 group-hover:text-brand-green transition-colors">
-            Dryck
-          </h2>
-          <p class="text-xs text-gray-500 mt-1">Vattenkylare, kaffe & juice</p>
-        </div>
-
-        <!-- Kategori 4: Gåvogram -->
-        <div onclick="selectCategory('Gåvogram')" class="category-card p-8 flex flex-col items-center justify-between text-center cursor-pointer group">
-          <div class="h-36 sm:h-44 w-full flex items-center justify-center p-2">
-            <!-- Presentkorg med delikatesser -->
-            <svg class="h-32 w-auto max-w-full transform group-hover:scale-105 transition-transform duration-300" viewBox="0 0 200 150" fill="none">
-              <!-- Skugga -->
-              <ellipse cx="100" cy="132" rx="45" ry="7" fill="#000" opacity="0.12"/>
-              <!-- Handtag -->
-              <path d="M65 95 C65 40, 135 40, 135 95" stroke="#b45309" stroke-width="4" stroke-linecap="round" fill="none"/>
-              <!-- Innehåll / Gåvor -->
-              <rect x="85" y="65" width="18" height="28" rx="2" fill="#b91c1c"/>
-              <circle cx="75" cy="85" r="12" fill="#ca8a04"/>
-              <circle cx="115" cy="85" r="11" fill="#15803d"/>
-              <circle cx="125" cy="80" r="9" fill="#e11d48"/>
-              <!-- Korg i flätad pil/halm -->
-              <path d="M55 88 C55 125, 145 125, 145 88 Z" fill="#d97706" stroke="#92400e" stroke-width="2"/>
-              <!-- Flätmönster -->
-              <path d="M65 95 C80 120, 120 120, 135 95" stroke="#b45309" stroke-width="2" fill="none"/>
-              <line x1="100" y1="90" x2="100" y2="120" stroke="#b45309" stroke-width="2"/>
-              <!-- Cellofanrosett -->
-              <path d="M100 50 C90 40, 80 50, 100 55 C120 50, 110 40, 100 50 Z" fill="#fde047" opacity="0.8"/>
-            </svg>
-          </div>
-          <h2 class="text-xl font-bold text-gray-900 mt-4 group-hover:text-brand-green transition-colors">
-            Gåvogram
-          </h2>
-          <p class="text-xs text-gray-500 mt-1">Uppskattning till personal & kunder</p>
-        </div>
-
-      </div>
     </div>
 
-  </section>
+    <script>
+        // --- 1. Datamodeller ---
+        const products = [
+            {
+                id: 1,
+                name: "Trådlösa Hörlurar Pro",
+                description: "Fantastiskt ljud med aktiv brusreducering och 30 timmars batteritid. Perfekt för pendling och kontor.",
+                price: 1499,
+                image: "https://placehold.co/600x400/4F46E5/ffffff?text=H%C3%B6rlurar+Pro",
+                category: "Ljud"
+            },
+            {
+                id: 2,
+                name: "Smartklocka Active",
+                description: "Spåra din träning, hjärtfrekvens och sömn i realtid. Vattentät design med AMOLED-skärm.",
+                price: 1999,
+                image: "https://placehold.co/600x400/0f172a/ffffff?text=Smartklocka",
+                category: "Elektronik"
+            },
+            {
+                id: 3,
+                name: "Powerbank 10000mAh",
+                description: "Kompakt bärbar laddare med snabbladdning. Ladda din smartphone upp till 3 gånger på en laddning.",
+                price: 399,
+                image: "https://placehold.co/600x400/10b981/ffffff?text=Powerbank",
+                category: "Tillbehör"
+            },
+            {
+                id: 4,
+                name: "Termosflaska Premium 0.5L",
+                description: "Dubbelväggig vakuumisolering i rostfritt stål. Håller drycken iskall i 24h eller rykande varm i 12h.",
+                price: 249,
+                image: "https://placehold.co/600x400/f59e0b/ffffff?text=Termosflaska",
+                category: "Livsstil"
+            },
+            {
+                id: 5,
+                name: "Ergonomisk Kontorsmus",
+                description: "Minskar belastningen på handleden vid långa arbetsdagar. Trådlös anslutning och ställbar känslighet.",
+                price: 599,
+                image: "https://placehold.co/600x400/8b5cf6/ffffff?text=Ergonomisk+Mus",
+                category: "Datorer"
+            }
+        ];
 
-  <!-- 4. INTRODUKTION OCH FÖRDELAR -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-      
-      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
-        <div class="w-12 h-12 rounded-xl bg-brand-greenLight text-brand-green flex items-center justify-center mb-4 mx-auto md:mx-0">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        </div>
-        <h3 class="text-lg font-bold text-gray-900 mb-2">Fullservice & Garanti</h3>
-        <p class="text-sm text-gray-600 leading-relaxed">
-          Vi sköter vattning, beskärning och näring. Skulle en växt mot förmodan tappa formen byter vi ut den helt kostnadsfritt.
-        </p>
-      </div>
+        let cart = [];
+        let isCartOpen = false;
 
-      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
-        <div class="w-12 h-12 rounded-xl bg-brand-greenLight text-brand-green flex items-center justify-center mb-4 mx-auto md:mx-0">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </div>
-        <h3 class="text-lg font-bold text-gray-900 mb-2">Alltid Punktliga Leveranser</h3>
-        <p class="text-sm text-gray-600 leading-relaxed">
-          Färska fruktkorgar levereras tidigt måndag morgon så era kollegor kan starta arbetsveckan med ny energi och glädje.
-        </p>
-      </div>
+        // --- 2. Rendera produkter ---
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
 
-      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
-        <div class="w-12 h-12 rounded-xl bg-brand-greenLight text-brand-green flex items-center justify-center mb-4 mx-auto md:mx-0">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </div>
-        <h3 class="text-lg font-bold text-gray-900 mb-2">Miljö & Hållbarhet</h3>
-        <p class="text-sm text-gray-600 leading-relaxed">
-          Vi prioriterar närproducerat, ekologiskt och klimatkompenserade transporter för ett hållbart och grönt kontor.
-        </p>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- 5. FOOTER -->
-  <footer class="mt-auto bg-gray-900 text-gray-400 py-12 border-t border-gray-800 text-xs sm:text-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 rounded bg-brand-green flex items-center justify-center text-white font-bold">
-            F
-          </div>
-          <div>
-            <p class="text-white font-bold leading-none">Företagsväxter Sverige AB</p>
-            <p class="text-xs text-gray-500 mt-1">Grönare arbetsplatser & piggare medarbetare sedan 1998</p>
-          </div>
-        </div>
-        <p class="text-gray-500 text-xs">
-          © <span id="year-span"></span> Företagsväxter. Alla rättigheter förbehållna.
-        </p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- MODAL: GRATIS VÄXTINREDNINGSFÖRSLAG & INTRESSEANMÄLAN -->
-  <div id="proposal-modal" class="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden" onclick="handleBackdropClick(event)">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-gray-100 transform transition-all" onclick="event.stopPropagation()">
-      
-      <!-- Stäng-kryss -->
-      <button onclick="closeModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition" aria-label="Stäng">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-
-      <div class="mb-5">
-        <div class="inline-flex items-center gap-1.5 bg-brand-greenLight text-brand-green text-xs font-semibold px-3 py-1 rounded-full mb-2">
-          <span>Kostnadsfritt möte</span>
-        </div>
-        <h3 id="modal-title" class="text-xl sm:text-2xl font-black text-gray-900 leading-snug">
-          Beställ gratis växtinredningsförslag
-        </h3>
-        <p class="text-xs sm:text-sm text-gray-600 mt-1">
-          Fyll i dina uppgifter så kontaktar en av våra växtinredare er för en genomgång på plats.
-        </p>
-      </div>
-
-      <!-- Formulär -->
-      <form id="proposal-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Företagsnamn *</label>
-          <input required type="text" placeholder="T.ex. Exempelbolaget AB" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition">
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Kontaktperson *</label>
-            <input required type="text" placeholder="För- och efternamn" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Telefon *</label>
-            <input required type="tel" placeholder="070-123 45 67" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">E-postadress *</label>
-          <input required type="email" placeholder="namn@foretag.se" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition">
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Intresserad av:</label>
-          <select id="modal-select-service" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition bg-white">
-            <option value="Växter & Växtinredning">Växter & Växtinredning</option>
-            <option value="Fruktkorgar">Fruktkorgar</option>
-            <option value="Dryck & Kaffe">Dryck & Kaffemaskiner</option>
-            <option value="Gåvogram">Gåvogram & Presenter</option>
-            <option value="Helhetslösning">Komplett helhetslösning</option>
-          </select>
-        </div>
-
-        <div id="form-feedback" class="hidden p-3 rounded-xl bg-green-50 border border-green-200 text-xs text-green-800">
-          Tack! Din förfrågan har mottagits. Vi hör av oss inom 24 timmar.
-        </div>
-
-        <div class="pt-2">
-          <button type="submit" id="submit-btn" class="w-full bg-brand-green hover:bg-brand-greenDark text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-brand-green/20">
-            Skicka förfrågan nu
-          </button>
-        </div>
-      </form>
-
-    </div>
-  </div>
-
-  <script>
-    // Årtal i footer
-    document.getElementById('year-span').textContent = new Date().getFullYear();
-
-    // Mobilmeny växling
-    function toggleMobileMenu() {
-      const menu = document.getElementById('mobile-menu');
-      menu.classList.toggle('hidden');
-    }
-
-    // Modal hantering
-    function openModal(serviceTitle) {
-      const modal = document.getElementById('proposal-modal');
-      const titleElem = document.getElementById('modal-title');
-      const selectElem = document.getElementById('modal-select-service');
-      const feedback = document.getElementById('form-feedback');
-
-      feedback.classList.add('hidden');
-      document.getElementById('proposal-form').reset();
-
-      if (serviceTitle) {
-        titleElem.textContent = `Beställ förslag: ${serviceTitle}`;
-        if (serviceTitle.includes('Växter')) selectElem.value = 'Växter & Växtinredning';
-        else if (serviceTitle.includes('Frukt')) selectElem.value = 'Fruktkorgar';
-        else if (serviceTitle.includes('Dryck')) selectElem.value = 'Dryck & Kaffe';
-        else if (serviceTitle.includes('Gåvogram')) selectElem.value = 'Gåvogram';
-      }
-
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      const modal = document.getElementById('proposal-modal');
-      modal.classList.add('hidden');
-      document.body.style.overflow = '';
-    }
-
-    function handleBackdropClick(e) {
-      if (e.target.id === 'proposal-modal') {
-        closeModal();
-      }
-    }
-
-    // Formulär submit
-    function handleFormSubmit(e) {
-      e.preventDefault();
-      const feedback = document.getElementById('form-feedback');
-      const submitBtn = document.getElementById('submit-btn');
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Skickar...';
-
-      setTimeout(() => {
-        feedback.classList.remove('hidden');
-        submitBtn.textContent = 'Skickat!';
-        setTimeout(() => {
-          closeModal();
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Skicka förfrågan nu';
-        }, 1500);
-      }, 600);
-    }
-
-    // Kategori klick
-    function selectCategory(name) {
-      openModal(name);
-    }
-
-    // Karusell prickar
-    function setSlide(index) {
-      const dots = document.querySelectorAll('.slide-dot');
-      dots.forEach((dot, i) => {
-        if (i === index) {
-          dot.className = "slide-dot w-2.5 h-2.5 rounded-full bg-brand-green scale-125 transition-all duration-300";
-        } else {
-          dot.className = "slide-dot w-2.5 h-2.5 rounded-full bg-gray-700 transition-all duration-300";
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col';
+                
+                card.innerHTML = `
+                    <div class="relative overflow-hidden aspect-video bg-slate-100">
+                        <img src="${product.image}" alt="${product.name}" class="object-cover w-full h-full transform hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur text-xs font-semibold px-3 py-1 rounded-full text-slate-700 shadow-sm">
+                            ${product.category}
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">${product.name}</h3>
+                        <p class="text-slate-600 text-sm flex-grow mb-6 line-clamp-3">${product.description}</p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
+                            <span class="text-2xl font-extrabold text-slate-900">${product.price} <span class="text-base font-medium text-slate-500">kr</span></span>
+                            <button onclick="addToCart(${product.id})" class="bg-slate-900 hover:bg-primary text-white p-3 rounded-xl transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" aria-label="Lägg till i varukorg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
         }
-      });
-    }
 
-    // ESC tangent stänger modal
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
-  </script>
+        // --- 3. Varukorg Logik ---
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            // Visuell feedback om cart inte är öppen
+            if(!isCartOpen) {
+                showToast(`Lade till ${product.name} i varukorgen`);
+            }
+            
+            updateCartUI();
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        function changeQuantity(productId, delta) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCartUI();
+                }
+            }
+        }
+
+        // --- 4. Uppdatera Varukorg UI ---
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const emptyMessage = document.getElementById('empty-cart-message');
+            const totalElement = document.getElementById('cart-total');
+            const badge = document.getElementById('cart-badge');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            // Rensa tidigare items (men behåll empty-message)
+            const items = container.querySelectorAll('.cart-item-row');
+            items.forEach(item => item.remove());
+
+            let total = 0;
+            let totalItems = 0;
+
+            if (cart.length === 0) {
+                emptyMessage.classList.remove('hidden');
+                checkoutBtn.disabled = true;
+                badge.classList.add('hidden');
+            } else {
+                emptyMessage.classList.add('hidden');
+                checkoutBtn.disabled = false;
+                badge.classList.remove('hidden');
+
+                cart.forEach(item => {
+                    total += item.price * item.quantity;
+                    totalItems += item.quantity;
+
+                    const div = document.createElement('div');
+                    div.className = 'cart-item-row flex items-center gap-4 bg-white p-4 rounded-xl border border-slate-100 shadow-sm';
+                    div.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md bg-slate-100">
+                        <div class="flex-1">
+                            <h4 class="text-sm font-bold text-slate-900">${item.name}</h4>
+                            <p class="text-primary font-medium text-sm">${item.price} kr</p>
+                            
+                            <div class="flex items-center mt-2 bg-slate-50 w-fit rounded-lg border border-slate-200">
+                                <button onclick="changeQuantity(${item.id}, -1)" class="px-2 py-1 text-slate-500 hover:text-slate-800 focus:outline-none">-</button>
+                                <span class="px-2 text-sm font-medium text-slate-700 min-w-[1.5rem] text-center">${item.quantity}</span>
+                                <button onclick="changeQuantity(${item.id}, 1)" class="px-2 py-1 text-slate-500 hover:text-slate-800 focus:outline-none">+</button>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="p-2 text-slate-300 hover:text-red-500 transition-colors focus:outline-none" aria-label="Ta bort">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            totalElement.textContent = `${total.toLocaleString('sv-SE')} kr`;
+            document.getElementById('checkout-total').textContent = `${total.toLocaleString('sv-SE')} kr`;
+            badge.textContent = totalItems;
+        }
+
+        // --- 5. UI Toggles ---
+        function toggleCart() {
+            isCartOpen = !isCartOpen;
+            const overlay = document.getElementById('cart-overlay');
+            const panel = document.getElementById('cart-panel');
+            
+            if (isCartOpen) {
+                overlay.classList.remove('hidden');
+                // Liten delay för transition
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    panel.classList.remove('cart-hidden');
+                    panel.classList.add('cart-visible');
+                    document.body.style.overflow = 'hidden'; // Förhindra bakgrundsscroll
+                }, 10);
+            } else {
+                overlay.classList.add('opacity-0');
+                panel.classList.remove('cart-visible');
+                panel.classList.add('cart-hidden');
+                document.body.style.overflow = '';
+                
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 300); // Matcha transition duration
+            }
+        }
+
+        function openCheckout() {
+            if (cart.length === 0) return;
+            toggleCart(); // Stäng varukorgen först
+            
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            
+            // Återställ vy om den var stängd på 'success' senast
+            document.getElementById('checkout-content').classList.remove('hidden');
+            document.getElementById('success-message').classList.add('hidden');
+        }
+
+        function closeCheckout() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        function closeCheckoutAndReset() {
+            closeCheckout();
+            cart = []; // Töm varukorg
+            updateCartUI();
+            document.getElementById('payment-form').reset();
+            clearValidation();
+        }
+
+        // Liten toast notification istället för alert()
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl z-[70] transform transition-all duration-300 translate-y-10 opacity-0';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- 6. Formulär & Betalning ---
+        
+        // Håller koll på input för realtidsvalidering av kort
+        document.getElementById('expiry').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, ''); // Ta bort icke-siffror
+            if (value.length > 2) {
+                value = value.substring(0,2) + '/' + value.substring(2,4);
+            }
+            e.target.value = value;
+        });
+        
+        document.getElementById('card').addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/\D/g, ''); // Endast siffror
+        });
+
+        function clearValidation() {
+            const inputs = document.querySelectorAll('#payment-form input');
+            inputs.forEach(input => {
+                input.classList.remove('input-error');
+                const errorMsg = input.nextElementSibling;
+                if(errorMsg && errorMsg.classList.contains('error-msg')) {
+                    errorMsg.classList.add('hidden');
+                }
+            });
+        }
+
+        function processPayment(event) {
+            event.preventDefault();
+            clearValidation();
+            
+            const form = event.target;
+            let isValid = true;
+            
+            // Anpassad validering med visuell feedback
+            const inputs = form.querySelectorAll('input[required]');
+            inputs.forEach(input => {
+                if (!input.checkValidity()) {
+                    isValid = false;
+                    input.classList.add('input-error');
+                    const errorMsg = input.nextElementSibling;
+                    if(errorMsg && errorMsg.classList.contains('error-msg')) {
+                        errorMsg.classList.remove('hidden');
+                    }
+                }
+            });
+
+            if (!isValid) {
+                // Skaka-effekt eller bara stoppa
+                return;
+            }
+
+            // Simulera betalningsprocess
+            const btn = document.getElementById('submit-payment-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Bearbetar säkert...`;
+
+            setTimeout(() => {
+                // Succé
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                
+                // Göm formulär, visa succémeddelande
+                document.getElementById('checkout-content').classList.add('hidden');
+                document.getElementById('success-message').classList.remove('hidden');
+                
+            }, 1500); // Simulerar 1.5s nätverksanrop
+        }
+
+        // --- 7. Uppstart ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            updateCartUI(); // Initiera tom varukorg
+        });
+
+    </script>
 </body>
 </html>
