@@ -211,7 +211,7 @@
                 card.innerHTML = `
                     <a href="product.html?id=${product.id}" class="block flex-grow relative overflow-hidden group cursor-pointer">
                         <div class="aspect-square bg-emendion-base/80 overflow-hidden relative border-b border-white/5">
-                            <img src="${product.image}" alt="${product.name}" class="object-cover w-full h-full opacity-90 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500 ease-out">
+                            <img src="${product.image}" alt="${product.name}" class="object-contain p-1 w-full h-full opacity-90 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500 ease-out">
                             <div class="absolute top-4 left-4 bg-emendion-base/80 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-md text-[10px] font-mono uppercase text-emendion-accent">
                                 ${product.id}
                             </div>
