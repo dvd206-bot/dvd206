@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="sv" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emendion | Hårdvaruspecifikation</title>
+    <title>Hardware Specifications - Emendion</title>
+
+    <!-- Webbplatsikon (Favicon) -->
+    <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
+    <link rel="alternate icon" href="https://emendion.com/favicon.ico">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -17,11 +21,12 @@
                     },
                     colors: {
                         emendion: {
-                            base: '#060709',
-                            surface: '#0d1017',
-                            card: '#121622',
-                            border: '#1f2638',
-                            accent: '#00f0ff',
+                            base: '#ffffff',
+                            surface: '#f8f9fb',
+                            card: '#ffffff',
+                            border: '#e8edf3',
+                            accent: '#2563eb',
+                            accentHover: '#1d4ed8'
                         }
                     }
                 }
@@ -31,183 +36,300 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #060709; 
-            color: #f1f5f9;
+            background-color: #ffffff; 
+            color: #0f172a;
         }
-        .cart-slide { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .cart-slide { transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
         .cart-hidden { transform: translateX(100%); }
         .cart-visible { transform: translateX(0); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-emendion-accent selection:text-black">
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
-    <!-- Top Navigation -->
-    <header class="sticky top-0 z-40 bg-emendion-base/80 backdrop-blur-xl border-b border-white/5">
+    <!-- Navigationsfält -->
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/70">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <!-- Tillbaka till översikt -->
-                <a href="index.html" class="inline-flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-emendion-accent transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    <span>Tillbaka till butiken</span>
-                </a>
+                <!-- Vänster -->
+                <div class="flex items-center gap-6">
+                    <a href="index.html" class="flex items-center group">
+                        <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" 
+                             alt="Emendion" 
+                             class="h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
+                    </a>
+                    <a href="index.html" class="hidden sm:inline-flex items-center gap-2 text-xs font-mono text-slate-500 hover:text-blue-600 transition-colors pl-4 border-l border-slate-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <span>Back to overview</span>
+                    </a>
+                </div>
                 
-                <!-- Logotyp -->
-                <a href="index.html" class="text-lg font-bold tracking-[0.2em] uppercase text-white font-mono hidden sm:block">
-                    Emendion
-                </a>
-                
-                <!-- Varukorg -->
-                <button onclick="toggleCart()" class="relative p-2.5 rounded-xl border border-white/10 bg-emendion-surface hover:border-emendion-accent/50 transition-all focus:outline-none">
-                    <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                    </svg>
-                    <span id="cart-badge" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[11px] font-mono font-bold leading-none text-black bg-emendion-accent rounded-full hidden">
-                        0
-                    </span>
-                </button>
+                <!-- Höger (Valuta & Varukorg) -->
+                <div class="flex items-center gap-3">
+                    <!-- Valutaväljare -->
+                    <div class="relative">
+                        <select id="currency-select" onchange="changeCurrency(this.value)" class="text-xs font-mono font-medium text-slate-700 bg-white border border-slate-200 rounded-xl pl-3 pr-8 py-2.5 hover:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer shadow-sm appearance-none">
+                            <option value="SEK">SEK (kr)</option>
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Varukorgsknapp -->
+                    <button onclick="toggleCart()" class="relative p-2.5 rounded-xl border border-slate-200 bg-white hover:border-blue-500 hover:bg-slate-50 transition-all focus:outline-none shadow-sm" aria-label="Open Shopping Cart">
+                        <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        <span id="cart-badge" class="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center px-1.5 py-0.5 text-[11px] font-mono font-bold leading-none text-white bg-blue-600 rounded-full hidden">
+                            0
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Produktvisning -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <!-- Mobilnavigering tillbaka -->
+        <div class="sm:hidden mb-6">
+            <a href="index.html" class="inline-flex items-center gap-2 text-xs font-mono text-slate-500 hover:text-blue-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span>Back to store</span>
+            </a>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             
             <!-- Bildpanel -->
             <div class="space-y-4">
-                <div class="aspect-square rounded-2xl overflow-hidden border border-white/10 bg-emendion-surface relative shadow-2xl">
-                    <img id="p-image" src="" alt="Produktbild" class="w-full h-full object-cover">
-                    <div id="p-tag" class="absolute top-4 left-4 bg-emendion-base/80 backdrop-blur-md border border-white/10 px-3 py-1 rounded-md text-xs font-mono uppercase text-emendion-accent">
-                        --
-                    </div>
+                <div class="aspect-square rounded-3xl overflow-hidden border border-slate-200/80 bg-[#f8f9fb] relative flex items-center justify-center p-8 shadow-sm">
+                    <img id="p-image" src="" alt="Product Image" class="w-full h-full object-contain">
                 </div>
             </div>
 
             <!-- Produktspecifikation & Köp -->
             <div class="flex flex-col">
-                <p id="p-tagline" class="text-xs font-mono text-emendion-accent uppercase tracking-widest mb-2">--</p>
-                <h1 id="p-title" class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Laddar enhet...</h1>
-                <div class="text-3xl font-extrabold font-mono text-white mb-6">
-                    <span id="p-price">0</span> <span class="text-sm font-normal text-slate-400">SEK</span>
+                <p id="p-tagline" class="text-xs font-mono text-blue-600 font-semibold uppercase tracking-wider mb-2">--</p>
+                <h1 id="p-title" class="text-3xl sm:text-4xl font-light tracking-tight text-slate-900 mb-4">Loading device...</h1>
+                <div class="text-3xl font-bold font-mono text-slate-900 mb-6">
+                    <span id="p-price">0</span>
                 </div>
 
-                <div class="border-t border-b border-white/10 py-6 mb-8">
-                    <p id="p-description" class="text-slate-300 leading-relaxed text-sm">--</p>
+                <div class="border-t border-b border-slate-200/70 py-6 mb-8">
+                    <p id="p-description" class="text-slate-600 leading-relaxed text-sm">--</p>
                 </div>
 
-                <!-- Köpknapp -->
+                <!-- Köpknappar -->
                 <div class="space-y-3">
-                    <button id="add-to-cart-btn" onclick="addProductToCart()" class="w-full bg-emendion-accent hover:bg-cyan-400 text-black py-4 px-6 rounded-xl font-mono font-bold tracking-wider uppercase text-sm shadow-[0_0_25px_rgba(0,240,255,0.25)] transition-all active:scale-[0.99] flex items-center justify-center gap-3">
+                    <button id="add-to-cart-btn" onclick="addProductToCart()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-mono font-bold tracking-wider uppercase text-sm shadow-sm transition-all active:scale-[0.99] flex items-center justify-center gap-3">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        <span>Lägg till i order</span>
+                        <span>Add to Order</span>
                     </button>
-                    <a href="index.html" class="w-full block text-center py-3 text-xs font-mono text-slate-400 hover:text-white transition-colors">
-                        Fortsätt handla
+                    <a href="index.html" class="w-full block text-center py-3 text-xs font-mono text-slate-400 hover:text-slate-700 transition-colors">
+                        Continue Shopping
                     </a>
                 </div>
 
-                <!-- Specifikationer -->
-                <div class="mt-12 bg-emendion-card/50 border border-white/5 rounded-2xl p-6">
-                    <h3 class="text-xs font-mono uppercase tracking-widest text-slate-400 mb-4 border-b border-white/5 pb-2">Hårdvaruspecifikationer</h3>
-                    <dl class="space-y-3 text-xs font-mono">
-                        <div class="flex justify-between py-1 border-b border-white/5">
-                            <dt class="text-slate-500">Protokoll</dt>
-                            <dd class="text-slate-200">Bluetooth LE Audio (LC3 Codec)</dd>
-                        </div>
-                        <div class="flex justify-between py-1 border-b border-white/5">
-                            <dt class="text-slate-500">Latens</dt>
-                            <dd class="text-emendion-accent">< 10 ms end-to-end</dd>
-                        </div>
-                        <div class="flex justify-between py-1 border-b border-white/5">
-                            <dt class="text-slate-500">Chassi</dt>
-                            <dd class="text-slate-200">CNC Anodiserad Aluminium</dd>
-                        </div>
-                        <div class="flex justify-between py-1">
-                            <dt class="text-slate-500">Leverans</dt>
-                            <dd class="text-slate-200">Internationell frakt med spårning</dd>
-                        </div>
+                <!-- Hårdvaruspecifikationer -->
+                <div class="mt-10 bg-slate-50 border border-slate-200/70 rounded-2xl p-6">
+                    <h3 class="text-xs font-mono uppercase tracking-widest text-slate-500 mb-4 border-b border-slate-200 pb-2">Hardware Specifications</h3>
+                    <dl id="p-specs" class="space-y-3 text-xs font-mono">
+                        <!-- Renderas dynamiskt -->
                     </dl>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Cart Backdrop & Drawer (Samma funktionalitet här) -->
-    <div id="cart-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
-    
-    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-emendion-surface border-l border-white/10 shadow-2xl z-50 cart-slide cart-hidden flex flex-col">
-        <div class="px-6 py-6 border-b border-white/5 flex justify-between items-center">
-            <div>
-                <h2 class="text-lg font-bold text-white tracking-wide font-mono uppercase">Varukorg</h2>
-                <p class="text-xs text-slate-400 mt-0.5 font-mono">Synkad över alla sidor</p>
+    <!-- Sidfot -->
+    <footer class="border-t border-slate-200 bg-slate-50/70 mt-auto py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500">
+            <div class="flex items-center gap-2">
+                <span class="text-slate-900 font-semibold tracking-wider uppercase">Emendion</span>
+                <span>— Precision Engineering</span>
             </div>
-            <button onclick="toggleCart()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors">
+            <div>&copy; 2026 Emendion. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Drawer & Overlay -->
+    <div id="cart-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
+    
+    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl z-50 cart-slide cart-hidden flex flex-col">
+        <div class="px-6 py-6 border-b border-slate-100 flex justify-between items-center">
+            <div>
+                <h2 class="text-lg font-semibold text-slate-900 tracking-wide font-mono uppercase">Shopping Cart</h2>
+                <p class="text-xs text-slate-400 mt-0.5 font-mono">Synchronized across active sessions</p>
+            </div>
+            <button onclick="toggleCart()" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
 
         <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 no-scrollbar space-y-4">
-            <div id="empty-cart-message" class="text-center text-slate-500 mt-28 flex flex-col items-center">
-                <p class="text-sm font-mono uppercase tracking-wider">Varukorgen är tom</p>
+            <div id="empty-cart-message" class="text-center text-slate-400 mt-28 flex flex-col items-center">
+                <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4 text-slate-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                </div>
+                <p class="text-sm font-mono uppercase tracking-wider">Your cart is empty</p>
             </div>
         </div>
 
-        <div class="p-6 border-t border-white/5 bg-emendion-card/60">
+        <div class="p-6 border-t border-slate-100 bg-slate-50/50">
             <div class="flex justify-between items-baseline mb-6 font-mono">
-                <span class="text-xs uppercase tracking-widest text-slate-400">Totalbelopp</span>
-                <span id="cart-total" class="text-2xl font-bold text-white">0 kr</span>
+                <span class="text-xs uppercase tracking-widest text-slate-500">Total Amount</span>
+                <span id="cart-total" class="text-2xl font-bold text-slate-900">0 kr</span>
             </div>
-            <button id="checkout-btn" onclick="handleCheckout()" class="w-full bg-emendion-accent hover:bg-cyan-400 text-black px-6 py-4 rounded-xl font-bold text-sm tracking-wider uppercase font-mono shadow-[0_0_20px_rgba(0,240,255,0.2)] transition-all active:scale-[0.99] flex justify-center items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed" disabled>
-                <span>Slutför Säker Kassa</span>
+            <button id="checkout-btn" onclick="handleCheckout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold text-sm tracking-wider uppercase font-mono shadow-sm transition-all active:scale-[0.99] flex justify-center items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                <span>Proceed to Checkout</span>
             </button>
+            <p class="text-center text-[11px] font-mono text-slate-400 mt-3">
+                Encrypted via Stripe Checkout
+            </p>
         </div>
     </div>
 
     <script>
-        // Samma produktkatalog
+        // Valutakonfiguration (Bas: SEK)
+        const currencies = {
+            SEK: { symbol: 'kr', rate: 1, position: 'suffix', locale: 'sv-SE' },
+            USD: { symbol: '$', rate: 0.095, position: 'prefix', locale: 'en-US' },
+            EUR: { symbol: '€', rate: 0.088, position: 'prefix', locale: 'de-DE' }
+        };
+
+        let currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
+
+        function formatPrice(amountInSek) {
+            const config = currencies[currentCurrency] || currencies.SEK;
+            const converted = Math.round(amountInSek * config.rate);
+            const formattedNum = converted.toLocaleString(config.locale);
+            
+            if (config.position === 'prefix') {
+                return `${config.symbol}${formattedNum}`;
+            }
+            return `${formattedNum} ${config.symbol}`;
+        }
+
+        function changeCurrency(newCurrency) {
+            if (!currencies[newCurrency]) return;
+            currentCurrency = newCurrency;
+            localStorage.setItem('emendion_currency', newCurrency);
+            updateProductPrice();
+            updateCartUI();
+        }
+
+        // Produktkatalog med uppdaterade specifikationer
         const products = [
             {
                 id: "item-001",
                 name: "Emendion LE-Node Mic",
                 tagline: "Ultra-low latency LE Audio system",
-                description: "Professionellt trådlöst mikrofonsystem optimerat för ultralåg latens och robust signalöverföring via Bluetooth LE Audio.",
+                description: "Professional wireless microphone system engineered for ultra-low latency and robust audio transmission via Bluetooth LE Audio.",
                 price: 2490,
-                image: "aspenaura.png"
+                image: "aspenaura.png",
+                specs: [
+                    { label: "Dimensions", value: "28 × 20 × 11 mm" },
+                    { label: "Weight", value: "5 g" },
+                    { label: "Acoustic Principle", value: "Combined MEMS microphones" },
+                    { label: "Polar Pattern", value: "Omnidirectional" },
+                    { label: "Frequency Range", value: "20–24,000 Hz" },
+                    { label: "Maximum SPL", value: "122 dBSPL" },
+                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
+                    { label: "Noise Level", value: "15 dB(A)" },
+                    { label: "Signal-to-Noise Ratio", value: "79 dB" },
+                    { label: "Power", value: "Built-in rechargeable LiPo" },
+                    { label: "Battery Life", value: "5 h" },
+                    { label: "Broadcast Range", value: "20 m" },
+                    { label: "Transmission Type", value: "Bluetooth LE Audio, USB-C" },
+                    { label: "Firmware Upgrade", value: "USB-C" },
+                    { label: "Codec (Bluetooth LE Audio)", value: "LC3" },
+                    { label: "Modes", value: "Line level, mic level" },
+                    { label: "Operating Modes", value: "Bluetooth LE Audio, USB" },
+                    { label: "Bit Depth (Bluetooth LE Audio)", value: "16 bit (LC3)" },
+                    { label: "Bit Depth (USB)", value: "24 bit" },
+                    { label: "Latency (Bluetooth LE Audio)", value: "33.5 ms", highlight: true }
+                ]
             },
             {
                 id: "item-002",
                 name: "Emendion Audio Base Core",
-                tagline: "DSP Receiver & Hub Interface",
-                description: "Central hårdvaruenhet med integrerad DSP och digital I2S-routing för krävande scen- och studiobruk.",
+                tagline: "Complete Hub & System Package",
+                description: "Complete hardware package featuring the full audio interface and routing capabilities for studio and mobile setups.",
                 price: 3890,
-                image: "total.png"
+                image: "total.png",
+                specs: [
+                    { label: "DSP Architecture", value: "32-bit Floating Point Hub" },
+                    { label: "Audio Interface", value: "Digital I2S & USB-C Audio Class" },
+                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
+                    { label: "Power Input", value: "5V USB-C / Low-Noise LDO" },
+                    { label: "Enclosure", value: "Milled Aluminum Chassis" },
+                    { label: "Shipping", value: "International Tracked Courier" }
+                ]
             },
             {
                 id: "item-003",
-                name: "Emendion Transmit Clip",
-                tagline: "Embedded Miniature Transmitter",
-                description: "Kompakt sändarenhet i CNC-fräst aluminium med anpassad antenndesign för maximal räckvidd.",
+                name: "Emendion Aura Receiver",
+                tagline: "Plug-and-play LE Audio Interface",
+                description: "Compact USB-C receiver that brings low-latency LE Audio reception to any desktop, laptop, or mobile workstation.",
                 price: 1590,
-                image: "receiver.png"
+                image: "receiver.png",
+                specs: [
+                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
+                    { label: "Firmware Upgrade", value: "USB-C" },
+                    { label: "Codec (BLE Audio)", value: "LC3" },
+                    { label: "Bit Depth", value: "24 bit" }
+                ]
             }
         ];
 
-        // Läs in aktuellt ID från adressfältet
+        // Hämta ID från adressfältet
         const params = new URLSearchParams(window.location.search);
         const currentId = params.get('id') || "item-001";
         const currentProduct = products.find(p => p.id === currentId) || products[0];
 
+        function updateProductPrice() {
+            document.getElementById('p-price').textContent = formatPrice(currentProduct.price);
+        }
+
+        // Rendera de individuella hårdvaruspecifikationerna
+        function renderProductSpecs() {
+            const container = document.getElementById('p-specs');
+            if (!container || !currentProduct.specs) return;
+
+            container.innerHTML = currentProduct.specs.map((spec, index) => {
+                const isLast = index === currentProduct.specs.length - 1;
+                const borderClass = isLast ? '' : 'border-b border-slate-200/60';
+                const valueClass = spec.highlight ? 'text-blue-600 font-semibold' : 'text-slate-800 font-medium';
+
+                return `
+                    <div class="flex justify-between py-1 ${borderClass}">
+                        <dt class="text-slate-500">${spec.label}</dt>
+                        <dd class="${valueClass}">${spec.value}</dd>
+                    </div>
+                `;
+            }).join('');
+        }
+
         // Populera sidan med vald produkt
+        document.title = `${currentProduct.name} - Emendion`;
         document.getElementById('p-title').textContent = currentProduct.name;
         document.getElementById('p-tagline').textContent = currentProduct.tagline;
-        document.getElementById('p-tag').textContent = currentProduct.id;
         document.getElementById('p-description').textContent = currentProduct.description;
-        document.getElementById('p-price').textContent = currentProduct.price.toLocaleString('sv-SE');
         document.getElementById('p-image').src = currentProduct.image;
         document.getElementById('p-image').alt = currentProduct.name;
+        updateProductPrice();
+        renderProductSpecs();
 
-        // --- Synkad Varukorg via LocalStorage ---
+        // --- LocalStorage Varukorgshantering ---
         function getCart() {
             try {
                 return JSON.parse(localStorage.getItem('emendion_cart')) || [];
@@ -238,7 +360,7 @@
             }
 
             saveCart(cart);
-            toggleCart(); // Öppna varukorgen direkt så användaren ser bekräftelsen
+            toggleCart();
         }
 
         function removeFromCart(productId) {
@@ -268,7 +390,7 @@
 
             container.querySelectorAll('.cart-item-row').forEach(el => el.remove());
 
-            let total = 0;
+            let totalInSek = 0;
             let totalItems = 0;
 
             if (cart.length === 0) {
@@ -281,25 +403,25 @@
                 badge.classList.remove('hidden');
 
                 cart.forEach(item => {
-                    const itemTotal = item.price * item.quantity;
-                    total += itemTotal;
+                    const itemTotalInSek = item.price * item.quantity;
+                    totalInSek += itemTotalInSek;
                     totalItems += item.quantity;
 
                     const div = document.createElement('div');
-                    div.className = 'cart-item-row flex items-center gap-4 bg-emendion-card/80 p-3.5 rounded-xl border border-white/5';
+                    div.className = 'cart-item-row flex items-center gap-4 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80';
                     div.innerHTML = `
-                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg bg-emendion-base border border-white/5">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-contain rounded-xl bg-white border border-slate-200/60 p-1">
                         <div class="flex-1 min-w-0">
-                            <h4 class="text-xs font-bold text-white truncate">${item.name}</h4>
-                            <p class="text-slate-400 font-mono text-xs mt-0.5">${item.price.toLocaleString('sv-SE')} SEK</p>
+                            <h4 class="text-xs font-semibold text-slate-900 truncate">${item.name}</h4>
+                            <p class="text-slate-500 font-mono text-xs mt-0.5">${formatPrice(item.price)}</p>
                             
-                            <div class="flex items-center mt-2.5 border border-white/10 rounded-lg w-fit overflow-hidden bg-emendion-base">
-                                <button onclick="changeQuantity('${item.id}', -1)" class="px-2.5 py-0.5 hover:bg-white/10 text-slate-300 text-xs font-mono">-</button>
-                                <span class="px-2 py-0.5 text-xs font-mono font-bold text-white min-w-[1.5rem] text-center">${item.quantity}</span>
-                                <button onclick="changeQuantity('${item.id}', 1)" class="px-2.5 py-0.5 hover:bg-white/10 text-slate-300 text-xs font-mono">+</button>
+                            <div class="flex items-center mt-2.5 border border-slate-200 rounded-lg w-fit overflow-hidden bg-white">
+                                <button onclick="changeQuantity('${item.id}', -1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono">-</button>
+                                <span class="px-2 py-0.5 text-xs font-mono font-bold text-slate-800 min-w-[1.5rem] text-center">${item.quantity}</span>
+                                <button onclick="changeQuantity('${item.id}', 1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono">+</button>
                             </div>
                         </div>
-                        <button onclick="removeFromCart('${item.id}')" class="p-2 text-slate-500 hover:text-red-400 transition-colors">
+                        <button onclick="removeFromCart('${item.id}')" class="p-2 text-slate-400 hover:text-red-500 transition-colors" aria-label="Remove item">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     `;
@@ -307,7 +429,7 @@
                 });
             }
 
-            totalElement.textContent = `${total.toLocaleString('sv-SE')} SEK`;
+            totalElement.textContent = formatPrice(totalInSek);
             badge.textContent = totalItems;
         }
 
@@ -330,7 +452,7 @@
                 panel.classList.remove('cart-visible');
                 panel.classList.add('cart-hidden');
                 document.body.style.overflow = '';
-                setTimeout(() => overlay.classList.add('hidden'), 300);
+                setTimeout(() => overlay.classList.add('hidden'), 350);
             }
         }
 
@@ -340,35 +462,43 @@
 
             const btn = document.getElementById('checkout-btn');
             btn.disabled = true;
-            btn.innerText = "Ansluter...";
+            btn.innerText = "Connecting...";
 
             try {
                 const response = await fetch('/api/create-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ items: cart }),
+                    body: JSON.stringify({ items: cart, currency: currentCurrency }),
                 });
 
                 const data = await response.json();
                 if (data.url) {
                     window.location.href = data.url;
                 } else {
-                    alert('Fel: ' + data.error);
+                    alert('Error --> ' + data.error);
                     btn.disabled = false;
-                    btn.innerText = "Slutför Säker Kassa";
+                    btn.innerText = "Proceed to Checkout";
                 }
             } catch (err) {
-                alert('Kommunikationsfel med servern.');
+                alert('Server communication error.');
                 btn.disabled = false;
-                btn.innerText = "Slutför Säker Kassa";
+                btn.innerText = "Proceed to Checkout";
             }
         }
 
+        // Synka valutaval och varukorg mellan flikar
         window.addEventListener('storage', () => {
+            currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
+            const selectEl = document.getElementById('currency-select');
+            if (selectEl) selectEl.value = currentCurrency;
+            updateProductPrice();
             updateCartUI();
         });
 
         document.addEventListener('DOMContentLoaded', () => {
+            const selectEl = document.getElementById('currency-select');
+            if (selectEl) selectEl.value = currentCurrency;
+            updateProductPrice();
             updateCartUI();
         });
     </script>
