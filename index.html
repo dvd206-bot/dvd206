@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="sv" class="dark">
+<html lang="sv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emendion | Official Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -17,12 +16,12 @@
                     },
                     colors: {
                         emendion: {
-                            base: '#060709',
-                            surface: '#0d1017',
-                            card: '#121622',
-                            border: '#1f2638',
-                            accent: '#00f0ff',
-                            glow: 'rgba(0, 240, 255, 0.15)'
+                            base: '#ffffff',
+                            surface: '#f8f9fb',
+                            card: '#ffffff',
+                            border: '#e8edf3',
+                            accent: '#2563eb',
+                            accentHover: '#1d4ed8'
                         }
                     }
                 }
@@ -32,47 +31,49 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #060709; 
-            color: #f1f5f9;
+            background-color: #ffffff; 
+            color: #0f172a;
         }
-        .cart-slide { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .cart-slide { transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
         .cart-hidden { transform: translateX(100%); }
         .cart-visible { transform: translateX(0); }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .tech-border {
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: linear-gradient(180deg, rgba(18, 22, 34, 0.75) 0%, rgba(13, 16, 23, 0.95) 100%);
-            backdrop-filter: blur(12px);
+        .clean-card {
+            background-color: #f8f9fb;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 1.75rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .tech-border:hover {
-            border-color: rgba(0, 240, 255, 0.35);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        .clean-card:hover {
+            border-color: rgba(37, 99, 235, 0.3);
+            box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.06);
+            transform: translateY(-2px);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-emendion-accent selection:text-black">
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
-    <!-- Top Navigation -->
-   <header class="sticky top-0 z-40 bg-emendion-base/80 backdrop-blur-xl border-b border-white/5">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-20">
-            <!-- Logotyp -->
-            <!-- Logotyp -->
-            <a href="index.html" class="flex items-center group">
-                <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" 
-                 alt="Emendion" 
-                class="h-8 w-auto object-contain transition-opacity duration-200 group-hover:opacity-80">
-            </a>
+    <!-- Navigationsfält -->
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logotyp -->
+                <a href="index.html" class="flex items-center group">
+                    <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" 
+                         alt="Emendion" 
+                         class="h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
+                </a>
+                
                 <!-- Varukorgsknapp -->
-                <button onclick="toggleCart()" class="relative p-2.5 rounded-xl border border-white/10 bg-emendion-surface hover:border-emendion-accent/50 transition-all focus:outline-none">
-                    <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button onclick="toggleCart()" class="relative p-2.5 rounded-xl border border-slate-200 bg-white hover:border-blue-500 hover:bg-slate-50 transition-all focus:outline-none shadow-sm">
+                    <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
                     <!-- Badge -->
-                    <span id="cart-badge" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[11px] font-mono font-bold leading-none text-black bg-emendion-accent rounded-full hidden">
+                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center px-1.5 py-0.5 text-[11px] font-mono font-bold leading-none text-white bg-blue-600 rounded-full hidden">
                         0
                     </span>
                 </button>
@@ -84,49 +85,49 @@
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
         <!-- Hero Header -->
         <div class="mb-14">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emendion-accent/30 bg-emendion-accent/5 text-emendion-accent text-xs font-mono tracking-widest uppercase mb-4">
-                <span class="w-1.5 h-1.5 rounded-full bg-emendion-accent animate-pulse"></span>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-xs font-mono tracking-widest uppercase mb-4">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
                 Hårdvaruarkitektur & Ljudsystem
             </div>
-            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white mb-3">Teknisk Utrustning</h1>
-            <p class="text-slate-400 max-w-2xl text-base">Välj en enhet för att läsa fullständiga specifikationer eller lägg till direkt i ordern.</p>
+            <h1 class="text-4xl sm:text-5xl font-light tracking-tight text-slate-900 mb-3">Teknisk Utrustning</h1>
+            <p class="text-slate-500 max-w-2xl text-base leading-relaxed">Välj en enhet för att läsa fullständiga specifikationer eller lägg till direkt i ordern.</p>
         </div>
 
         <!-- Produktgrid -->
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Renderas av JavaScript -->
+            <!-- Renderas dynamiskt -->
         </div>
     </main>
 
     <!-- Sidfot -->
-    <footer class="border-t border-white/5 bg-emendion-surface/40 mt-auto py-10">
+    <footer class="border-t border-slate-200 bg-slate-50/70 mt-auto py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500">
             <div class="flex items-center gap-2">
-                <span class="text-white font-bold tracking-widest uppercase">Emendion</span>
+                <span class="text-slate-900 font-semibold tracking-wider uppercase">Emendion</span>
                 <span>— Precision Engineering</span>
             </div>
             <div>&copy; 2026 Emendion. Alla rättigheter förbehållna.</div>
         </div>
     </footer>
 
-    <!-- Cart Backdrop & Drawer -->
-    <div id="cart-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
+    <!-- Varukorg (Drawer & Overlay) -->
+    <div id="cart-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
     
-    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-emendion-surface border-l border-white/10 shadow-2xl z-50 cart-slide cart-hidden flex flex-col">
-        <div class="px-6 py-6 border-b border-white/5 flex justify-between items-center">
+    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl z-50 cart-slide cart-hidden flex flex-col">
+        <div class="px-6 py-6 border-b border-slate-100 flex justify-between items-center">
             <div>
-                <h2 class="text-lg font-bold text-white tracking-wide font-mono uppercase">Varukorg</h2>
+                <h2 class="text-lg font-semibold text-slate-900 tracking-wide font-mono uppercase">Varukorg</h2>
                 <p class="text-xs text-slate-400 mt-0.5 font-mono">Synkad över alla sidor</p>
             </div>
-            <button onclick="toggleCart()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors">
+            <button onclick="toggleCart()" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
 
         <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 no-scrollbar space-y-4">
             <!-- Fylls dynamiskt -->
-            <div id="empty-cart-message" class="text-center text-slate-500 mt-28 flex flex-col items-center">
-                <div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-4 text-slate-600">
+            <div id="empty-cart-message" class="text-center text-slate-400 mt-28 flex flex-col items-center">
+                <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4 text-slate-400">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
@@ -135,26 +136,26 @@
             </div>
         </div>
 
-        <div class="p-6 border-t border-white/5 bg-emendion-card/60">
+        <div class="p-6 border-t border-slate-100 bg-slate-50/50">
             <div class="flex justify-between items-baseline mb-6 font-mono">
-                <span class="text-xs uppercase tracking-widest text-slate-400">Totalbelopp</span>
-                <span id="cart-total" class="text-2xl font-bold text-white">0 kr</span>
+                <span class="text-xs uppercase tracking-widest text-slate-500">Totalbelopp</span>
+                <span id="cart-total" class="text-2xl font-bold text-slate-900">0 kr</span>
             </div>
             
-            <button id="checkout-btn" onclick="handleCheckout()" class="w-full bg-emendion-accent hover:bg-cyan-400 text-black px-6 py-4 rounded-xl font-bold text-sm tracking-wider uppercase font-mono shadow-[0_0_20px_rgba(0,240,255,0.2)] transition-all active:scale-[0.99] flex justify-center items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none" disabled>
+            <button id="checkout-btn" onclick="handleCheckout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold text-sm tracking-wider uppercase font-mono shadow-sm transition-all active:scale-[0.99] flex justify-center items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                 </svg>
                 <span>Slutför Säker Kassa</span>
             </button>
-            <p class="text-center text-[11px] font-mono text-slate-500 mt-3">
+            <p class="text-center text-[11px] font-mono text-slate-400 mt-3">
                 Krypterat via Stripe Checkout
             </p>
         </div>
     </div>
 
     <script>
-        // Delad produktkatalog
+        // Delad produktkatalog med matchande ljusa bildplatser
         const products = [
             {
                 id: "item-001",
@@ -162,7 +163,7 @@
                 tagline: "Ultra-low latency LE Audio system",
                 description: "Professionellt trådlöst mikrofonsystem optimerat för ultralåg latens och robust signalöverföring via Bluetooth LE Audio.",
                 price: 2490,
-                image: "https://placehold.co/800x800/0d1017/00f0ff?text=LE-Node+Mic"
+                image: "https://placehold.co/800x800/ffffff/2563eb?text=LE-Node+Mic"
             },
             {
                 id: "item-002",
@@ -170,7 +171,7 @@
                 tagline: "DSP Receiver & Hub Interface",
                 description: "Central hårdvaruenhet med integrerad DSP och digital I2S-routing för krävande scen- och studiobruk.",
                 price: 3890,
-                image: "https://placehold.co/800x800/0d1017/00f0ff?text=Audio+Base+Core"
+                image: "https://placehold.co/800x800/ffffff/2563eb?text=Audio+Base+Core"
             },
             {
                 id: "item-003",
@@ -178,7 +179,7 @@
                 tagline: "Embedded Miniature Transmitter",
                 description: "Kompakt sändarenhet i CNC-fräst aluminium med anpassad antenndesign för maximal räckvidd.",
                 price: 1590,
-                image: "https://placehold.co/800x800/0d1017/00f0ff?text=Transmit+Clip"
+                image: "https://placehold.co/800x800/ffffff/2563eb?text=Transmit+Clip"
             }
         ];
 
@@ -205,29 +206,29 @@
 
             products.forEach(product => {
                 const card = document.createElement('div');
-                card.className = 'tech-border rounded-2xl flex flex-col overflow-hidden transition-all duration-300';
+                card.className = 'clean-card p-6 flex flex-col justify-between';
                 
                 card.innerHTML = `
-                    <a href="product.html?id=${product.id}" class="block flex-grow relative overflow-hidden group cursor-pointer">
-                        <div class="aspect-square bg-emendion-base/80 overflow-hidden relative border-b border-white/5">
-                            <img src="${product.image}" alt="${product.name}" class="object-contain p-1 w-full h-full opacity-90 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500 ease-out">
-                            <div class="absolute top-4 left-4 bg-emendion-base/80 backdrop-blur-md border border-white/10 px-2.5 py-1 rounded-md text-[10px] font-mono uppercase text-emendion-accent">
-                                ${product.id}
+                    <div>
+                        <a href="product.html?id=${product.id}" class="block group cursor-pointer">
+                            <div class="aspect-square bg-white rounded-2xl border border-slate-200/60 p-4 mb-6 flex items-center justify-center relative overflow-hidden shadow-inner">
+                                <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out">
+                                <span class="absolute top-3 left-3 bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider">
+                                    ${product.id}
+                                </span>
                             </div>
-                        </div>
-                        <div class="p-6">
-                            <p class="text-xs font-mono text-emendion-accent uppercase tracking-wider mb-1">${product.tagline}</p>
-                            <h3 class="text-xl font-bold text-white mb-2">${product.name}</h3>
-                            <p class="text-slate-400 text-sm line-clamp-2 leading-relaxed">${product.description}</p>
-                        </div>
-                    </a>
+                            <p class="text-xs font-mono text-blue-600 font-semibold uppercase tracking-wider mb-2">${product.tagline}</p>
+                            <h3 class="text-2xl font-normal text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">${product.name}</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6">${product.description}</p>
+                        </a>
+                    </div>
                     
-                    <div class="px-6 pb-6 pt-2 flex items-end justify-between mt-auto">
+                    <div class="pt-4 border-t border-slate-200/60 flex items-center justify-between mt-auto">
                         <div>
-                            <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest block mb-0.5">Enhetspris</span>
-                            <span class="text-2xl font-extrabold text-white font-mono">${product.price.toLocaleString('sv-SE')} <span class="text-sm font-normal text-slate-400">SEK</span></span>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest block">Enhetspris</span>
+                            <span class="text-2xl font-bold text-slate-900 font-mono">${product.price.toLocaleString('sv-SE')} <span class="text-sm font-normal text-slate-500">SEK</span></span>
                         </div>
-                        <button onclick="addToCart('${product.id}')" class="bg-white/5 hover:bg-emendion-accent hover:text-black border border-white/10 text-white p-3 rounded-xl transition-all duration-200 active:scale-95" title="Lägg i varukorg">
+                        <button onclick="addToCart('${product.id}')" class="bg-slate-900 hover:bg-blue-600 text-white p-3 rounded-xl transition-all duration-200 active:scale-95 shadow-sm" title="Lägg i varukorg">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
@@ -258,7 +259,7 @@
             }
 
             saveCart(cart);
-            showToast(`${product.name} tillagd i varukorgen`);
+            showToast(`${product.name} lades till`);
         }
 
         function removeFromCart(productId) {
@@ -306,20 +307,20 @@
                     totalItems += item.quantity;
 
                     const div = document.createElement('div');
-                    div.className = 'cart-item-row flex items-center gap-4 bg-emendion-card/80 p-3.5 rounded-xl border border-white/5';
+                    div.className = 'cart-item-row flex items-center gap-4 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80';
                     div.innerHTML = `
-                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg bg-emendion-base border border-white/5">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-contain rounded-xl bg-white border border-slate-200/60 p-1">
                         <div class="flex-1 min-w-0">
-                            <h4 class="text-xs font-bold text-white truncate">${item.name}</h4>
-                            <p class="text-slate-400 font-mono text-xs mt-0.5">${item.price.toLocaleString('sv-SE')} SEK</p>
+                            <h4 class="text-xs font-semibold text-slate-900 truncate">${item.name}</h4>
+                            <p class="text-slate-500 font-mono text-xs mt-0.5">${item.price.toLocaleString('sv-SE')} SEK</p>
                             
-                            <div class="flex items-center mt-2.5 border border-white/10 rounded-lg w-fit overflow-hidden bg-emendion-base">
-                                <button onclick="changeQuantity('${item.id}', -1)" class="px-2.5 py-0.5 hover:bg-white/10 text-slate-300 text-xs font-mono">-</button>
-                                <span class="px-2 py-0.5 text-xs font-mono font-bold text-white min-w-[1.5rem] text-center">${item.quantity}</span>
-                                <button onclick="changeQuantity('${item.id}', 1)" class="px-2.5 py-0.5 hover:bg-white/10 text-slate-300 text-xs font-mono">+</button>
+                            <div class="flex items-center mt-2.5 border border-slate-200 rounded-lg w-fit overflow-hidden bg-white">
+                                <button onclick="changeQuantity('${item.id}', -1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono">-</button>
+                                <span class="px-2 py-0.5 text-xs font-mono font-bold text-slate-800 min-w-[1.5rem] text-center">${item.quantity}</span>
+                                <button onclick="changeQuantity('${item.id}', 1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono">+</button>
                             </div>
                         </div>
-                        <button onclick="removeFromCart('${item.id}')" class="p-2 text-slate-500 hover:text-red-400 transition-colors">
+                        <button onclick="removeFromCart('${item.id}')" class="p-2 text-slate-400 hover:text-red-500 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     `;
@@ -349,14 +350,14 @@
                 panel.classList.remove('cart-visible');
                 panel.classList.add('cart-hidden');
                 document.body.style.overflow = '';
-                setTimeout(() => overlay.classList.add('hidden'), 300);
+                setTimeout(() => overlay.classList.add('hidden'), 350);
             }
         }
 
         function showToast(message) {
             const toast = document.createElement('div');
-            toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-emendion-card border border-emendion-accent/40 text-white px-5 py-3 rounded-xl shadow-2xl z-[70] font-mono text-xs tracking-wider flex items-center gap-3 transition-all duration-300 translate-y-20 opacity-0';
-            toast.innerHTML = `<span class="w-2 h-2 rounded-full bg-emendion-accent"></span> ${message}`;
+            toast.className = 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl z-[70] font-mono text-xs tracking-wider flex items-center gap-3 transition-all duration-300 translate-y-20 opacity-0';
+            toast.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500"></span> ${message}`;
             document.body.appendChild(toast);
             
             setTimeout(() => toast.classList.remove('translate-y-20', 'opacity-0'), 10);
@@ -376,7 +377,7 @@
             
             btn.disabled = true;
             btn.innerHTML = `
-                <svg class="animate-spin h-4 w-4 text-black inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg class="animate-spin h-4 w-4 text-white inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -395,19 +396,18 @@
                 if (data.url) {
                     window.location.href = data.url;
                 } else {
-                    alert('Kunde inte initiera betalning: ' + (data.error || 'Försök igen.'));
+                    alert('Kunde inte initiera betalning --> ' + (data.error || 'Försök igen.'));
                     btn.disabled = false;
                     btn.innerHTML = originalText;
                 }
             } catch (err) {
                 console.error('Checkout error:', err);
-                alert('Ett kommunikationsfel inträffade vid anslutning till Vercel API.');
+                alert('Ett kommunikationsfel inträffade vid anslutning till kassan.');
                 btn.disabled = false;
                 btn.innerHTML = originalText;
             }
         }
 
-        // Synka om ändringar skett i en annan flik
         window.addEventListener('storage', () => {
             updateCartUI();
         });
