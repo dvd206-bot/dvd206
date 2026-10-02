@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Emendion | The Aspen Aura Series</title>
 
     <!-- Website Favicon -->
@@ -38,6 +38,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: #ffffff; 
             color: #0f172a;
+            -webkit-tap-highlight-color: transparent;
         }
         .cart-slide { transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
         .cart-hidden { transform: translateX(100%); }
@@ -51,10 +52,12 @@
             border: 1px solid #e8edf3;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .product-card:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
+        @media (min-width: 1024px) {
+            .product-card:hover {
+                border-color: #cbd5e1;
+                box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+                transform: translateY(-2px);
+            }
         }
     </style>
 </head>
@@ -62,37 +65,37 @@
 
     <!-- Top Navigation (Full Width) -->
     <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200/70">
-        <div class="w-full px-6 sm:px-10 lg:px-16 2xl:px-24">
-            <div class="flex justify-between items-center h-20">
+        <div class="w-full px-4 sm:px-10 lg:px-16 2xl:px-24">
+            <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logotyp -->
-                <a href="index.html" class="flex items-center group">
+                <a href="index.html" class="flex items-center group py-2">
                     <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" 
                          alt="Emendion" 
-                         class="h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
+                         class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
                 </a>
                 
                 <!-- Höger (Valutaväljare & Varukorg) -->
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3">
                     <!-- Valuta -->
                     <div class="relative">
-                        <select id="currency-select" onchange="changeCurrency(this.value)" class="text-xs font-mono font-medium text-slate-700 bg-white border border-slate-200 rounded-xl pl-3 pr-8 py-2.5 hover:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer shadow-sm appearance-none">
+                        <select id="currency-select" onchange="changeCurrency(this.value)" class="text-[11px] sm:text-xs font-mono font-medium text-slate-700 bg-white border border-slate-200 rounded-xl pl-2.5 sm:pl-3 pr-7 sm:pr-8 py-2 sm:py-2.5 hover:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer shadow-sm appearance-none">
                             <option value="SEK">SEK (kr)</option>
                             <option value="USD">USD ($)</option>
                             <option value="EUR">EUR (€)</option>
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 sm:px-2.5 text-slate-400">
+                            <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </div>
                     </div>
 
                     <!-- Varukorgsknapp -->
-                    <button onclick="toggleCart()" class="relative p-2.5 rounded-xl border border-slate-200 bg-white hover:border-blue-500 hover:bg-slate-50 transition-all focus:outline-none shadow-sm" aria-label="Open Shopping Cart">
+                    <button onclick="toggleCart()" class="relative p-2 sm:p-2.5 rounded-xl border border-slate-200 bg-white hover:border-blue-500 hover:bg-slate-50 transition-all focus:outline-none shadow-sm touch-manipulation" aria-label="Open Shopping Cart">
                         <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
-                        <span id="cart-badge" class="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center px-1.5 py-0.5 text-[11px] font-mono font-bold leading-none text-white bg-blue-600 rounded-full hidden">
+                        <span id="cart-badge" class="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] sm:text-[11px] font-mono font-bold leading-none text-white bg-blue-600 rounded-full hidden">
                             0
                         </span>
                     </button>
@@ -102,30 +105,30 @@
     </header>
 
     <!-- Huvudinnehåll (Full Width) -->
-    <main class="flex-grow w-full px-6 sm:px-10 lg:px-16 2xl:px-24 py-12 lg:py-16">
+    <main class="flex-grow w-full px-4 sm:px-10 lg:px-16 2xl:px-24 py-8 sm:py-12 lg:py-16">
         <!-- Hero Header -->
-        <div class="mb-14">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200/60 text-blue-600 text-xs font-mono font-medium tracking-wider uppercase mb-5">
+        <div class="mb-10 sm:mb-14">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/60 text-blue-600 text-[10px] sm:text-xs font-mono font-medium tracking-wider uppercase mb-3 sm:mb-5">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
                 HARDWARE ARCHITECTURE & AUDIO SYSTEMS
             </div>
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight text-slate-900 mb-4">
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-light tracking-tight text-slate-900 mb-3 sm:mb-4">
                 The Aspen Aura Series
             </h1>
-            <p class="text-slate-500 max-w-3xl text-base sm:text-lg leading-relaxed font-normal">
+            <p class="text-slate-500 max-w-3xl text-sm sm:text-base lg:text-lg leading-relaxed font-normal">
                 High-performance wireless audio equipment designed for professional clarity, low latency, and direct Auracast broadcasting.
             </p>
         </div>
 
         <!-- Produktgrid -->
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 2xl:gap-10 w-full">
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 2xl:gap-10 w-full">
             <!-- Renderas dynamiskt av JavaScript -->
         </div>
     </main>
 
     <!-- Sidfot (Full Width) -->
-    <footer class="border-t border-slate-200 bg-slate-50/70 mt-auto py-10">
-        <div class="w-full px-6 sm:px-10 lg:px-16 2xl:px-24 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500">
+    <footer class="border-t border-slate-200 bg-slate-50/70 mt-auto py-8 sm:py-10">
+        <div class="w-full px-4 sm:px-10 lg:px-16 2xl:px-24 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500 text-center md:text-left">
             <div class="flex items-center gap-2">
                 <span class="text-slate-900 font-semibold tracking-wider uppercase">Emendion</span>
                 <span>— Precision Engineering</span>
@@ -137,41 +140,41 @@
     <!-- Shopping Cart Drawer & Overlay -->
     <div id="cart-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
     
-    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl z-50 cart-slide cart-hidden flex flex-col">
-        <div class="px-6 py-6 border-b border-slate-100 flex justify-between items-center">
+    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full sm:max-w-md bg-white border-l border-slate-200 shadow-2xl z-50 cart-slide cart-hidden flex flex-col">
+        <div class="px-5 sm:px-6 py-5 sm:py-6 border-b border-slate-100 flex justify-between items-center">
             <div>
-                <h2 class="text-lg font-semibold text-slate-900 tracking-wide font-mono uppercase">Shopping Cart</h2>
-                <p class="text-xs text-slate-400 mt-0.5 font-mono">Synchronized across active sessions</p>
+                <h2 class="text-base sm:text-lg font-semibold text-slate-900 tracking-wide font-mono uppercase">Shopping Cart</h2>
+                <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 font-mono">Synchronized across active sessions</p>
             </div>
-            <button onclick="toggleCart()" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors">
+            <button onclick="toggleCart()" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors touch-manipulation" aria-label="Close cart">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
 
-        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 no-scrollbar space-y-4">
-            <div id="empty-cart-message" class="text-center text-slate-400 mt-28 flex flex-col items-center">
-                <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4 text-slate-400">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 sm:p-6 no-scrollbar space-y-3 sm:space-y-4">
+            <div id="empty-cart-message" class="text-center text-slate-400 mt-20 sm:mt-28 flex flex-col items-center">
+                <div class="w-14 sm:w-16 h-14 sm:h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-3 sm:mb-4 text-slate-400">
+                    <svg class="w-7 sm:w-8 h-7 sm:h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
                 </div>
-                <p class="text-sm font-mono uppercase tracking-wider">Your cart is empty</p>
+                <p class="text-xs sm:text-sm font-mono uppercase tracking-wider">Your cart is empty</p>
             </div>
         </div>
 
-        <div class="p-6 border-t border-slate-100 bg-slate-50/50">
-            <div class="flex justify-between items-baseline mb-6 font-mono">
+        <div class="p-5 sm:p-6 border-t border-slate-100 bg-slate-50/50 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]">
+            <div class="flex justify-between items-baseline mb-4 sm:mb-6 font-mono">
                 <span class="text-xs uppercase tracking-widest text-slate-500">Total Amount</span>
-                <span id="cart-total" class="text-2xl font-bold text-slate-900">0 kr</span>
+                <span id="cart-total" class="text-xl sm:text-2xl font-bold text-slate-900">0 kr</span>
             </div>
             
-            <button id="checkout-btn" onclick="handleCheckout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold text-sm tracking-wider uppercase font-mono shadow-sm transition-all active:scale-[0.99] flex justify-center items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+            <button id="checkout-btn" onclick="handleCheckout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl font-bold text-xs sm:text-sm tracking-wider uppercase font-mono shadow-sm transition-all active:scale-[0.99] flex justify-center items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation" disabled>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                 </svg>
                 <span>Proceed to Checkout</span>
             </button>
-            <p class="text-center text-[11px] font-mono text-slate-400 mt-3">
+            <p class="text-center text-[10px] sm:text-[11px] font-mono text-slate-400 mt-2.5 sm:mt-3">
                 Encrypted via Stripe Checkout
             </p>
         </div>
@@ -257,26 +260,26 @@
 
             products.forEach(product => {
                 const card = document.createElement('div');
-                card.className = 'product-card rounded-3xl flex flex-col overflow-hidden';
+                card.className = 'product-card rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden';
                 
                 card.innerHTML = `
-                    <a href="product.html?id=${product.id}" class="block flex-grow relative overflow-hidden group cursor-pointer p-6 sm:p-8">
-                        <div class="aspect-square bg-[#f8f9fb] rounded-2xl overflow-hidden relative border border-slate-100 flex items-center justify-center p-8 mb-6">
+                    <a href="product.html?id=${product.id}" class="block flex-grow relative overflow-hidden group cursor-pointer p-5 sm:p-7 lg:p-8">
+                        <div class="aspect-square bg-[#f8f9fb] rounded-xl sm:rounded-2xl overflow-hidden relative border border-slate-100 flex items-center justify-center p-6 sm:p-8 mb-5 sm:mb-6">
                             <img src="${product.image}" alt="${product.name}" class="object-contain w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out">
                         </div>
                         <div>
-                            <p class="text-[11px] font-mono text-blue-600 font-semibold uppercase tracking-wider mb-2">${product.tagline}</p>
-                            <h3 class="text-2xl font-light text-slate-900 mb-3">${product.name}</h3>
-                            <p class="text-slate-500 text-sm leading-relaxed">${product.description}</p>
+                            <p class="text-[10px] sm:text-[11px] font-mono text-blue-600 font-semibold uppercase tracking-wider mb-1.5 sm:mb-2">${product.tagline}</p>
+                            <h3 class="text-xl sm:text-2xl font-light text-slate-900 mb-2 sm:mb-3">${product.name}</h3>
+                            <p class="text-slate-500 text-xs sm:text-sm leading-relaxed">${product.description}</p>
                         </div>
                     </a>
                     
-                    <div class="px-6 pb-6 sm:px-8 sm:pb-8 pt-2 flex items-center justify-between mt-auto border-t border-slate-100/80">
-                        <div>
-                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest block mb-0.5">Unit Price</span>
-                            <span class="text-2xl font-bold text-slate-900 font-mono">${formatPrice(product.price)}</span>
+                    <div class="px-5 pb-5 sm:px-7 sm:pb-7 lg:px-8 lg:pb-8 pt-3 flex items-center justify-between mt-auto border-t border-slate-100/80 gap-3">
+                        <div class="min-w-0">
+                            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase tracking-widest block mb-0.5 truncate">Unit Price</span>
+                            <span class="text-xl sm:text-2xl font-bold text-slate-900 font-mono whitespace-nowrap">${formatPrice(product.price)}</span>
                         </div>
-                        <button onclick="addToCart('${product.id}')" class="bg-blue-600 hover:bg-blue-700 text-white p-3.5 rounded-xl transition-all duration-200 active:scale-95 shadow-sm" title="Add to cart">
+                        <button onclick="addToCart('${product.id}')" class="bg-blue-600 hover:bg-blue-700 text-white p-3 sm:p-3.5 rounded-xl transition-all duration-200 active:scale-95 shadow-sm shrink-0 touch-manipulation" title="Add to cart" aria-label="Add to cart">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
@@ -355,20 +358,20 @@
                     totalItems += item.quantity;
 
                     const div = document.createElement('div');
-                    div.className = 'cart-item-row flex items-center gap-4 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80';
+                    div.className = 'cart-item-row flex items-center gap-3 sm:gap-4 bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200/80';
                     div.innerHTML = `
-                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-contain rounded-xl bg-white border border-slate-200/60 p-1">
+                        <img src="${item.image}" alt="${item.name}" class="w-14 sm:w-16 h-14 sm:h-16 object-contain rounded-xl bg-white border border-slate-200/60 p-1 shrink-0">
                         <div class="flex-1 min-w-0">
                             <h4 class="text-xs font-semibold text-slate-900 truncate">${item.name}</h4>
-                            <p class="text-slate-500 font-mono text-xs mt-0.5">${formatPrice(item.price)}</p>
+                            <p class="text-slate-500 font-mono text-[11px] sm:text-xs mt-0.5">${formatPrice(item.price)}</p>
                             
-                            <div class="flex items-center mt-2.5 border border-slate-200 rounded-lg w-fit overflow-hidden bg-white">
-                                <button onclick="changeQuantity('${item.id}', -1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono">-</button>
+                            <div class="flex items-center mt-2 border border-slate-200 rounded-lg w-fit overflow-hidden bg-white">
+                                <button onclick="changeQuantity('${item.id}', -1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono touch-manipulation">-</button>
                                 <span class="px-2 py-0.5 text-xs font-mono font-bold text-slate-800 min-w-[1.5rem] text-center">${item.quantity}</span>
-                                <button onclick="changeQuantity('${item.id}', 1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono">+</button>
+                                <button onclick="changeQuantity('${item.id}', 1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono touch-manipulation">+</button>
                             </div>
                         </div>
-                        <button onclick="removeFromCart('${item.id}')" class="p-2 text-slate-400 hover:text-red-500 transition-colors" aria-label="Remove item">
+                        <button onclick="removeFromCart('${item.id}')" class="p-2 text-slate-400 hover:text-red-500 transition-colors shrink-0 touch-manipulation" aria-label="Remove item">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     `;
