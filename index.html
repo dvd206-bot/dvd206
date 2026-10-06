@@ -63,7 +63,7 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
-    <!-- Top Navigation (Full Width) -->
+    <!-- övre navigationsfält -->
     <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200/70">
         <div class="w-full px-4 sm:px-10 lg:px-16 2xl:px-24">
             <div class="flex justify-between items-center h-16 sm:h-20">
@@ -74,7 +74,7 @@
                          class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
                 </a>
                 
-                <!-- Höger (Valutaväljare & Varukorg) -->
+                <!-- Valuta och varukorg -->
                 <div class="flex items-center gap-2 sm:gap-3">
                     <!-- Valuta -->
                     <div class="relative">
@@ -104,9 +104,8 @@
         </div>
     </header>
 
-    <!-- Huvudinnehåll (Full Width) -->
+    <!-- Huvudinnehåll -->
     <main class="flex-grow w-full px-4 sm:px-10 lg:px-16 2xl:px-24 py-8 sm:py-12 lg:py-16">
-        <!-- Hero Header -->
         <div class="mb-10 sm:mb-14">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/60 text-blue-600 text-[10px] sm:text-xs font-mono font-medium tracking-wider uppercase mb-3 sm:mb-5">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
@@ -122,11 +121,10 @@
 
         <!-- Produktgrid -->
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 2xl:gap-10 w-full">
-            <!-- Renderas dynamiskt av JavaScript -->
         </div>
     </main>
 
-    <!-- Sidfot (Full Width) -->
+    <!-- Sidfot -->
     <footer class="border-t border-slate-200 bg-slate-50/70 mt-auto py-8 sm:py-10">
         <div class="w-full px-4 sm:px-10 lg:px-16 2xl:px-24 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500 text-center md:text-left">
             <div class="flex items-center gap-2">
@@ -137,7 +135,7 @@
         </div>
     </footer>
 
-    <!-- Shopping Cart Drawer & Overlay -->
+    <!-- Shopping Cart (det som kommer fram) -->
     <div id="cart-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
     
     <div id="cart-panel" class="fixed inset-y-0 right-0 w-full sm:max-w-md bg-white border-l border-slate-200 shadow-2xl z-50 cart-slide cart-hidden flex flex-col">
@@ -175,13 +173,13 @@
                 <span>Proceed to Checkout</span>
             </button>
             <p class="text-center text-[10px] sm:text-[11px] font-mono text-slate-400 mt-2.5 sm:mt-3">
-                Encrypted via Stripe Checkout
+                Encrypted via Klarna Checkout
             </p>
         </div>
     </div>
 
     <script>
-        // Valutakonfiguration (Bas --> SEK)
+        // Valutaomvandling (Bas --> SEK)
         const currencies = {
             SEK: { symbol: 'kr', rate: 1, position: 'suffix', locale: 'sv-SE' },
             USD: { symbol: '$', rate: 0.095, position: 'prefix', locale: 'en-US' },
@@ -209,7 +207,7 @@
             updateCartUI();
         }
 
-        // Produktkatalog
+        // Produkter
         const products = [
             {
                 id: "item-001",
@@ -237,7 +235,7 @@
             }
         ];
 
-        // --- LocalStorage Varukorgshantering ---
+        //  LocalStorage Varukorgshantering 
         function getCart() {
             try {
                 return JSON.parse(localStorage.getItem('emendion_cart')) || [];
@@ -253,7 +251,7 @@
 
         let isCartOpen = false;
 
-        // Rendera produktkort
+        // rendera produkterna
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
@@ -405,36 +403,12 @@
             }
         }
 
-        // Stripe Checkout Anrop
-        async function handleCheckout() {
+        // skickar kunden  till checkout.html
+        function handleCheckout() {
             const cart = getCart();
             if (cart.length === 0) return;
 
-            const btn = document.getElementById('checkout-btn');
-            btn.disabled = true;
-            btn.innerText = "Connecting...";
-
-            try {
-                const response = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ items: cart, currency: currentCurrency }),
-                });
-
-                const data = await response.json();
-
-                if (data.url) {
-                    window.location.href = data.url;
-                } else {
-                    alert('Error --> ' + (data.error || 'Please try again.'));
-                    btn.disabled = false;
-                    btn.innerText = "Proceed to Checkout";
-                }
-            } catch (err) {
-                alert('Server communication error.');
-                btn.disabled = false;
-                btn.innerText = "Proceed to Checkout";
-            }
+            window.location.href = 'checkout.html';
         }
 
         // Synka valutaval och varukorg mellan flikar

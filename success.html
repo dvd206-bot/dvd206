@@ -1,22 +1,64 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tack för din beställning | Emendion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Order Confirmed | Emendion</title>
+
+  <!-- Website Favicon -->
+  <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
+  <link rel="alternate icon" href="https://emendion.com/favicon.ico">
+
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+      tailwind.config = {
+          theme: {
+              extend: {
+                  fontFamily: {
+                      sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                      mono: ['"JetBrains Mono"', 'monospace'],
+                  }
+              }
+          }
+      }
+  </script>
+  <style>
+      body { 
+          font-family: 'Plus Jakarta Sans', sans-serif; 
+          background-color: #f8f9fb; 
+          color: #0f172a;
+          -webkit-tap-highlight-color: transparent;
+      }
+  </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-6">
-  <div class="max-w-md w-full bg-slate-900 border border-slate-800 p-8 rounded-2xl text-center">
-    <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-      ✓
-    </div>
-    <h1 class="text-2xl font-bold mb-2 tracking-wide">Betalning slutförd</h1>
-    <p class="text-slate-400 text-sm mb-6">
-      Tack för din beställning hos Emendion! Vi har skickat en orderbekräftelse till din e-postadress.
-    </p>
-    <a href="index.html" class="inline-block bg-white text-black font-semibold px-6 py-3 rounded-xl hover:bg-slate-200 transition">
-      Tillbaka till butiken
-    </a>
-  </div>
-</body>
-</html>
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- Header -->
+  <header class="bg-white/90 backdrop-blur-xl border-b border-slate-200/70 py-5">
+      <div class="max-w-4xl mx-auto px-6 flex justify-between items-center">
+          <a href="index.html" class="flex items-center group">
+              <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" 
+                   alt="Emendion" 
+                   class="h-6 w-auto brightness-0 transition-opacity duration-200 group-hover:opacity-70">
+          </a>
+          <span class="text-xs font-mono text-emerald-600 font-semibold uppercase tracking-wider flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Payment Confirmed
+          </span>
+      </div>
+  </header>
+
+  <!-- Success Card -->
+  <main class="flex-grow flex items-center justify-center p-4 sm:p-6 my-8">
+    <div class="max-w-lg w-full bg-white border border-slate-200/80 p-8 sm:p-12 rounded-3xl shadow-sm text-center">
+      
+      <!-- Checkmark Icon -->
+      <div class="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+
+      <p class="text-xs font-mono text-blue-600 font-semibold uppercase tracking-widest mb-2">Klarna Checkout</p>
+      <h1 class="text-2xl sm:text-3xl font-light tracking

@@ -198,7 +198,7 @@
                 <span>Proceed to Checkout</span>
             </button>
             <p class="text-center text-[10px] sm:text-[11px] font-mono text-slate-400 mt-2.5 sm:mt-3">
-                Encrypted via Stripe Checkout
+                Encrypted via Klarna Checkout
             </p>
         </div>
     </div>
@@ -432,7 +432,8 @@
 
             container.querySelectorAll('.cart-item-row').forEach(el => el.remove());
 
-            let totalInSek = 0;
+            const config = currencies[currentCurrency] || currencies.SEK;
+            let grandTotalConverted = 0;
             let totalItems = 0;
 
             if (cart.length === 0) {
@@ -445,9 +446,14 @@
                 badge.classList.remove('hidden');
 
                 cart.forEach(item => {
-                    const itemTotalInSek = item.price * item.quantity;
-                    totalInSek += itemTotalInSek;
+                    const unitPriceConverted = Math.round(item.price * config.rate);
+                    const lineTotalConverted = unitPriceConverted * item.quantity;
+                    grandTotalConverted += lineTotalConverted;
                     totalItems += item.quantity;
+
+                    const formattedUnitPrice = config.position === 'prefix'
+                        ? `${config.symbol}${unitPriceConverted.toLocaleString(config.locale)}`
+                        : `${unitPriceConverted.toLocaleString(config.locale)} ${config.symbol}`;
 
                     const div = document.createElement('div');
                     div.className = 'cart-item-row flex items-center gap-3 sm:gap-4 bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200/80';
@@ -455,7 +461,7 @@
                         <img src="${item.image}" alt="${item.name}" class="w-14 sm:w-16 h-14 sm:h-16 object-contain rounded-xl bg-white border border-slate-200/60 p-1 shrink-0">
                         <div class="flex-1 min-w-0">
                             <h4 class="text-xs font-semibold text-slate-900 truncate">${item.name}</h4>
-                            <p class="text-slate-500 font-mono text-[11px] sm:text-xs mt-0.5">${formatPrice(item.price)}</p>
+                            <p class="text-slate-500 font-mono text-[11px] sm:text-xs mt-0.5">${formattedUnitPrice}</p>
                             
                             <div class="flex items-center mt-2 border border-slate-200 rounded-lg w-fit overflow-hidden bg-white">
                                 <button onclick="changeQuantity('${item.id}', -1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono touch-manipulation">-</button>
@@ -471,7 +477,11 @@
                 });
             }
 
-            totalElement.textContent = formatPrice(totalInSek);
+            const formattedGrandTotal = config.position === 'prefix'
+                ? `${config.symbol}${grandTotalConverted.toLocaleString(config.locale)}`
+                : `${grandTotalConverted.toLocaleString(config.locale)} ${config.symbol}`;
+
+            totalElement.textContent = formattedGrandTotal;
             badge.textContent = totalItems;
         }
 
@@ -498,34 +508,12 @@
             }
         }
 
-        async function handleCheckout() {
+        // Kopplad direkt till den lokala kassan
+        function handleCheckout() {
             const cart = getCart();
             if (cart.length === 0) return;
 
-            const btn = document.getElementById('checkout-btn');
-            btn.disabled = true;
-            btn.innerText = "Connecting...";
-
-            try {
-                const response = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ items: cart, currency: currentCurrency }),
-                });
-
-                const data = await response.json();
-                if (data.url) {
-                    window.location.href = data.url;
-                } else {
-                    alert('Error --> ' + data.error);
-                    btn.disabled = false;
-                    btn.innerText = "Proceed to Checkout";
-                }
-            } catch (err) {
-                alert('Server communication error.');
-                btn.disabled = false;
-                btn.innerText = "Proceed to Checkout";
-            }
+            window.location.href = 'checkout.html';
         }
 
         // Synchronize currency and cart across tabs
