@@ -3,472 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Checkout & Fraktkontroll - Emendion</title>
+    <title>Betalning - Emendion</title>
 
-    <!-- Website Favicon -->
     <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
-    <link rel="alternate icon" href="https://emendion.com/favicon.ico">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
-                    },
-                    colors: {
-                        emendion: {
-                            base: '#ffffff',
-                            surface: '#f8f9fb',
-                            card: '#ffffff',
-                            border: '#e8edf3',
-                            accent: '#2563eb',
-                            accentHover: '#1d4ed8'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f8f9fb; 
-            color: #0f172a;
-            -webkit-tap-highlight-color: transparent;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fb; color: #0f172a; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+<body class="min-h-screen flex flex-col antialiased">
 
-    <!-- Header -->
-    <header class="bg-white/90 backdrop-blur-xl border-b border-slate-200/70 py-4 sm:py-5 sticky top-0 z-30">
-        <div class="max-w-6xl mx-auto px-4 sm:px-8 flex justify-between items-center">
-            <a href="index.html" class="flex items-center group py-1">
-                <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" 
-                     alt="Emendion" 
-                     class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
+    <!-- Header med Steg-indikator -->
+    <header class="bg-white/90 backdrop-blur-xl border-b border-slate-200/70 py-4 sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" alt="Emendion" class="h-6 w-auto brightness-0">
             </a>
-            <a href="index.html" class="inline-flex items-center gap-1.5 text-xs font-mono text-slate-500 hover:text-blue-600 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                <span>Back to store</span>
-            </a>
+            <!-- Steg -->
+            <div class="flex items-center gap-2 text-xs font-mono font-semibold">
+                <a href="shipping.html" class="text-emerald-600 hover:underline">✓ 1. Leverans vald</a>
+                <span class="text-slate-300">───</span>
+                <span class="text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">2. Betalning (Klarna)</span>
+            </div>
         </div>
     </header>
 
-    <!-- Kassainnehåll -->
-    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-12 w-full">
-        <div id="checkout-container" class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Vänsterkolumn -->
+            <!-- Vänsterkolumn: Vald frakt & Klarna Iframe -->
             <div class="lg:col-span-7 space-y-6">
                 
-                <!-- Klarna Iframe Container (Aktiveras automatiskt när API-nycklar finns) -->
-                <div id="klarna-live-container" class="hidden bg-white border border-slate-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-sm">
+                <!-- Sammanfattning av vald leverans -->
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Valt utlämningsställe / leverans</span>
+                        <h3 id="display-shipping-name" class="text-sm font-bold text-slate-900 mt-0.5">PostNord Ombud</h3>
+                        <p id="display-shipping-address" class="text-xs text-slate-500 font-mono mt-0.5"></p>
+                    </div>
+                    <a href="shipping.html" class="text-xs font-mono text-blue-600 hover:underline font-bold shrink-0 ml-4">
+                        Ändra ombud
+                    </a>
+                </div>
+
+                <!-- Klarna Checkout Container -->
+                <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-                        <h2 class="text-base sm:text-lg font-semibold text-slate-900 tracking-tight">Klarna Checkout</h2>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Klarna Checkout</h2>
                         <span class="text-xs font-mono font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-200">Klarna.</span>
                     </div>
-                    <div id="klarna-checkout-container" class="min-h-[300px]"></div>
-                </div>
 
-                <!-- Interaktiv Frakt- & Klarnasimulator -->
-                <div id="shipping-simulator-box" class="bg-white border border-slate-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-sm">
-                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                        <div>
-                            <span class="text-[10px] font-mono uppercase tracking-widest text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200/60">PostNord Live API</span>
-                            <h2 class="text-base sm:text-lg font-semibold text-slate-900 tracking-tight mt-1">Realtidsberäkning av frakt</h2>
+                    <div id="klarna-checkout-container" class="min-h-[300px] flex items-center justify-center">
+                        <div id="klarna-loading" class="text-center font-mono text-xs text-slate-400">
+                            <div class="w-6 h-6 border-2 border-slate-300 border-t-pink-600 rounded-full animate-spin mx-auto mb-2"></div>
+                            Laddar säker Klarna-kassa...
                         </div>
-                        <div class="text-right">
-                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest block">Total paketvikt</span>
-                            <span id="package-weight-badge" class="text-xs font-mono font-bold text-slate-700">0 g</span>
-                        </div>
-                    </div>
-
-                    <p class="text-xs text-slate-500 mb-6 leading-relaxed">
-                        Priset sätts inte av hemsidan utan beräknas i realtid via PostNords API baserat på paketets totalvikt, avsändarort (90336 Umeå) och mottagarens adress.
-                    </p>
-
-                    <!-- Adressinmatning för test -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1.5">Mottagarland</label>
-                            <select id="sim-country" onchange="testShippingCalculation()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 bg-slate-50 font-mono">
-                                <option value="SE" selected>Sverige (SE)</option>
-                                <option value="DE">Tyskland (DE)</option>
-                                <option value="NO">Norge (NO)</option>
-                                <option value="FI">Finland (FI)</option>
-                                <option value="US">USA (US)</option>
-                                <option value="JP">Japan (JP)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1.5">Postnummer</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="sim-zip" value="90336" placeholder="ex. 90336" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 bg-slate-50 font-mono">
-                                <button type="button" onclick="testShippingCalculation()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-mono font-bold uppercase shrink-0 transition-all">
-                                    Hämta pris
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Fraktalternativ som returnerades från callbacken -->
-                    <div class="mt-6 pt-5 border-t border-slate-100">
-                        <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-3">
-                            Aktuella priser från PostNord API
-                        </label>
-                        
-                        <div id="shipping-loading" class="hidden py-6 text-center text-xs font-mono text-slate-400">
-                            <div class="w-5 h-5 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"></div>
-                            Hämtar prisuppgift från PostNord API...
-                        </div>
-
-                        <div id="sim-shipping-options" class="space-y-3">
-                            <!-- Renderas dynamiskt med priser från PostNord -->
-                        </div>
-                    </div>
-
-                    <!-- Knapp för att slutföra testorder -->
-                    <div class="mt-8 pt-6 border-t border-slate-100">
-                        <button type="button" id="complete-btn" onclick="completeTestOrder()" class="w-full bg-slate-900 hover:bg-black text-white py-4 px-6 rounded-xl font-mono font-bold tracking-wider uppercase text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span>Slutför beställning med PostNord-pris</span>
-                        </button>
-                        <p class="text-center text-[10px] font-mono text-slate-400 mt-2.5">
-                            Sparar ordern i MariaDB-databasen på Loopia och skickar bekräftelsemejl.
-                        </p>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Högerkolumn -->
+            <!-- Högerkolumn: Totalbelopp -->
             <div class="lg:col-span-5">
-                <div class="bg-white border border-slate-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-sm sticky top-28">
-                    <h2 class="text-base sm:text-lg font-semibold text-slate-900 tracking-tight mb-4 pb-4 border-b border-slate-100">
-                        Order Summary
-                    </h2>
+                <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm sticky top-24">
+                    <h2 class="text-base font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Orderöversikt</h2>
+                    <div id="checkout-items" class="space-y-3 mb-6"></div>
 
-                    <!-- Artiklar -->
-                    <div id="order-items-list" class="space-y-3.5 max-h-[350px] overflow-y-auto pr-1 mb-6"></div>
-
-                    <!-- Summering -->
                     <div class="space-y-2.5 pt-4 border-t border-slate-100 text-xs font-mono">
                         <div class="flex justify-between text-slate-500">
-                            <span>Subtotal</span>
-                            <span id="summary-subtotal">0 kr</span>
+                            <span>Varor</span>
+                            <span id="co-subtotal">0 kr</span>
                         </div>
                         <div class="flex justify-between text-slate-500">
-                            <span>PostNord-frakt</span>
-                            <span id="summary-shipping" class="text-blue-600 font-semibold">Beräknas...</span>
+                            <span>PostNord Frakt</span>
+                            <span id="co-shipping" class="text-blue-600 font-bold">0 kr</span>
                         </div>
-                        <div class="flex justify-between text-slate-500">
-                            <span>Moms (25 %)</span>
-                            <span id="summary-tax">0 kr</span>
-                        </div>
-                        <div class="flex justify-between text-sm sm:text-base font-bold text-slate-900 pt-3 border-t border-slate-100">
-                            <span>Totalsumma</span>
-                            <span id="summary-total">0 kr</span>
+                        <div class="flex justify-between text-sm font-bold text-slate-900 pt-3 border-t border-slate-100">
+                            <span>Totalsumma att betala</span>
+                            <span id="co-total">0 kr</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-        </div>
-
-        <!-- Tom varukorg -->
-        <div id="empty-state" class="hidden text-center py-20 bg-white border border-slate-200/80 rounded-3xl p-8 max-w-lg mx-auto">
-            <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4 text-slate-400">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-slate-900 mb-1">Varukorgen är tom</h3>
-            <p class="text-xs font-mono text-slate-500 mb-6">Lägg till produkter i butiken innan du besöker kassan.</p>
-            <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-mono text-xs font-bold uppercase tracking-wider px-6 py-3.5 rounded-xl transition-all">
-                Gå till butiken
-            </a>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 bg-white/50 py-6 text-center text-xs font-mono text-slate-400 mt-auto">
-        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div>&copy; 2026 Emendion. All rights reserved.</div>
-            <div class="flex gap-4">
-                <a href="terms.html" class="hover:text-slate-600 transition-colors">Köpvillkor</a>
-                <a href="privacy.html" class="hover:text-slate-600 transition-colors">Integritetspolicy</a>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        const currencies = {
-            SEK: { symbol: 'kr', rate: 1, position: 'suffix', locale: 'sv-SE' },
-            USD: { symbol: '$', rate: 0.095, position: 'prefix', locale: 'en-US' },
-            EUR: { symbol: '€', rate: 0.088, position: 'prefix', locale: 'de-DE' }
-        };
+        let customer = null;
+        let selectedShipping = null;
+        let cart = [];
 
-        const currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
-        const config = currencies[currentCurrency] || currencies.SEK;
+        document.addEventListener('DOMContentLoaded', () => {
+            customer = JSON.parse(localStorage.getItem('emendion_customer_address'));
+            selectedShipping = JSON.parse(localStorage.getItem('emendion_selected_shipping'));
+            cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
 
-        let cartSubtotal = 0;
-        let totalWeightGrams = 0;
-        let selectedShippingCost = 0;
-        let activeShippingName = "";
-
-        // Standardvikter per produkt (i gram) om ej definierat
-        const productWeights = {
-            "item-001": 250,  // Mic-system
-            "item-002": 550,  // Core Hub
-            "item-003": 180   // Transmitter Clip
-        };
-
-        function formatMoney(amountInCurrentCurrency) {
-            const formatted = amountInCurrentCurrency.toLocaleString(config.locale);
-            return config.position === 'prefix' ? `${config.symbol}${formatted}` : `${formatted} ${config.symbol}`;
-        }
-
-        function loadCartOverview() {
-            let cart = [];
-            try {
-                cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
-            } catch (e) {
-                cart = [];
+            // Om kunden inte valt frakt först --> skicka till steg 1
+            if (!customer || !selectedShipping) {
+                window.location.href = 'shipping.html';
+                return;
             }
 
-            const container = document.getElementById('checkout-container');
-            const emptyState = document.getElementById('empty-state');
-            const itemsList = document.getElementById('order-items-list');
+            document.getElementById('display-shipping-name').textContent = selectedShipping.name;
+            document.getElementById('display-shipping-address').textContent = `${selectedShipping.description} (${customer.street}, ${customer.zip} ${customer.city})`;
 
-            if (cart.length === 0) {
-                container.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                return false;
-            }
-
-            container.classList.remove('hidden');
-            emptyState.classList.add('hidden');
-            itemsList.innerHTML = '';
-
-            cartSubtotal = 0;
-            totalWeightGrams = 0;
-
-            cart.forEach(item => {
-                const unitPriceConverted = Math.round(item.price * config.rate);
-                const lineTotal = unitPriceConverted * item.quantity;
-                cartSubtotal += lineTotal;
-
-                const itemWeight = productWeights[item.id] || 350;
-                totalWeightGrams += (itemWeight * item.quantity);
-
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-3.5 bg-slate-50/70 p-3 rounded-xl border border-slate-100';
-                div.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-contain bg-white rounded-lg border border-slate-200/60 p-1 shrink-0">
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-semibold text-slate-900 truncate">${item.name}</h4>
-                        <p class="text-[11px] font-mono text-slate-500 mt-0.5">${formatMoney(unitPriceConverted)} × ${item.quantity}</p>
-                    </div>
-                    <span class="text-xs font-mono font-bold text-slate-900 shrink-0">${formatMoney(lineTotal)}</span>
-                `;
-                itemsList.appendChild(div);
-            });
-
-            document.getElementById('package-weight-badge').textContent = totalWeightGrams + " g";
-            updateTotals();
-            return true;
-        }
-
-        function updateTotals() {
-            const total = cartSubtotal + selectedShippingCost;
-            const tax = Math.round(total * 0.20);
-
-            document.getElementById('summary-subtotal').textContent = formatMoney(cartSubtotal);
-            document.getElementById('summary-shipping').textContent = selectedShippingCost > 0 ? formatMoney(selectedShippingCost) : "Välj frakt";
-            document.getElementById('summary-tax').textContent = formatMoney(tax);
-            document.getElementById('summary-total').textContent = formatMoney(total);
-        }
-
-        // Anropar servern för att PostNord ska beräkna det dynamiska priset
-        // Byt ut funktionen testShippingCalculation() i checkout.html mot denna:
-async function testShippingCalculation() {
-    const country = document.getElementById('sim-country').value;
-    const zip = document.getElementById('sim-zip').value.trim();
-    const optionsContainer = document.getElementById('sim-shipping-options');
-    const loader = document.getElementById('shipping-loading');
-    const completeBtn = document.getElementById('complete-btn');
-
-    loader.classList.remove('hidden');
-    optionsContainer.innerHTML = '';
-    if (completeBtn) completeBtn.disabled = true;
-
-    let cart = [];
-    try {
-        cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
-    } catch (e) {
-        cart = [];
-    }
-
-    const payload = {
-        shipping_address: {
-            country: country,
-            postal_code: zip
-        },
-        package_weight_grams: totalWeightGrams || 180,
-        purchase_currency: currentCurrency,
-        order_lines: cart.map(item => ({
-            id: item.id,
-            name: item.name,
-            quantity: item.quantity,
-            total_amount: Math.round(item.price * 100 * item.quantity),
-            total_tax_amount: Math.round(item.price * 100 * item.quantity * 0.20)
-        }))
-    };
-
-    try {
-        // Anropa Vercel serverless endpoint
-        const res = await fetch('/api/klarna-shipping-callback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            renderOrderSummary();
+            initKlarnaOrder();
         });
 
-        const data = await res.json();
-        loader.classList.add('hidden');
+        function renderOrderSummary() {
+            const list = document.getElementById('checkout-items');
+            list.innerHTML = '';
+            let subtotal = 0;
 
-        if (data.shipping_options && data.shipping_options.length > 0) {
-            renderShippingOptions(data.shipping_options);
-            if (completeBtn) completeBtn.disabled = false;
-        } else {
-            // Om fel returneras, formatera det som ren text (inte [object Object])
-            const rawError = data.error || "Inga fraktalternativ kunde hämtas.";
-            const errorMsg = typeof rawError === 'object' ? JSON.stringify(rawError) : rawError;
-            
-            optionsContainer.innerHTML = `
-                <div class="p-4 bg-amber-50 text-amber-800 text-xs font-mono rounded-xl border border-amber-200">
-                    <strong>Information --></strong> ${errorMsg}
-                </div>
-            `;
-        }
-    } catch (err) {
-        loader.classList.add('hidden');
-        optionsContainer.innerHTML = `
-            <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
-                Kunde inte ansluta till /api/klarna-shipping-callback. Kontrollera att filen finns i mappen api/ och är deployad.
-            </div>
-        `;
-    }
-}
-
-        function renderShippingOptions(options) {
-            const container = document.getElementById('sim-shipping-options');
-            container.innerHTML = '';
-
-            options.forEach((opt, index) => {
-                // opt.price kommer från PostNord i minor units (öre/cent)
-                const costInMajorUnits = Math.round(opt.price / 100);
-                const isSelected = (index === 0);
-
-                if (isSelected) {
-                    selectedShippingCost = Math.round(costInMajorUnits * config.rate);
-                    activeShippingName = opt.name;
-                    updateTotals();
-                }
-
-                const label = document.createElement('label');
-                label.className = `flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${
-                    isSelected ? 'border-blue-600 bg-blue-50/20' : 'border-slate-200 hover:border-slate-300 bg-white'
-                }`;
-
-                label.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <input type="radio" name="shipping_choice" value="${costInMajorUnits}" data-name="${opt.name}" ${isSelected ? 'checked' : ''} 
-                               onchange="onShippingSelect(this)" class="text-blue-600 focus:ring-blue-500 h-4 w-4">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-900">${opt.name}</p>
-                            <p class="text-[11px] text-slate-500">${opt.description || ''}</p>
-                        </div>
-                    </div>
-                    <span class="text-xs font-mono font-bold text-blue-600">${formatMoney(Math.round(costInMajorUnits * config.rate))}</span>
-                `;
-
-                container.appendChild(label);
+            cart.forEach(item => {
+                subtotal += (item.price * item.quantity);
+                const d = document.createElement('div');
+                d.className = 'flex justify-between text-xs';
+                d.innerHTML = `<span>${item.name} × ${item.quantity}</span><span class="font-mono">${item.price * item.quantity} kr</span>`;
+                list.appendChild(d);
             });
+
+            const shippingKr = Math.round(selectedShipping.price / 100);
+            document.getElementById('co-subtotal').textContent = subtotal + " kr";
+            document.getElementById('co-shipping').textContent = shippingKr + " kr";
+            document.getElementById('co-total').textContent = (subtotal + shippingKr) + " kr";
         }
 
-        function onShippingSelect(input) {
-            const cost = parseInt(input.value, 10);
-            selectedShippingCost = Math.round(cost * config.rate);
-            activeShippingName = input.getAttribute('data-name');
-            updateTotals();
-
-            document.querySelectorAll('#sim-shipping-options label').forEach(lbl => {
-                lbl.classList.remove('border-blue-600', 'bg-blue-50/20');
-                lbl.classList.add('border-slate-200');
-            });
-            input.closest('label').classList.remove('border-slate-200');
-            input.closest('label').classList.add('border-blue-600', 'bg-blue-50/20');
-        }
-
-        async function completeTestOrder() {
-            let cart = [];
+        async function initKlarnaOrder() {
             try {
-                cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
-            } catch (e) {
-                cart = [];
-            }
-
-            const country = document.getElementById('sim-country').value;
-            const zip = document.getElementById('sim-zip').value.trim();
-            const totalText = document.getElementById('summary-total').textContent;
-
-            const customer = {
-                firstName: "Test",
-                lastName: "Kund (" + country + ")",
-                email: "order@emendion.com",
-                street: "Skolgatan 10",
-                zip: zip,
-                city: (country === 'SE' ? "Umeå" : "Internationell")
-            };
-
-            const orderItems = [...cart, {
-                name: activeShippingName + " (PostNord Live API)",
-                price: selectedShippingCost,
-                quantity: 1
-            }];
-
-            try {
-                const response = await fetch('send-order.php', {
+                const res = await fetch('/api/create-klarna-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        items: cart,
+                        shipping_option: selectedShipping,
                         customer: customer,
-                        items: orderItems,
-                        total: totalText,
-                        currency: currentCurrency
+                        currency: 'SEK'
                     })
                 });
 
-                const data = await response.json();
-                const orderId = data.orderId || ('EMD-' + Math.random().toString(36).substring(2, 8).toUpperCase());
-                window.location.href = `success.html?order_id=${orderId}`;
+                const data = await res.json();
+                const container = document.getElementById('klarna-checkout-container');
+
+                if (data.html_snippet) {
+                    container.innerHTML = data.html_snippet;
+                    // Kör Klarnas inbäddade JavaScript
+                    const scripts = container.getElementsByTagName("script");
+                    for (let s of scripts) {
+                        const newScript = document.createElement("script");
+                        newScript.text = s.text;
+                        document.body.appendChild(newScript);
+                    }
+                } else if (data.mock) {
+                    // Visas innan du lagt in skarpa Klarna-uppgifter
+                    container.innerHTML = `
+                        <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center">
+                            <span class="text-xs font-mono text-pink-600 font-bold uppercase tracking-wider block mb-2">Klarna Redo</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">${data.message}</p>
+                            <button onclick="window.location.href='success.html?order_id=TEST-ORD'" class="mt-4 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-mono text-xs uppercase font-bold">
+                                Slutför testköp direkt
+                            </button>
+                        </div>
+                    `;
+                }
             } catch (err) {
-                const orderId = 'EMD-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-                window.location.href = `success.html?order_id=${orderId}`;
+                console.error("Fel vid start av Klarna -->", err);
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const hasItems = loadCartOverview();
-            if (hasItems) {
-                testShippingCalculation();
-            }
-        });
     </script>
 </body>
 </html>

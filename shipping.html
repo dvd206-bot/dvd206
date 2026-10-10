@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Leverans & Frakt - Emendion</title>
+
+    <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fb; color: #0f172a; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- Header med Steg-indikator -->
+    <header class="bg-white/90 backdrop-blur-xl border-b border-slate-200/70 py-4 sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" alt="Emendion" class="h-6 w-auto brightness-0">
+            </a>
+            <!-- Steg -->
+            <div class="flex items-center gap-2 text-xs font-mono font-semibold">
+                <span class="text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">1. Leverans & Ombud</span>
+                <span class="text-slate-300">───</span>
+                <span class="text-slate-400">2. Betalning (Klarna)</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Vänsterkolumn -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 tracking-tight mb-1">Mottagaradress</h2>
+                    <p class="text-xs text-slate-500 mb-6">Skriv in din adress var som helst i världen för att se PostNords leveranssätt och närmaste ombud.</p>
+
+                    <form id="shipping-form" onsubmit="event.preventDefault(); fetchShippingOptions();" class="space-y-4">
+                        
+                        <!-- Land -->
+                        <div>
+                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Land / Destination</label>
+                            <select id="country" onchange="fetchShippingOptions()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50 font-mono">
+                                <optgroup label="Norden">
+                                    <option value="SE" selected>Sverige (SE)</option>
+                                    <option value="FI">Finland (FI)</option>
+                                    <option value="NO">Norge (NO)</option>
+                                    <option value="DK">Danmark (DK)</option>
+                                </optgroup>
+                                <optgroup label="Europa">
+                                    <option value="DE">Tyskland (DE)</option>
+                                    <option value="FR">Frankrike (FR)</option>
+                                    <option value="NL">Nederländerna (NL)</option>
+                                    <option value="GB">Storbritannien (GB)</option>
+                                    <option value="ES">Spanien (ES)</option>
+                                    <option value="IT">Italien (IT)</option>
+                                </optgroup>
+                                <optgroup label="Resten av världen">
+                                    <option value="US">USA (US)</option>
+                                    <option value="CA">Kanada (CA)</option>
+                                    <option value="JP">Japan (JP)</option>
+                                    <option value="AU">Australien (AU)</option>
+                                    <option value="KR">Sydkorea (KR)</option>
+                                    <option value="OTHER">Övriga världen</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <!-- Namn & Kontakt -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Förnamn</label>
+                                <input type="text" id="firstname" required placeholder="Förnamn" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Efternamn</label>
+                                <input type="text" id="lastname" required placeholder="Efternamn" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">E-postadress</label>
+                            <input type="email" id="email" required placeholder="namn@exempel.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <!-- Gatuadress -->
+                        <div>
+                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Gatuadress</label>
+                            <input type="text" id="street" required placeholder="Gata och nummer" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <!-- Postnummer & Ort -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Postnummer</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="zip" required value="90336" placeholder="ex. 90336" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
+                                    <button type="button" onclick="fetchShippingOptions()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-mono font-bold uppercase transition-all">Sök</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Ort / Stad</label>
+                                <input type="text" id="city" required value="Umeå" placeholder="Stad" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Val av PostNord-ombud och fraktsätt -->
+                    <div class="mt-8 pt-6 border-t border-slate-100">
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider">
+                                Välj utlämningsställe eller leveransmetod
+                            </label>
+                            <span id="loading-spinner" class="hidden text-xs text-blue-600 font-mono flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
+                                Söker ombud...
+                            </span>
+                        </div>
+
+                        <div id="shipping-options-list" class="space-y-3">
+                            <!-- Fylls dynamiskt från PostNord API -->
+                        </div>
+                    </div>
+
+                    <!-- Fortsätt-knapp -->
+                    <div class="mt-8 pt-6 border-t border-slate-100">
+                        <button type="button" id="proceed-btn" onclick="goToPaymentStep()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-mono font-bold tracking-wider uppercase text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                            <span>Fortsätt till betalning</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Högerkolumn: Sammanfattning -->
+            <div class="lg:col-span-5">
+                <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm sticky top-24">
+                    <h2 class="text-base font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Varukorg</h2>
+                    <div id="order-items-list" class="space-y-3 mb-6"></div>
+
+                    <div class="space-y-2.5 pt-4 border-t border-slate-100 text-xs font-mono">
+                        <div class="flex justify-between text-slate-500">
+                            <span>Subtotal</span>
+                            <span id="summary-subtotal">0 kr</span>
+                        </div>
+                        <div class="flex justify-between text-slate-500">
+                            <span>Frakt</span>
+                            <span id="summary-shipping" class="text-blue-600 font-bold">0 kr</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-bold text-slate-900 pt-3 border-t border-slate-100">
+                            <span>Totalt att betala</span>
+                            <span id="summary-total">0 kr</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let cart = [];
+        let cartSubtotal = 0;
+        let totalGrams = 0;
+        let availableOptions = [];
+        let selectedShippingOption = null;
+
+        function init() {
+            try {
+                cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
+            } catch(e) { cart = []; }
+
+            if (cart.length === 0) {
+                // Lägg till testprodukt om varukorg är tom
+                cart = [{ id: "item-001", name: "Emendion LE-Node Mic", price: 1890, quantity: 1, image: "https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" }];
+            }
+
+            renderCart();
+            fetchShippingOptions();
+        }
+
+        function renderCart() {
+            const list = document.getElementById('order-items-list');
+            list.innerHTML = '';
+            cartSubtotal = 0;
+            totalGrams = 0;
+
+            cart.forEach(item => {
+                cartSubtotal += (item.price * item.quantity);
+                totalGrams += (item.weight || 250) * item.quantity;
+
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center text-xs';
+                div.innerHTML = `
+                    <span class="text-slate-800">${item.name} × ${item.quantity}</span>
+                    <span class="font-mono font-semibold">${item.price * item.quantity} kr</span>
+                `;
+                list.appendChild(div);
+            });
+
+            updateTotals();
+        }
+
+        function updateTotals() {
+            const shippingCost = selectedShippingOption ? Math.round(selectedShippingOption.price / 100) : 0;
+            document.getElementById('summary-subtotal').textContent = cartSubtotal + " kr";
+            document.getElementById('summary-shipping').textContent = shippingCost > 0 ? shippingCost + " kr" : "Beräknas...";
+            document.getElementById('summary-total').textContent = (cartSubtotal + shippingCost) + " kr";
+        }
+
+        async function fetchShippingOptions() {
+            const country = document.getElementById('country').value;
+            const zip = document.getElementById('zip').value.trim();
+            const street = document.getElementById('street').value.trim();
+            const spinner = document.getElementById('loading-spinner');
+            const container = document.getElementById('shipping-options-list');
+
+            spinner.classList.remove('hidden');
+            container.innerHTML = '';
+
+            try {
+                const res = await fetch('/api/klarna-shipping-callback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        shipping_address: {
+                            country: country,
+                            postal_code: zip,
+                            street_address: street
+                        },
+                        package_weight_grams: totalGrams,
+                        purchase_currency: 'SEK',
+                        order_lines: cart.map(i => ({
+                            name: i.name,
+                            quantity: i.quantity,
+                            total_amount: i.price * 100 * i.quantity,
+                            total_tax_amount: Math.round(i.price * 100 * i.quantity * 0.20)
+                        }))
+                    })
+                });
+
+                const data = await res.json();
+                spinner.classList.add('hidden');
+
+                if (data.shipping_options && data.shipping_options.length > 0) {
+                    availableOptions = data.shipping_options;
+                    selectedShippingOption = availableOptions[0];
+                    renderShippingOptions(availableOptions);
+                    updateTotals();
+                } else {
+                    container.innerHTML = `<p class="text-xs text-red-500 font-mono">Inga alternativ hittades för denna adress.</p>`;
+                }
+            } catch (err) {
+                spinner.classList.add('hidden');
+                container.innerHTML = `<p class="text-xs text-red-500 font-mono">Kunde inte ansluta till PostNord API.</p>`;
+            }
+        }
+
+        function renderShippingOptions(options) {
+            const container = document.getElementById('shipping-options-list');
+            container.innerHTML = '';
+
+            options.forEach((opt, idx) => {
+                const cost = Math.round(opt.price / 100);
+                const isSelected = idx === 0;
+
+                const label = document.createElement('label');
+                label.className = `flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${isSelected ? 'border-blue-600 bg-blue-50/20' : 'border-slate-200 hover:border-slate-300 bg-white'}`;
+                label.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="radio" name="shipping_choice" value="${opt.id}" ${isSelected ? 'checked' : ''} onchange="selectShipping('${opt.id}')" class="text-blue-600 focus:ring-blue-500 h-4 w-4">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-900">${opt.name}</p>
+                            <p class="text-[11px] text-slate-500">${opt.description}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-blue-600">${cost} kr</span>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        function selectShipping(id) {
+            selectedShippingOption = availableOptions.find(o => o.id === id);
+            updateTotals();
+            document.querySelectorAll('#shipping-options-list label').forEach(lbl => {
+                lbl.classList.remove('border-blue-600', 'bg-blue-50/20');
+                lbl.classList.add('border-slate-200');
+            });
+            event.target.closest('label').classList.remove('border-slate-200');
+            event.target.closest('label').classList.add('border-blue-600', 'bg-blue-50/20');
+        }
+
+        function goToPaymentStep() {
+            const customer = {
+                firstName: document.getElementById('firstname').value,
+                lastName: document.getElementById('lastname').value,
+                email: document.getElementById('email').value,
+                street: document.getElementById('street').value,
+                zip: document.getElementById('zip').value,
+                city: document.getElementById('city').value,
+                country: document.getElementById('country').value
+            };
+
+            if (!customer.firstName || !customer.email || !customer.street) {
+                alert("Vänligen fyll i dina adressuppgifter.");
+                return;
+            }
+
+            // Spara vald frakt & adress i localStorage inför steg 2
+            localStorage.setItem('emendion_customer_address', JSON.stringify(customer));
+            localStorage.setItem('emendion_selected_shipping', JSON.stringify(selectedShippingOption));
+
+            // Gå till steg 2: Betalsidan
+            window.location.href = 'checkout.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
