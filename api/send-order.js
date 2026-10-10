@@ -60,10 +60,10 @@ module.exports = async (req, res) => {
 
             <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0 0 10px 0;">Leveransdetaljer</h3>
             <p style="font-size: 14px; line-height: 1.6; margin: 0; color: #334155;">
-                <strong>Mottagare --></strong> ${customer.firstName} ${customer.lastName}<br>
-                <strong>Mobil för SMS-avi --></strong> ${customer.phone || 'Ej angivet'}<br>
-                <strong>Leveranssätt --></strong> ${shippingName}<br>
-                <strong>Plats / Ombud --></strong> ${shippingDesc}
+                <strong>Recipient --></strong> ${customer.firstName} ${customer.lastName}<br>
+                <strong>Phone-Number--></strong> ${customer.phone || 'Ej angivet'}<br>
+                <strong>Way of Delivery --></strong> ${shippingName}<br>
+                <strong>Location / Dropoff --></strong> ${shippingDesc}
             </p>
 
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
