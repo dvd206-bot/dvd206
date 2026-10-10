@@ -90,7 +90,7 @@
                         <!-- Gatuadress -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Gatuadress</label>
-                            <input type="text" id="street" value="Korsgatan 4a" onblur="fetchShippingOptions()" placeholder="Gata och nummer" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="street" value="" onblur="fetchShippingOptions()" placeholder="Gata och nummer" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Postnummer & Ort -->
@@ -98,13 +98,13 @@
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Postnummer</label>
                                 <div class="flex gap-2">
-                                    <input type="text" id="zip" required value="90336" placeholder="ex. 90336" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
+                                    <input type="text" id="zip" required value="" placeholder="ex. 12345" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
                                     <button type="button" onclick="fetchShippingOptions()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-mono font-bold uppercase transition-all">Sök</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Ort / Stad</label>
-                                <input type="text" id="city" required value="Umeå" placeholder="Stad" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                                <input type="text" id="city" required value="" placeholder="Robertsfors" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                             </div>
                         </div>
                     </form>
@@ -279,7 +279,7 @@
             if (homeOptions.length > 0) {
                 const homeHeader = document.createElement('div');
                 homeHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-2';
-                homeHeader.textContent = '🏠 Leverans till dörren';
+                homeHeader.textContent = 'Leverans till dörren';
                 container.appendChild(homeHeader);
 
                 homeOptions.forEach(opt => {
@@ -291,7 +291,7 @@
             if (pickupOptions.length > 0) {
                 const pickupHeader = document.createElement('div');
                 pickupHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-4';
-                pickupHeader.textContent = '🏪 Välj PostNord-ombud';
+                pickupHeader.textContent = 'Välj PostNord-ombud';
                 container.appendChild(pickupHeader);
 
                 pickupOptions.forEach(opt => {
