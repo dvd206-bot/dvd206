@@ -1,7 +1,6 @@
 // api/klarna-shipping-callback.js
 
 module.exports = async (req, res) => {
-    // Sätt CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -27,95 +26,142 @@ module.exports = async (req, res) => {
     const shipping_address = data.shipping_address || {};
     const dest_country     = String(shipping_address.country || 'SE').toUpperCase();
     const dest_postal_code = String(shipping_address.postal_code || '').replace(/\s+/g, '');
+    const dest_street      = String(shipping_address.street_address || '').trim();
+
+    if (!dest_postal_code) {
+        return res.status(400).json({ error: "Postnummer måste anges för att hämta live-pris från PostNord." });
+    }
 
     const total_grams = parseInt(data.package_weight_grams, 10) || 180;
     const weight_kg   = Math.max(0.1, Number((total_grams / 1000).toFixed(2)));
 
     // Service-koder hos PostNord:
     // 19 = PostNord MyPack Collect (Ombud inrikes & Norden)
-    // 52 = PostNord MyPack Home / Parcel
-    const service_code = (dest_country === 'SE' || ['DK', 'FI', 'NO'].includes(dest_country)) ? '19' : '52';
+    // 52 = PostNord Parcel (Europa / Världen)
+    const isNordic = ['SE', 'DK', 'FI', 'NO'].includes(dest_country);
+    const service_code = isNordic ? '19' : '52';
 
-    let calculated_price_sek = null;
-    let service_point_name   = dest_country === 'SE' ? "PostNord Ombud (MyPack Collect)" : "PostNord Tracked Parcel";
+    // -------------------------------------------------------------
+    // 1. HÄMTA PRIS LIVE FRÅN POSTNORD PRICE API (INGA FÖRBESTÄMDA PRISER)
+    // -------------------------------------------------------------
+    let live_price_amount = null;
+    let live_vat_amount = 0;
+    let price_error = null;
 
-    // 1. Slå upp närmaste PostNord-ombud via Service Point API (v5)
-    if (postnord_api_key && postnord_api_key !== "DIN_POSTNORD_API_KEY" && dest_postal_code) {
-        try {
-            const spUrl = `https://api2.postnord.com/rest/businesslocation/v5/servicepoints/nearest/byaddress?apikey=${encodeURIComponent(postnord_api_key)}&countryCode=${encodeURIComponent(dest_country)}&postalCode=${encodeURIComponent(dest_postal_code)}&numberOfServicePoints=1`;
-            const spRes = await fetch(spUrl);
-            
-            if (spRes.ok) {
-                const spData = await spRes.json();
-                const points = spData?.servicePointInformationResponse?.servicePoints;
-                if (Array.isArray(points) && points.length > 0 && points[0]?.name) {
-                    const sp = points[0];
-                    const street = sp.visitingAddress?.streetName ? ` (${sp.visitingAddress.streetName})` : '';
-                    service_point_name = `PostNord Ombud --> ${sp.name}${street}`;
-                }
+    try {
+        const priceParams = new URLSearchParams({
+            apikey: postnord_api_key,
+            fromCountryCode: sender_country_code,
+            fromPostalCode: sender_postal_code,
+            toCountryCode: dest_country,
+            toPostalCode: dest_postal_code,
+            weight: weight_kg.toString(),
+            serviceCode: service_code
+        });
+
+        const priceRes = await fetch(`https://api2.postnord.com/rest/transport/v1/price?${priceParams.toString()}`, {
+            headers: {
+                'Accept': 'application/json'
             }
+        });
+
+        const priceText = await priceRes.text();
+        let priceData = {};
+        try {
+            priceData = JSON.parse(priceText);
         } catch (e) {
-            console.error("Fel vid Service Point-uppslag -->", e);
+            price_error = `PostNord Price API svarade inte med JSON (HTTP ${priceRes.status}): ${priceText.substring(0, 120)}`;
         }
+
+        if (priceRes.ok && priceData) {
+            const rawAmount = priceData?.price?.amount ?? priceData?.grossPrice ?? priceData?.netAmount;
+            if (rawAmount !== undefined && rawAmount !== null && !isNaN(Number(rawAmount))) {
+                live_price_amount = Number(rawAmount);
+                live_vat_amount   = Number(priceData?.price?.vatAmount ?? priceData?.vat ?? 0);
+            } else {
+                price_error = priceData?.message || priceData?.error || "PostNord returnerade inget pris för angiven rutt/vikt.";
+            }
+        } else if (!price_error) {
+            price_error = priceData?.message || priceData?.compositeFault?.faults?.[0]?.explanationText || `PostNord avvisade prisberäkningen (Status ${priceRes.status}).`;
+        }
+    } catch (err) {
+        price_error = `Kunde inte kontakta PostNord Price API --> ${err.message}`;
     }
 
-    // 2. Slå upp dynamiskt pris från PostNord Price API
-    if (postnord_api_key && postnord_api_key !== "DIN_POSTNORD_API_KEY" && dest_postal_code) {
+    if (live_price_amount === null) {
+        return res.status(400).json({
+            error: price_error || "Inget pris kunde hämtas live från PostNord för denna adress och vikt."
+        });
+    }
+
+    const price_in_minor = Math.round(live_price_amount * 100);
+    const vat_in_minor   = Math.round(live_vat_amount * 100);
+    const tax_rate       = (vat_in_minor > 0 && price_in_minor > 0) ? Math.round((vat_in_minor / (price_in_minor - vat_in_minor)) * 10000) : 0;
+
+    // -------------------------------------------------------------
+    // 2. HÄMTA OMBUD LIVE FRÅN POSTNORD SERVICE POINT API
+    // -------------------------------------------------------------
+    let shipping_options = [];
+
+    if (isNordic) {
         try {
-            const priceParams = new URLSearchParams({
+            const spParams = new URLSearchParams({
                 apikey: postnord_api_key,
-                fromCountryCode: sender_country_code,
-                fromPostalCode: sender_postal_code,
-                toCountryCode: dest_country,
-                toPostalCode: dest_postal_code,
-                weight: weight_kg.toString(),
-                serviceCode: service_code
+                countryCode: dest_country,
+                postalCode: dest_postal_code,
+                numberOfServicePoints: '5'
             });
 
-            const priceRes = await fetch(`https://api2.postnord.com/rest/transport/v1/price?${priceParams.toString()}`);
-            
-            if (priceRes.ok) {
-                const priceData = await priceRes.json();
-                const amount = priceData?.price?.amount ?? priceData?.grossPrice ?? priceData?.netAmount;
-                if (amount !== undefined && amount !== null && !isNaN(Number(amount))) {
-                    calculated_price_sek = Number(amount);
-                }
+            if (dest_street) {
+                spParams.append('streetName', dest_street);
             }
-        } catch (e) {
-            console.error("Fel vid Price API-uppslag -->", e);
+
+            const spRes = await fetch(`https://api2.postnord.com/rest/businesslocation/v5/servicepoints/nearest/byaddress?${spParams.toString()}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (spRes.ok) {
+                const spData = await spRes.json();
+                const points = spData?.servicePointInformationResponse?.servicePoints || [];
+
+                points.forEach((sp, idx) => {
+                    const street = sp.visitingAddress?.streetName ? `${sp.visitingAddress.streetName}` : '';
+                    const city = sp.visitingAddress?.city || '';
+                    const distance = sp.routeDistance ? ` (${(sp.routeDistance / 1000).toFixed(1)} km)` : '';
+
+                    shipping_options.push({
+                        id: `pn_sp_${sp.servicePointId}`,
+                        name: `PostNord Ombud --> ${sp.name}`,
+                        description: `${street}, ${city}${distance}`,
+                        service_point_id: sp.servicePointId,
+                        price: price_in_minor,
+                        tax_rate: tax_rate,
+                        tax_amount: vat_in_minor,
+                        preselected: idx === 0
+                    });
+                });
+            }
+        } catch (err) {
+            console.error("Fel vid hämtning av ombud -->", err);
         }
     }
 
-    // Om PostNord Price API inte returnerar belopp (ex. kräver kundavtal), använd dynamisk viktbaserad taxa:
-    if (calculated_price_sek === null) {
-        if (dest_country === 'SE') {
-            // Baserat på PostNords standard portotabell för paket/ombud:
-            calculated_price_sek = weight_kg <= 0.5 ? 59 : (weight_kg <= 1.0 ? 69 : 89);
-        } else if (['DK', 'FI', 'NO'].includes(dest_country)) {
-            calculated_price_sek = 129;
-        } else {
-            calculated_price_sek = 199;
-        }
-    }
-
-    // Konvertera till minor units (öre/cent)
-    const price_in_minor = Math.round(calculated_price_sek * 100);
-    const tax_rate       = 2500; // 25 % moms
-    const tax_in_minor   = Math.round(price_in_minor * 0.20);
-
-    const shipping_options = [
-        {
-            id: `postnord_${service_code}`,
-            name: service_point_name,
-            description: `Vikt: ${total_grams} g | Levereras inom 1-2 vardagar`,
+    // Om inga ombud hittas eller vid internationell frakt (utanför Norden)
+    if (shipping_options.length === 0) {
+        shipping_options.push({
+            id: `pn_live_${service_code}`,
+            name: isNordic ? "PostNord MyPack Collect" : `PostNord Tracked Parcel (${dest_country})`,
+            description: `Live PostNord-taxa (${weight_kg} kg) till ${dest_postal_code}`,
             price: price_in_minor,
             tax_rate: tax_rate,
-            tax_amount: tax_in_minor,
+            tax_amount: vat_in_minor,
             preselected: true
-        }
-    ];
+        });
+    }
 
-    // Beräkna Klarna totalsummor
+    // Beräkna totalsummor för ordern
     let new_order_amount = 0;
     let new_tax_amount   = 0;
 
