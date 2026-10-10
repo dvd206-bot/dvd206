@@ -20,6 +20,7 @@
             <a href="index.html" class="flex items-center">
                 <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" alt="Emendion" class="h-6 w-auto brightness-0">
             </a>
+            <!-- Steg -->
             <div class="flex items-center gap-2 text-xs font-mono font-semibold">
                 <span class="text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">1. Leverans & Ombud</span>
                 <span class="text-slate-300">───</span>
@@ -31,7 +32,7 @@
     <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Vänsterkolumn -->
+            <!-- Vänsterkolumn: Adressformulär & Val av leverans -->
             <div class="lg:col-span-7 space-y-6">
                 
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
@@ -46,7 +47,7 @@
                         <!-- Land -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Land / Destination</label>
-                            <select id="country" onchange="fetchShippingOptions()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50 font-mono">
+                            <select id="country" onchange="onCountryChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50 font-mono">
                                 <optgroup label="Norden">
                                     <option value="SE" selected>Sverige (SE)</option>
                                     <option value="FI">Finland (FI)</option>
@@ -70,7 +71,7 @@
                             </select>
                         </div>
 
-                        <!-- Namn & Kontakt -->
+                        <!-- Förnamn & Efternamn -->
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Förnamn</label>
@@ -82,15 +83,32 @@
                             </div>
                         </div>
 
+                        <!-- E-postadress -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">E-postadress</label>
                             <input type="email" id="email" required placeholder="namn@exempel.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
+                        <!-- Telefonnummer: Landskod (smalare) + Telefonnummer (bredare) -->
+                        <div>
+                            <div class="grid grid-cols-12 gap-2 sm:gap-3">
+                                <!-- Smalare fält: Landskod -->
+                                <div class="col-span-4 sm:col-span-3">
+                                    <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1 truncate">Landskod</label>
+                                    <input type="text" id="phone-prefix" value="+46" placeholder="+46" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-mono text-center focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                                </div>
+                                <!-- Bredare fält: Mobilnummer -->
+                                <div class="col-span-8 sm:col-span-9">
+                                    <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Mobilnummer (för SMS-avisering)</label>
+                                    <input type="tel" id="phone-number" placeholder="ex. 70 123 45 67" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Gatuadress -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Gatuadress</label>
-                            <input type="text" id="street" value="" onblur="fetchShippingOptions()" placeholder="Gata och nummer" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="street" placeholder="Gata och nummer" onblur="fetchShippingOptions()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Postnummer & Ort -->
@@ -98,13 +116,13 @@
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Postnummer</label>
                                 <div class="flex gap-2">
-                                    <input type="text" id="zip" required value="" placeholder="ex. 12345" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
+                                    <input type="text" id="zip" required value="90336" placeholder="ex. 90336" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
                                     <button type="button" onclick="fetchShippingOptions()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-mono font-bold uppercase transition-all">Sök</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Ort / Stad</label>
-                                <input type="text" id="city" required value="" placeholder="Robertsfors" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                                <input type="text" id="city" required value="Umeå" placeholder="Stad" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                             </div>
                         </div>
                     </form>
@@ -138,7 +156,7 @@
 
             </div>
 
-            <!-- Högerkolumn -->
+            <!-- Högerkolumn: Varukorgssammanfattning -->
             <div class="lg:col-span-5">
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm sticky top-24">
                     <h2 class="text-base font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Varukorg</h2>
@@ -170,6 +188,33 @@
         let totalGrams = 180;
         let availableOptions = [];
         let selectedShippingOption = null;
+
+        const countryPrefixMap = {
+            'SE': '+46',
+            'FI': '+358',
+            'NO': '+47',
+            'DK': '+45',
+            'DE': '+49',
+            'GB': '+44',
+            'FR': '+33',
+            'NL': '+31',
+            'ES': '+34',
+            'IT': '+39',
+            'US': '+1',
+            'CA': '+1',
+            'JP': '+81',
+            'AU': '+61'
+        };
+
+        function onCountryChange() {
+            const country = document.getElementById('country').value;
+            const prefix = countryPrefixMap[country] || '+46';
+            const prefixInput = document.getElementById('phone-prefix');
+            if (prefixInput) {
+                prefixInput.value = prefix;
+            }
+            fetchShippingOptions();
+        }
 
         function init() {
             try {
@@ -245,7 +290,6 @@
 
                 if (res.ok && data.shipping_options && data.shipping_options.length > 0) {
                     availableOptions = data.shipping_options;
-                    // Välj ombud om det finns, annars första alternativet
                     const defaultPick = availableOptions.find(o => o.type === 'pickup_point') || availableOptions[0];
                     selectedShippingOption = defaultPick;
                     renderShippingOptions(availableOptions);
@@ -262,7 +306,7 @@
                 spinner.classList.add('hidden');
                 container.innerHTML = `
                     <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
-                        Kunde inte kontakta servern (/api/klarna-shipping-callback).
+                        Kunde inte kontakta servern (/api/klarna-shipping-callback). Kontrollera att filen ligger i mappen api/ och är deployad.
                     </div>
                 `;
             }
@@ -275,11 +319,10 @@
             const homeOptions = options.filter(o => o.type === 'home');
             const pickupOptions = options.filter(o => o.type === 'pickup_point');
 
-            // 1. Sektion: Direkt Hemleverans
             if (homeOptions.length > 0) {
                 const homeHeader = document.createElement('div');
                 homeHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-2';
-                homeHeader.textContent = 'Leverans till dörren';
+                homeHeader.textContent = '🏠 Leverans till dörren';
                 container.appendChild(homeHeader);
 
                 homeOptions.forEach(opt => {
@@ -287,11 +330,10 @@
                 });
             }
 
-            // 2. Sektion: Närmsta Utlämningsställen / Ombud
             if (pickupOptions.length > 0) {
                 const pickupHeader = document.createElement('div');
                 pickupHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-4';
-                pickupHeader.textContent = 'Välj PostNord-ombud';
+                pickupHeader.textContent = '🏪 Välj PostNord-ombud';
                 container.appendChild(pickupHeader);
 
                 pickupOptions.forEach(opt => {
@@ -342,22 +384,27 @@
                 return;
             }
 
+            const prefix = document.getElementById('phone-prefix').value.trim();
+            const rawPhone = document.getElementById('phone-number').value.trim();
+            const fullPhone = rawPhone ? `${prefix} ${rawPhone}` : '';
+
             const customer = {
-                firstName: document.getElementById('firstname').value,
-                lastName: document.getElementById('lastname').value,
-                email: document.getElementById('email').value,
-                street: document.getElementById('street').value,
-                zip: document.getElementById('zip').value,
-                city: document.getElementById('city').value,
+                firstName: document.getElementById('firstname').value.trim(),
+                lastName: document.getElementById('lastname').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: fullPhone,
+                street: document.getElementById('street').value.trim(),
+                zip: document.getElementById('zip').value.trim(),
+                city: document.getElementById('city').value.trim(),
                 country: document.getElementById('country').value
             };
 
-            if (!customer.firstName || !customer.email || !customer.zip) {
-                alert("Vänligen fyll i namn, e-post och postnummer.");
+            if (!customer.firstName || !customer.email || !rawPhone || !customer.zip) {
+                alert("Vänligen fyll i namn, e-post, mobilnummer och postnummer.");
                 return;
             }
 
-            // Spara vald frakt & adress inför betalning med Klarna
+            // Spara kund & vald frakt inför Klarna-steget
             localStorage.setItem('emendion_customer_address', JSON.stringify(customer));
             localStorage.setItem('emendion_selected_shipping', JSON.stringify(selectedShippingOption));
 
