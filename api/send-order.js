@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
     }
 
     const mailUser = process.env.LOOPIA_EMAIL || 'order@emendion.com';
-    const mailPass = process.env.LOOPIA_EMAIL_PASS || 'perspolis11x';
+    const mailPass = process.env.LOOPIA_EMAIL_PASS || 'perspolis11#X';
 
     // Loopia SMTP via port 587 (STARTTLS) för stabil anslutning från Vercel
     const transporter = nodemailer.createTransport({
