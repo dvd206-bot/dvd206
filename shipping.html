@@ -39,7 +39,7 @@
                         <h2 class="text-lg font-bold text-slate-900 tracking-tight">Mottagaradress</h2>
                         <span class="text-[10px] font-mono uppercase bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-bold border border-blue-200">PostNord Live API</span>
                     </div>
-                    <p class="text-xs text-slate-500 mb-6">Alla priser och ombud beräknas uteslutande via PostNords realtids-API utan fasta taxor.</p>
+                    <p class="text-xs text-slate-500 mb-6">Skriv in din adress för att se hemleverans och närmaste PostNord-ombud.</p>
 
                     <form id="shipping-form" onsubmit="event.preventDefault(); fetchShippingOptions();" class="space-y-4">
                         
@@ -90,7 +90,7 @@
                         <!-- Gatuadress -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Gatuadress</label>
-                            <input type="text" id="street" placeholder="Gata och nummer" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="street" value="Korsgatan 4a" onblur="fetchShippingOptions()" placeholder="Gata och nummer" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Postnummer & Ort -->
@@ -109,20 +109,20 @@
                         </div>
                     </form>
 
-                    <!-- Val av PostNord-ombud och fraktsätt -->
+                    <!-- Val av Leveransmetod -->
                     <div class="mt-8 pt-6 border-t border-slate-100">
                         <div class="flex justify-between items-center mb-3">
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider">
-                                Tillgängliga PostNord-ombud / Tjänster
+                                Välj leveranssätt & utlämningsställe
                             </label>
                             <span id="loading-spinner" class="hidden text-xs text-blue-600 font-mono flex items-center gap-1.5">
                                 <span class="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
-                                Hämtar live-pris från PostNord...
+                                Söker närmaste ombud...
                             </span>
                         </div>
 
                         <div id="shipping-options-list" class="space-y-3">
-                            <!-- Fylls uteslutande från PostNord API -->
+                            <!-- Fylls dynamiskt från PostNord API -->
                         </div>
                     </div>
 
@@ -150,8 +150,8 @@
                             <span id="summary-subtotal">0 kr</span>
                         </div>
                         <div class="flex justify-between text-slate-500">
-                            <span>PostNord Live Frakt</span>
-                            <span id="summary-shipping" class="text-blue-600 font-bold">Hämtas...</span>
+                            <span>Frakt</span>
+                            <span id="summary-shipping" class="text-blue-600 font-bold">0 kr</span>
                         </div>
                         <div class="flex justify-between text-sm font-bold text-slate-900 pt-3 border-t border-slate-100">
                             <span>Totalt att betala</span>
@@ -167,7 +167,7 @@
     <script>
         let cart = [];
         let cartSubtotal = 0;
-        let totalGrams = 0;
+        let totalGrams = 180;
         let availableOptions = [];
         let selectedShippingOption = null;
 
@@ -177,7 +177,7 @@
             } catch(e) { cart = []; }
 
             if (cart.length === 0) {
-                cart = [{ id: "item-001", name: "Emendion LE-Node Mic", price: 1890, quantity: 1, weight: 500, image: "https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" }];
+                cart = [{ id: "item-001", name: "Emendion LE-Node Mic", price: 1890, quantity: 1, weight: 180 }];
             }
 
             renderCart();
@@ -192,7 +192,7 @@
 
             cart.forEach(item => {
                 cartSubtotal += (item.price * item.quantity);
-                totalGrams += (item.weight || 250) * item.quantity;
+                totalGrams += (item.weight || 180) * item.quantity;
 
                 const div = document.createElement('div');
                 div.className = 'flex justify-between items-center text-xs';
@@ -209,7 +209,7 @@
         function updateTotals() {
             const shippingCost = selectedShippingOption ? Math.round(selectedShippingOption.price / 100) : 0;
             document.getElementById('summary-subtotal').textContent = cartSubtotal + " kr";
-            document.getElementById('summary-shipping').textContent = selectedShippingOption ? shippingCost + " kr" : "Krävs live-offert";
+            document.getElementById('summary-shipping').textContent = selectedShippingOption ? shippingCost + " kr" : "Välj frakt";
             document.getElementById('summary-total').textContent = (cartSubtotal + shippingCost) + " kr";
         }
 
@@ -224,8 +224,6 @@
             spinner.classList.remove('hidden');
             container.innerHTML = '';
             proceedBtn.disabled = true;
-            selectedShippingOption = null;
-            updateTotals();
 
             try {
                 const res = await fetch('/api/klarna-shipping-callback', {
@@ -238,13 +236,7 @@
                             street_address: street
                         },
                         package_weight_grams: totalGrams,
-                        purchase_currency: 'SEK',
-                        order_lines: cart.map(i => ({
-                            name: i.name,
-                            quantity: i.quantity,
-                            total_amount: i.price * 100 * i.quantity,
-                            total_tax_amount: Math.round(i.price * 100 * i.quantity * 0.20)
-                        }))
+                        purchase_currency: 'SEK'
                     })
                 });
 
@@ -253,15 +245,16 @@
 
                 if (res.ok && data.shipping_options && data.shipping_options.length > 0) {
                     availableOptions = data.shipping_options;
-                    selectedShippingOption = availableOptions[0];
+                    // Välj ombud om det finns, annars första alternativet
+                    const defaultPick = availableOptions.find(o => o.type === 'pickup_point') || availableOptions[0];
+                    selectedShippingOption = defaultPick;
                     renderShippingOptions(availableOptions);
                     proceedBtn.disabled = false;
                     updateTotals();
                 } else {
-                    const errMsg = data.error || "PostNord kunde inte lämna offert för angivet postnummer.";
                     container.innerHTML = `
                         <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
-                            <strong>Fel från PostNord API --></strong> ${errMsg}
+                            ${data.error || "Inga leveransalternativ hittades för denna adress."}
                         </div>
                     `;
                 }
@@ -269,7 +262,7 @@
                 spinner.classList.add('hidden');
                 container.innerHTML = `
                     <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
-                        Kunde inte kontakta serverless-funktionen (/api/klarna-shipping-callback).
+                        Kunde inte kontakta servern (/api/klarna-shipping-callback).
                     </div>
                 `;
             }
@@ -279,40 +272,73 @@
             const container = document.getElementById('shipping-options-list');
             container.innerHTML = '';
 
-            options.forEach((opt, idx) => {
-                const cost = Math.round(opt.price / 100);
-                const isSelected = idx === 0;
+            const homeOptions = options.filter(o => o.type === 'home');
+            const pickupOptions = options.filter(o => o.type === 'pickup_point');
 
-                const label = document.createElement('label');
-                label.className = `flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${isSelected ? 'border-blue-600 bg-blue-50/20' : 'border-slate-200 hover:border-slate-300 bg-white'}`;
-                label.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <input type="radio" name="shipping_choice" value="${opt.id}" ${isSelected ? 'checked' : ''} onchange="selectShipping('${opt.id}')" class="text-blue-600 focus:ring-blue-500 h-4 w-4">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-900">${opt.name}</p>
-                            <p class="text-[11px] text-slate-500">${opt.description}</p>
-                        </div>
+            // 1. Sektion: Direkt Hemleverans
+            if (homeOptions.length > 0) {
+                const homeHeader = document.createElement('div');
+                homeHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-2';
+                homeHeader.textContent = '🏠 Leverans till dörren';
+                container.appendChild(homeHeader);
+
+                homeOptions.forEach(opt => {
+                    container.appendChild(createOptionCard(opt));
+                });
+            }
+
+            // 2. Sektion: Närmsta Utlämningsställen / Ombud
+            if (pickupOptions.length > 0) {
+                const pickupHeader = document.createElement('div');
+                pickupHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-4';
+                pickupHeader.textContent = '🏪 Välj PostNord-ombud';
+                container.appendChild(pickupHeader);
+
+                pickupOptions.forEach(opt => {
+                    container.appendChild(createOptionCard(opt));
+                });
+            }
+        }
+
+        function createOptionCard(opt) {
+            const cost = Math.round(opt.price / 100);
+            const isSelected = selectedShippingOption && selectedShippingOption.id === opt.id;
+
+            const label = document.createElement('label');
+            label.id = `label-${opt.id}`;
+            label.className = `flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${isSelected ? 'border-blue-600 bg-blue-50/20 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white'}`;
+            
+            label.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <input type="radio" name="shipping_choice" value="${opt.id}" ${isSelected ? 'checked' : ''} onchange="selectShipping('${opt.id}')" class="text-blue-600 focus:ring-blue-500 h-4 w-4">
+                    <div>
+                        <p class="text-xs font-bold text-slate-900">${opt.name}</p>
+                        <p class="text-[11px] text-slate-500">${opt.description}</p>
                     </div>
-                    <span class="text-xs font-mono font-bold text-blue-600">${cost} kr</span>
-                `;
-                container.appendChild(label);
-            });
+                </div>
+                <span class="text-xs font-mono font-bold text-blue-600 shrink-0 ml-3">${cost} kr</span>
+            `;
+            return label;
         }
 
         function selectShipping(id) {
             selectedShippingOption = availableOptions.find(o => o.id === id);
             updateTotals();
+
             document.querySelectorAll('#shipping-options-list label').forEach(lbl => {
-                lbl.classList.remove('border-blue-600', 'bg-blue-50/20');
+                lbl.classList.remove('border-blue-600', 'bg-blue-50/20', 'shadow-sm');
                 lbl.classList.add('border-slate-200');
             });
-            event.target.closest('label').classList.remove('border-slate-200');
-            event.target.closest('label').classList.add('border-blue-600', 'bg-blue-50/20');
+            const active = document.getElementById(`label-${id}`);
+            if (active) {
+                active.classList.remove('border-slate-200');
+                active.classList.add('border-blue-600', 'bg-blue-50/20', 'shadow-sm');
+            }
         }
 
         function goToPaymentStep() {
             if (!selectedShippingOption) {
-                alert("Vänligen välj ett leveransalternativ.");
+                alert("Vänligen välj ett fraktalternativ.");
                 return;
             }
 
@@ -327,10 +353,11 @@
             };
 
             if (!customer.firstName || !customer.email || !customer.zip) {
-                alert("Vänligen fyll i dina adressuppgifter.");
+                alert("Vänligen fyll i namn, e-post och postnummer.");
                 return;
             }
 
+            // Spara vald frakt & adress inför betalning med Klarna
             localStorage.setItem('emendion_customer_address', JSON.stringify(customer));
             localStorage.setItem('emendion_selected_shipping', JSON.stringify(selectedShippingOption));
 
