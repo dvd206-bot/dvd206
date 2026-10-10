@@ -51,7 +51,7 @@
 
   <!-- Success Card -->
   <main class="flex-grow flex items-center justify-center p-4 sm:p-6 my-8">
-    <div class="max-w-lg w-full bg-white border border-slate-200/80 p-8 sm:p-12 rounded-3xl shadow-sm text-center">
+    <div class="max-w-lg w-full bg-white border border-slate-200/80 p-8 sm:p-10 rounded-3xl shadow-sm text-center">
       
       <!-- Checkmark Icon -->
       <div class="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
@@ -61,4 +61,112 @@
       </div>
 
       <p class="text-xs font-mono text-blue-600 font-semibold uppercase tracking-widest mb-2">Klarna Checkout</p>
-      <h1 class="text-2xl sm:text-3xl font-light tracking
+      <h1 class="text-2xl sm:text-3xl font-light tracking-tight text-slate-900 mb-3">Tack för din beställning!</h1>
+      <p class="text-xs text-slate-500 mb-6">En orderbekräftelse har skickats till din e-postadress.</p>
+
+      <!-- Order ID Banner -->
+      <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 mb-6 text-left">
+        <div class="flex justify-between items-center text-xs font-mono mb-2">
+            <span class="text-slate-400">ORDER-ID</span>
+            <span id="display-order-id" class="font-bold text-slate-800">Laddar...</span>
+        </div>
+        <div class="flex justify-between items-center text-xs font-mono mb-2">
+            <span class="text-slate-400">LEVERANS</span>
+            <span id="display-shipping-name" class="font-semibold text-slate-700 truncate max-w-[220px]">PostNord</span>
+        </div>
+        <div class="flex justify-between items-center text-xs font-mono border-t border-slate-200/60 pt-2">
+            <span class="text-slate-400">STATUS MEJL</span>
+            <span id="email-status" class="text-blue-600 flex items-center gap-1 font-semibold">
+                <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                Skickar bekräftelse...
+            </span>
+        </div>
+      </div>
+
+      <!-- Hemknapp -->
+      <a href="index.html" class="inline-block w-full bg-slate-900 hover:bg-slate-800 text-white font-mono text-xs uppercase tracking-wider font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm">
+        Tillbaka till startsidan
+      </a>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-200/70 py-6 text-center text-xs font-mono text-slate-400">
+    Emendion • Alla rättigheter förbehållna
+  </footer>
+
+  <!-- Spara order & trigga e-post -->
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const customer = JSON.parse(localStorage.getItem('emendion_customer_address'));
+        const shipping = JSON.parse(localStorage.getItem('emendion_selected_shipping'));
+        const cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
+
+        // Hämta order_id från Klarna i URL:en (?order_id=xyz) eller generera ett
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('order_id') || ('ORD-' + Math.floor(100000 + Math.random() * 900000));
+
+        const orderIdEl = document.getElementById('display-order-id');
+        const shippingNameEl = document.getElementById('display-shipping-name');
+        const emailStatusEl = document.getElementById('email-status');
+
+        if (orderIdEl) orderIdEl.textContent = orderId;
+        if (shippingNameEl && shipping) shippingNameEl.textContent = shipping.name;
+
+        // Kontrollera om ordern redan skickats under denna session för att förhindra dubbletter vid refresh
+        if (sessionStorage.getItem('order_submitted_' + orderId)) {
+            if (emailStatusEl) {
+                emailStatusEl.className = 'text-emerald-600 font-semibold';
+                emailStatusEl.textContent = '✓ Skickat tidigare';
+            }
+            return;
+        }
+
+        if (customer && cart.length > 0) {
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            let shippingCost = shipping ? Math.round(shipping.price / 100) : 0;
+            let totalAmount = subtotal + shippingCost;
+
+            try {
+                const res = await fetch('/api/send-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer: customer,
+                        shipping: shipping,
+                        items: cart,
+                        order_id: orderId,
+                        total_amount: totalAmount
+                    })
+                });
+
+                if (res.ok) {
+                    sessionStorage.setItem('order_submitted_' + orderId, 'true');
+                    if (emailStatusEl) {
+                        emailStatusEl.className = 'text-emerald-600 font-semibold';
+                        emailStatusEl.textContent = '✓ Skickat till ' + customer.email;
+                    }
+                    // Töm varukorgen nu när köpet och mejlet är klart
+                    localStorage.removeItem('emendion_cart');
+                } else {
+                    if (emailStatusEl) {
+                        emailStatusEl.className = 'text-amber-600 font-semibold';
+                        emailStatusEl.textContent = 'Order sparad (mejlet köas)';
+                    }
+                }
+            } catch (err) {
+                console.error("Fel vid anrop till /api/send-order -->", err);
+                if (emailStatusEl) {
+                    emailStatusEl.className = 'text-slate-500 font-semibold';
+                    emailStatusEl.textContent = 'Klar';
+                }
+            }
+        } else {
+            if (emailStatusEl) {
+                emailStatusEl.className = 'text-slate-400 font-semibold';
+                emailStatusEl.textContent = 'Ingen aktiv session';
+            }
+        }
+    });
+  </script>
+</body>
+</html>
