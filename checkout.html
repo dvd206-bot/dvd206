@@ -295,72 +295,75 @@
         }
 
         // Anropar servern för att PostNord ska beräkna det dynamiska priset
-        async function testShippingCalculation() {
-            const country = document.getElementById('sim-country').value;
-            const zip = document.getElementById('sim-zip').value.trim();
-            const optionsContainer = document.getElementById('sim-shipping-options');
-            const loader = document.getElementById('shipping-loading');
-            const completeBtn = document.getElementById('complete-btn');
+        // Byt ut funktionen testShippingCalculation() i checkout.html mot denna:
+async function testShippingCalculation() {
+    const country = document.getElementById('sim-country').value;
+    const zip = document.getElementById('sim-zip').value.trim();
+    const optionsContainer = document.getElementById('sim-shipping-options');
+    const loader = document.getElementById('shipping-loading');
+    const completeBtn = document.getElementById('complete-btn');
 
-            loader.classList.remove('hidden');
-            optionsContainer.innerHTML = '';
-            completeBtn.disabled = true;
+    loader.classList.remove('hidden');
+    optionsContainer.innerHTML = '';
+    if (completeBtn) completeBtn.disabled = true;
 
-            let cart = [];
-            try {
-                cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
-            } catch (e) {
-                cart = [];
-            }
+    let cart = [];
+    try {
+        cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
+    } catch (e) {
+        cart = [];
+    }
 
-            // Skickar faktisk varukorg och totalvikt till callbacken
-            const payload = {
-                shipping_address: {
-                    country: country,
-                    postal_code: zip
-                },
-                package_weight_grams: totalWeightGrams,
-                purchase_currency: currentCurrency,
-                order_lines: cart.map(item => ({
-                    id: item.id,
-                    name: item.name,
-                    quantity: item.quantity,
-                    weight_grams: productWeights[item.id] || 350,
-                    total_amount: Math.round(item.price * 100 * item.quantity),
-                    total_tax_amount: Math.round(item.price * 100 * item.quantity * 0.20)
-                }))
-            };
+    const payload = {
+        shipping_address: {
+            country: country,
+            postal_code: zip
+        },
+        package_weight_grams: totalWeightGrams || 180,
+        purchase_currency: currentCurrency,
+        order_lines: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            total_amount: Math.round(item.price * 100 * item.quantity),
+            total_tax_amount: Math.round(item.price * 100 * item.quantity * 0.20)
+        }))
+    };
 
-            try {
-                const res = await fetch('klarna-shipping-callback.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+    try {
+        // Anropa Vercel serverless endpoint
+        const res = await fetch('/api/klarna-shipping-callback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
 
-                const data = await res.json();
-                loader.classList.add('hidden');
+        const data = await res.json();
+        loader.classList.add('hidden');
 
-                if (data.shipping_options && data.shipping_options.length > 0) {
-                    renderShippingOptions(data.shipping_options);
-                    completeBtn.disabled = false;
-                } else {
-                    const errorMsg = data.error || "PostNord API kunde inte beräkna frakt för angivet postnummer.";
-                    optionsContainer.innerHTML = `
-                        <div class="p-4 bg-amber-50 text-amber-800 text-xs font-mono rounded-xl border border-amber-200">
-                            <strong>Fel från PostNord API --></strong> ${errorMsg}
-                        </div>
-                    `;
-                }
-            } catch (err) {
-                loader.classList.add('hidden');
-                optionsContainer.innerHTML = `
-                    <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
-                        Kunde inte kontakta servern (klarna-shipping-callback.php). Kontrollera att filen är uppladdad på Loopia.
-                    </div>
-                `;
-            }
+        if (data.shipping_options && data.shipping_options.length > 0) {
+            renderShippingOptions(data.shipping_options);
+            if (completeBtn) completeBtn.disabled = false;
+        } else {
+            // Om fel returneras, formatera det som ren text (inte [object Object])
+            const rawError = data.error || "Inga fraktalternativ kunde hämtas.";
+            const errorMsg = typeof rawError === 'object' ? JSON.stringify(rawError) : rawError;
+            
+            optionsContainer.innerHTML = `
+                <div class="p-4 bg-amber-50 text-amber-800 text-xs font-mono rounded-xl border border-amber-200">
+                    <strong>Information --></strong> ${errorMsg}
+                </div>
+            `;
         }
+    } catch (err) {
+        loader.classList.add('hidden');
+        optionsContainer.innerHTML = `
+            <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
+                Kunde inte ansluta till /api/klarna-shipping-callback. Kontrollera att filen finns i mappen api/ och är deployad.
+            </div>
+        `;
+    }
+}
 
         function renderShippingOptions(options) {
             const container = document.getElementById('sim-shipping-options');
