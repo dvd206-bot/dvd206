@@ -82,15 +82,15 @@ module.exports = async (req, res) => {
             </table>
 
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0 16px 0;">
-            <p style="font-size: 12px; color: #94a3b8; margin: 0; text-align: center;">Emendion • Vi skickar ditt paket så snart det har packats.</p>
+            <p style="font-size: 12px; color: #94a3b8; margin: 0; text-align: center;">Sincerly, Emendion</p>
         </div>
     `;
 
     try {
         await transporter.sendMail({
             from: `"Emendion" <${mailUser}>`,
-            to: customer.email,                           // Skickas till kunden
-            bcc: mailUser,                                // Skickar kopia direkt till din egen Loopia-inkorg
+            to: customer.email,                           
+            bcc: mailUser,                                
             subject: `Orderbekräftelse #${order_id || ''} - Emendion`,
             html: mailHtml
         });
