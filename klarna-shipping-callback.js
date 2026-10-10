@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     // POSTNORD API-KONFIGURATION
     // -------------------------------------------------------------
-    const postnord_api_key    = process.env.POSTNORD_API_KEY || "DIN_POSTNORD_API_KEY";
+    const postnord_api_key    = process.env.POSTNORD_API_KEY || "0dcf57ae801653934a0b868e8fb81f87";
     const sender_postal_code  = "90336";
     const sender_country_code = "SE";
 
