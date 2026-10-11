@@ -14,28 +14,29 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased">
 
-    // Header 
-<header class="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200/70">
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200/70">
         <div class="w-full px-4 sm:px-10 lg:px-16 2xl:px-24">
             <div class="flex justify-between items-center h-16 sm:h-20">
-                // Logotyp 
+                <!-- Logotyp -->
                 <a href="index.html" class="flex items-center group py-2">
                     <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" 
                          alt="Emendion" 
                          class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
                 </a>
-        <div class="flex items-center gap-2 text-xs font-mono font-semibold">
-            <span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">1. Leverans & Ombud</span>
-            <span class="text-slate-300">───</span>
-            <span class="text-slate-400">2. Betalning (Klarna)</span>
+                <div class="flex items-center gap-2 text-xs font-mono font-semibold">
+                    <span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">1. Leverans & Ombud</span>
+                    <span class="text-slate-300">───</span>
+                    <span class="text-slate-400">2. Betalning (Klarna)</span>
+                </div>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            // Vänsterkolumn: Adressformulär och val av leverans 
+            <!-- Vänsterkolumn: Adressformulär och val av leverans -->
             <div class="lg:col-span-7 space-y-6">
                 
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
@@ -46,7 +47,7 @@
 
                     <form id="shipping-form" onsubmit="event.preventDefault(); fetchShippingOptions();" class="space-y-4">
                         
-                        // Land
+                        <!-- Land -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Land / Destination</label>
                             <select id="country" onchange="onCountryChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50 font-mono">
@@ -76,7 +77,7 @@
                             </select>
                         </div>
 
-                        // Förnamn och Efternamn 
+                        <!-- Förnamn och Efternamn -->
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Förnamn</label>
@@ -88,21 +89,21 @@
                             </div>
                         </div>
 
-                        // E-postadress
+                        <!-- E-postadress -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">E-postadress</label>
                             <input type="email" id="email" required placeholder="namn@exempel.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
-                        // Landskod + Telefonnummer
+                        <!-- Landskod + Telefonnummer -->
                         <div>
                             <div class="grid grid-cols-12 gap-2 sm:gap-3">
-                                //Landskod 
+                                <!-- Landskod -->
                                 <div class="col-span-4 sm:col-span-3">
                                     <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1 truncate">Landskod</label>
                                     <input type="text" id="phone-prefix" value="+46" placeholder="+46" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-mono text-center focus:ring-2 focus:ring-blue-500 bg-slate-50">
                                 </div>
-                                // Mobilnummer 
+                                <!-- Mobilnummer -->
                                 <div class="col-span-8 sm:col-span-9">
                                     <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Mobilnummer</label>
                                     <input type="tel" id="phone-number" placeholder="ex. 70 123 45 67" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-blue-500">
@@ -110,13 +111,13 @@
                             </div>
                         </div>
 
-                        // Gatuadress 
+                        <!-- Gatuadress -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Gatuadress</label>
                             <input type="text" id="street" placeholder="Gata och nummer" onblur="fetchShippingOptions()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
-                        // Postnummer & Ort 
+                        <!-- Postnummer & Ort -->
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Postnummer</label>
@@ -132,7 +133,7 @@
                         </div>
                     </form>
 
-                    // Val av Leverans
+                    <!-- Val av Leverans -->
                     <div class="mt-8 pt-6 border-t border-slate-100">
                         <div class="flex justify-between items-center mb-3">
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider">
@@ -145,11 +146,11 @@
                         </div>
 
                         <div id="shipping-options-list" class="space-y-3">
-                            // Fylls  från PostNord API 
+                            <!-- Fylls från PostNord API -->
                         </div>
                     </div>
 
-                    // Fortsätt-knapp //
+                    <!-- Fortsätt-knapp -->
                     <div class="mt-8 pt-6 border-t border-slate-100">
                         <button type="button" id="proceed-btn" onclick="goToPaymentStep()" disabled class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white py-4 px-6 rounded-xl font-mono font-bold tracking-wider uppercase text-sm shadow-md transition-all flex items-center justify-center gap-2">
                             <span>Fortsätt till betalning</span>
@@ -161,7 +162,7 @@
 
             </div>
 
-            <!-- Högerkolumn: Varukorgssammanfattning -->
+            <!-- Högerkolumn - Varukorgssammanfattning -->
             <div class="lg:col-span-5">
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm sticky top-24">
                     <h2 class="text-base font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Varukorg</h2>
