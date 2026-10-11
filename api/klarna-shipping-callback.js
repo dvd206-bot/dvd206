@@ -16,7 +16,6 @@ module.exports = async (req, res) => {
 
     // POSTNORD API
     const postnord_api_key         = process.env.POSTNORD_API_KEY || "0dcf57ae801653934a0b868e8fb81f87";
-    const postnord_customer_number = process.env.POSTNORD_CUSTOMER_NUMBER || "20934030";
     const sender_postal_code       = "90336"; 
     const sender_country_code      = "SE";
 
@@ -29,70 +28,20 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: "Postnummer saknas." });
     }
 
-    const total_grams = parseInt(data.package_weight_grams, 10) || 180;
-    const weight_kg   = Math.max(0.1, Number((total_grams / 1000).toFixed(2)));
-
     const isNordic = ['SE', 'DK', 'FI', 'NO'].includes(dest_country);
 
 
     // beräknande av baspris (POSTNORD LIVE PRICE ELLER PORTOTABELL)
     let base_collect_price = null;
 
-    try {
-        const priceParams = new URLSearchParams({
-            apikey: postnord_api_key,
-            returnType: 'json',
-            fromCountryCode: sender_country_code,
-            fromPostalCode: sender_postal_code,
-            toCountryCode: dest_country,
-            toPostalCode: dest_postal_code,
-            weight: weight_kg.toString(),
-            serviceCode: isNordic ? '19' : '18'
-        });
-
-        if (postnord_customer_number && postnord_customer_number !== "DITT_KUNDNUMMER_HAR") {
-            priceParams.append('customerAgreementId', postnord_customer_number);
-        }
-
-        const priceRes = await fetch(`https://api2.postnord.com/rest/transport/v1/price?${priceParams.toString()}`, {
-            headers: { 'Accept': 'application/json' }
-        });
-
-        if (priceRes.ok) {
-            const priceData = await priceRes.json();
-            const val = priceData?.priceCalculationResponse?.price?.amount
-                ?? priceData?.priceCalculationResponse?.prices?.[0]?.amount
-                ?? priceData?.priceCalculation?.grossPrice
-                ?? priceData?.price?.amount
-                ?? priceData?.grossPrice
-                ?? priceData?.netAmount
-                ?? priceData?.amount;
-            if (val !== undefined && val !== null && !isNaN(Number(val))) {
-                base_collect_price = Number(val);
-            }
-        }
-    } catch (e) {
-        // (Går vidare till portotabell om Price API kräver avtal)
-    }
-
-    if (base_collect_price === null) {
-        if (dest_country === 'SE') {
-            const destZone = parseInt(dest_postal_code.substring(0, 2), 10) || 50;
-            const isLocal = destZone >= 90 && destZone <= 93;
-            const isGotland = destZone === 62;
-            const isFarSouth = destZone <= 40;
-            let dynamicRate = 69;
-            if (isGotland) dynamicRate = 99;
-            else if (isFarSouth) dynamicRate = 85;
-            else if (!isLocal) dynamicRate = 75;
-            base_collect_price = dynamicRate + (weight_kg > 1.0 ? 30 : 0);
-        } else if (isNordic) {
-            base_collect_price = 119 + Math.round(weight_kg * 20);
-        } else if (['DE', 'FR', 'NL', 'GB', 'ES', 'IT'].includes(dest_country)) {
-            base_collect_price = 159 + Math.round(weight_kg * 25);
-        } else {
-            base_collect_price = 219 + Math.round(weight_kg * 35);
-        }
+    if (dest_country === 'SE') {
+        base_collect_price = 69;
+    } else if (isNordic) {
+        base_collect_price = 139;
+    } else if (['DE', 'FR', 'NL', 'GB', 'ES', 'IT', 'AT', 'BE', 'PL'].includes(dest_country)) {
+        base_collect_price = 159;
+    } else {
+        base_collect_price = 209;
     }
 
     const collect_minor = Math.round(base_collect_price * 100);
