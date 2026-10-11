@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Betalning - Emendion</title>
+    <title>Checkout - Emendion</title>
 
     <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +14,7 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased">
 
-    <!-- Header med Steg-indikator -->
+    //header
     <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200/70">
         <div class="w-full px-4 sm:px-10 lg:px-16 2xl:px-24">
             <div class="flex justify-between items-center h-16 sm:h-20">
@@ -24,15 +24,15 @@
                          alt="Emendion" 
                          class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
                 </a>
-    </header>
+    </header> 
 
     <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Vänsterkolumn: Vald frakt & Klarna Iframe -->
+            //vald frakt/klarana
             <div class="lg:col-span-7 space-y-6">
                 
-                <!-- Sammanfattning av vald leverans -->
+                //val av frakt
                 <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
                     <div>
                         <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Valt utlämningsställe / leverans</span>
@@ -44,7 +44,7 @@
                     </a>
                 </div>
 
-                <!-- Klarna Checkout Container -->
+                // Klarna Checkout Container 
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                         <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Klarna Checkout</h2>
@@ -61,7 +61,7 @@
 
             </div>
 
-            <!-- Högerkolumn: Totalbelopp -->
+            //Totalbelopp 
             <div class="lg:col-span-5">
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm sticky top-24">
                     <h2 class="text-base font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Orderöversikt</h2>
@@ -97,7 +97,7 @@
             selectedShipping = JSON.parse(localStorage.getItem('emendion_selected_shipping'));
             cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
 
-            // Om kunden inte valt frakt först --> skicka till steg 1
+            // Om kunden inte valt frakt först --> skicka till frakt-sidan
             if (!customer || !selectedShipping) {
                 window.location.href = 'shipping.html';
                 return;
@@ -147,7 +147,7 @@
 
                 if (data.html_snippet) {
                     container.innerHTML = data.html_snippet;
-                    // Kör Klarnas inbäddade JavaScript
+                    // Kör Klarnas JavaScript
                     const scripts = container.getElementsByTagName("script");
                     for (let s of scripts) {
                         const newScript = document.createElement("script");
@@ -155,7 +155,7 @@
                         document.body.appendChild(newScript);
                     }
                 } else if (data.mock) {
-                    // Visas innan du lagt in skarpa Klarna-uppgifter
+                    // testköp hos klarna
                     container.innerHTML = `
                         <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center">
                             <span class="text-xs font-mono text-pink-600 font-bold uppercase tracking-wider block mb-2">Klarna Redo</span>
