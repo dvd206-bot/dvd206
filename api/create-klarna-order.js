@@ -21,15 +21,13 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Varukorgen är tom.' });
     }
 
-    // -------------------------------------------------------------
-    // KLARNA API-KONFIGURATION
     // Playground (Test) --> https://api.playground.klarna.com
     // Production (Skarpt) --> https://api.klarna.com
-    // -------------------------------------------------------------
+
     const klarna_endpoint = process.env.KLARNA_ENDPOINT || "https://api.playground.klarna.com/checkout/v3/orders";
     const klarna_uid      = process.env.KLARNA_UID || "DITT_KLARNA_UID";
     const klarna_password = process.env.KLARNA_PASSWORD || "DITT_KLARNA_PASSWORD";
-    // -------------------------------------------------------------
+
 
     const currency = String(data.currency || 'SEK').toUpperCase();
     const customer = data.customer || {};
@@ -40,13 +38,13 @@ module.exports = async (req, res) => {
     let order_amount = 0;
     let order_tax_amount = 0;
 
-    // 1. Bygg orderrader för produkterna
+    //  orderrader för produkterna
     data.items.forEach(item => {
         const qty = parseInt(item.quantity, 10) || 1;
         const unit_price = Math.round(Number(item.price) * 100); // Belopp i öre/cents
         const total_line_amount = unit_price * qty;
 
-        // Momsberäkning (25 % moms inrikes/EU, 0 % utanför EU)
+        // Momsberäkning (25 % moms inrikes/EU, 0 % utanför EU) (måste fixas)
         const isEU = ['SE', 'DK', 'FI', 'DE', 'FR', 'NL', 'ES', 'IT', 'BE', 'AT', 'PL'].includes(country);
         const tax_rate = isEU ? 2500 : 0;
         const line_tax_amount = tax_rate > 0 ? Math.round(total_line_amount * 0.20) : 0;
@@ -65,7 +63,7 @@ module.exports = async (req, res) => {
         });
     });
 
-    // 2. Lägg till vald PostNord-frakt från steg 1 som en fast fraktrad
+    //Lägg till vald PostNord-frakt som en fast fraktrad
     const shipping_option = data.shipping_option || {
         id: 'postnord_standard',
         name: 'PostNord Frakt',
@@ -91,12 +89,11 @@ module.exports = async (req, res) => {
         total_tax_amount: shipping_tax_amount
     });
 
-    // Fastställ basadressen från Vercel
     const protocol = req.headers['x-forwarded-proto'] || 'https';
     const host = req.headers.host;
     const base_url = `${protocol}://${host}`;
 
-    // 3. Klarna Checkout-payload med förvald adress och låst frakt
+    // Klarna Checkout-payload med förvald adress och låst frakt (så man inte kan ändra och betala mindre)
     const payload = {
         purchase_country: country,
         purchase_currency: currency,
@@ -134,7 +131,7 @@ module.exports = async (req, res) => {
         }
     };
 
-    // Mock-läge om Klarna API-nycklar inte lagts till i Vercel ännu
+    // testläge
     if (klarna_uid === "DITT_KLARNA_UID" || !process.env.KLARNA_UID) {
         return res.status(200).json({
             mock: true,
@@ -144,7 +141,7 @@ module.exports = async (req, res) => {
         });
     }
 
-    // 4. Anropa Klarna Checkout API med Basic Auth
+    // Klarna checkout API 
     try {
         const authString = Buffer.from(`${klarna_uid}:${klarna_password}`).toString('base64');
         const klarnaRes = await fetch(klarna_endpoint, {

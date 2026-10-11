@@ -1,5 +1,3 @@
-// api/klarna-shipping-callback.js
-
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -16,11 +14,9 @@ module.exports = async (req, res) => {
 
     const data = req.body || {};
 
-    // -------------------------------------------------------------
-    // POSTNORD API-KONFIGURATION
-    // -------------------------------------------------------------
+    // POSTNORD API
     const postnord_api_key    = process.env.POSTNORD_API_KEY || "0dcf57ae801653934a0b868e8fb81f87";
-    const sender_postal_code  = "90336"; // Umeå
+    const sender_postal_code  = "90336"; 
     const sender_country_code = "SE";
 
     const shipping_address = data.shipping_address || {};
@@ -37,9 +33,8 @@ module.exports = async (req, res) => {
 
     const isNordic = ['SE', 'DK', 'FI', 'NO'].includes(dest_country);
 
-    // -------------------------------------------------------------
-    // 1. BERÄKNA BASPRIS (POSTNORD LIVE PRICE ELLER PORTOTABELL)
-    // -------------------------------------------------------------
+
+    // beräknande av baspris (POSTNORD LIVE PRICE ELLER PORTOTABELL)
     let base_collect_price = null;
 
     try {
@@ -66,7 +61,7 @@ module.exports = async (req, res) => {
             }
         }
     } catch (e) {
-        // Går vidare till portotabell om Price API kräver avtal
+        // (Går vidare till portotabell om Price API kräver avtal)
     }
 
     if (base_collect_price === null) {
@@ -85,14 +80,13 @@ module.exports = async (req, res) => {
     const home_minor    = collect_minor + 6000; // +60 kr för hemleverans direkt till dörren
     const tax_rate      = isNordic ? 2500 : 0;
 
-    // -------------------------------------------------------------
-    // 2. HÄMTA NÄRMASTE OMBUD LIVE FRÅN POSTNORD SERVICE POINT API
-    // -------------------------------------------------------------
+    // hämta närmaste ombud (postnord service point API) -- fungerar enbart till elverans i norden
+
     let ombud_list = [];
 
     if (isNordic) {
         try {
-            // Försök 1: Sök med gatuadress och postnummer
+            // Sök med gatuadress och postnummer
             const spParams = new URLSearchParams({
                 apikey: postnord_api_key,
                 returnType: 'json',
@@ -115,7 +109,7 @@ module.exports = async (req, res) => {
                 ombud_list = spData?.servicePointInformationResponse?.servicePoints || [];
             }
 
-            // Försök 2: Fallback på enbart postnummer om gatuadressen inte gav träff
+            // Fallback på enbart postnummer om gatuadressen inte gav någon träff
             if (ombud_list.length === 0) {
                 const fallbackUrl = `https://api2.postnord.com/rest/businesslocation/v5/servicepoints/bypostalcode?apikey=${encodeURIComponent(postnord_api_key)}&returnType=json&countryCode=${encodeURIComponent(dest_country)}&postalCode=${encodeURIComponent(dest_postal_code)}`;
                 const fbRes = await fetch(fallbackUrl, { headers: { 'Accept': 'application/json' } });
@@ -129,9 +123,8 @@ module.exports = async (req, res) => {
         }
     }
 
-    // -------------------------------------------------------------
-    // 3. SKAPA STRUKTURERADE LEVERANSALTERNATIV
-    // -------------------------------------------------------------
+    // skapa leveransalternativ
+
     let shipping_options = [];
 
     // Alternativ A --> Hemleverans direkt till dörren
@@ -147,7 +140,7 @@ module.exports = async (req, res) => {
         preselected: false
     });
 
-    // Alternativ B --> Ombud / Utlämningsställen
+    // Ombud / Utlämningsställen
     if (ombud_list.length > 0) {
         ombud_list.forEach((sp, idx) => {
             const streetName = sp.visitingAddress?.streetName ? `${sp.visitingAddress.streetName}` : '';
@@ -170,7 +163,7 @@ module.exports = async (req, res) => {
             });
         });
     } else {
-        // Internationellt eller om inga ombud finns i registret
+        // Internationellt eller om inga ombud finns i registret (utanför norden)
         shipping_options.push({
             id: "postnord_parcel_collect",
             type: "pickup_point",

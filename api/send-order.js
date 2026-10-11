@@ -1,5 +1,5 @@
-// api/send-order.js
 const nodemailer = require('nodemailer');
+const mysql = require('mysql2/promise');
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,10 +16,60 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Kunduppgifter eller e-post saknas.' });
     }
 
+    // Spara ordern Loopia MariaDB (emendion_com_db_2)
+    let dbSuccess = false;
+    let dbError = null;
+
+    try {
+        const db = await mysql.createConnection({
+            host: process.env.LOOPIA_DB_HOST || 'mysql681.loopia.se',
+            user: process.env.LOOPIA_DB_USER || 'DITT_DATABAS_ANVANDARNAMN',
+            password: process.env.LOOPIA_DB_PASSWORD || 'DITT_DATABAS_LOSENORD',
+            database: process.env.LOOPIA_DB_NAME || 'emendion_com_db_2',
+            connectTimeout: 8000
+        });
+
+        const insertSql = `
+            INSERT INTO orders (
+                order_id, first_name, last_name, email, phone,
+                street_address, postal_code, city, country,
+                shipping_name, shipping_details, shipping_cost,
+                items_json, total_amount
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE payment_status = VALUES(payment_status)
+        `;
+
+        const shippingCost = shipping?.price ? Math.round(Number(shipping.price) / 100) : 0;
+
+        await db.execute(insertSql, [
+            order_id || `ORD-${Date.now()}`,
+            customer.firstName || '',
+            customer.lastName || '',
+            customer.email,
+            customer.phone || '',
+            customer.street || '',
+            customer.zip || '',
+            customer.city || '',
+            customer.country || 'SE',
+            shipping?.name || 'PostNord',
+            shipping?.description || '',
+            shippingCost,
+            JSON.stringify(items || []),
+            total_amount || 0
+        ]);
+
+        await db.end();
+        dbSuccess = true;
+    } catch (err) {
+        console.error("Fel vid sparning till Loopia DB -->", err);
+        dbError = err.message;
+    }
+
+    //  orderbekräftelsemejl via Loopia SMTP
     const mailUser = process.env.LOOPIA_EMAIL || 'order@emendion.com';
     const mailPass = process.env.LOOPIA_EMAIL_PASS || 'perspolis11#X';
 
-    // Loopia SMTP via port 587 (STARTTLS) för stabil anslutning från Vercel
+    // Loopia SMTP via port 587 (STARTTLS)
     const transporter = nodemailer.createTransport({
         host: 'mailcluster.loopia.se',
         port: 587,
@@ -33,7 +83,7 @@ module.exports = async (req, res) => {
         }
     });
 
-    // Formatera artikellistan för mejlet
+    // artikellistan för mejlet
     const itemsHtml = (items || []).map(i => {
         const qty = parseInt(i.quantity, 10) || 1;
         const lineTotal = (Number(i.price) || 0) * qty;
@@ -61,7 +111,7 @@ module.exports = async (req, res) => {
             <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0 0 10px 0;">Leveransdetaljer</h3>
             <p style="font-size: 14px; line-height: 1.6; margin: 0; color: #334155;">
                 <strong>Recipient --></strong> ${customer.firstName} ${customer.lastName}<br>
-                <strong>Phone-Number--></strong> ${customer.phone || 'Ej angivet'}<br>
+                <strong>Phone-Number --></strong> ${customer.phone || 'Ej angivet'}<br>
                 <strong>Way of Delivery --></strong> ${shippingName}<br>
                 <strong>Location / Dropoff --></strong> ${shippingDesc}
             </p>
@@ -82,22 +132,31 @@ module.exports = async (req, res) => {
             </table>
 
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0 16px 0;">
-            <p style="font-size: 12px; color: #94a3b8; margin: 0; text-align: center;">Sincerly, Emendion</p>
+            <p style="font-size: 12px; color: #94a3b8; margin: 0; text-align: center;">Sincerely, Emendion</p>
         </div>
     `;
 
     try {
         await transporter.sendMail({
             from: `"Emendion" <${mailUser}>`,
-            to: customer.email,                           
-            bcc: mailUser,                                
+            to: customer.email,
+            bcc: mailUser,
             subject: `Orderbekräftelse #${order_id || ''} - Emendion`,
             html: mailHtml
         });
 
-        return res.status(200).json({ success: true, message: "Bekräftelsemejl skickat." });
+        return res.status(200).json({ 
+            success: true, 
+            db_saved: dbSuccess,
+            db_error: dbError,
+            message: "Bekräftelsemejl skickat och order sparad i databas." 
+        });
     } catch (err) {
         console.error("Fel vid Loopia SMTP-anrop -->", err);
-        return res.status(500).json({ error: `Kunde inte skicka mejl --> ${err.message}` });
+        return res.status(500).json({ 
+            error: `Kunde inte skicka mejl --> ${err.message}`,
+            db_saved: dbSuccess,
+            db_error: dbError
+        });
     }
 };
