@@ -10,7 +10,7 @@
     <link rel="alternate icon" href="https://emendion.com/favicon.ico">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -235,11 +235,11 @@
         const products = [
             {
                 id: "item-001",
-                name: "Emendion LE-Node Mic",
-                tagline: "Ultra-low latency LE Audio system",
+                name: "Aspen Aura",
+                tagline: "ULTRA-LOW LATENCY LE AUDIO SYSTEM",
                 description: "Professional wireless microphone system engineered for ultra-low latency and robust audio transmission via Bluetooth LE Audio.",
                 price: 2490,
-                image: "aspenaura.png",
+                images: ["picture/Aspen Aura.png"],
                 specs: [
                     { label: "Dimensions", value: "28 × 20 × 11 mm" },
                     { label: "Weight", value: "5 g" },
@@ -265,11 +265,11 @@
             },
             {
                 id: "item-002",
-                name: "Emendion Audio Base Core",
-                tagline: "Complete Hub & System Package",
-                description: "Complete hardware package featuring the full audio interface and routing capabilities for studio and mobile setups.",
+                name: "Aspen Module",
+                tagline: "DSP RECEIVER & HUB INTERFACE",
+                description: "Central hardware hub featuring integrated DSP and digital I2S routing for demanding stage and studio environments.",
                 price: 3890,
-                image: "total.png",
+                images: ["picture/Aspen Module/Aspen Module_USB.png", "picture/Aspen Module/Aspen Module.png" ],
                 specs: [
                     { label: "DSP Architecture", value: "32-bit Floating Point Hub" },
                     { label: "Audio Interface", value: "Digital I2S & USB-C Audio Class" },
@@ -281,23 +281,59 @@
             },
             {
                 id: "item-003",
-                name: "Emendion Aura Receiver",
-                tagline: "Plug-and-play LE Audio Interface",
-                description: "Compact USB-C receiver that brings low-latency LE Audio reception to any desktop, laptop, or mobile workstation.",
+                name: "Aspen Kit",
+                tagline: "EMBEDDED MINIATURE TRANSMITTER",
+                description: "Compact transmitter unit encased in CNC-machined aluminum with custom antenna design for maximum range.",
                 price: 1590,
-                image: "receiver.png",
+                images: ["picture/Aspen Kit.png"],
                 specs: [
                     { label: "Sampling Frequency", value: "Up to 48 kHz" },
                     { label: "Firmware Upgrade", value: "USB-C" },
                     { label: "Codec (BLE Audio)", value: "LC3" },
                     { label: "Bit Depth", value: "24 bit" }
                 ]
-            }
+            },
+            {
+                id: "item-004",
+                name: "Aspen Wind",
+                tagline: "EMBEDDED MINIATURE TRANSMITTER",
+                description: "Compact transmitter unit encased in CNC-machined aluminum with custom antenna design for maximum range.",
+                price: 1590,
+                images: ["picture/Aspen Wind.png"]
+            },
+            {
+                id: "item-005",
+                name: "Aspen Transmitter/Receiver",
+                tagline: "EMBEDDED MINIATURE TRANSMITTER",
+                description: "Compact transmitter unit encased in CNC-machined aluminum with custom antenna design for maximum range.",
+                price: 1590,
+                images: ["picture/Aspen Aura Transmitter.png"]
+            },
+            {
+                id: "item-006",
+                name: "Aspen Module",
+                tagline: "DSP RECEIVER & HUB INTERFACE",
+                description: "Central hardware hub featuring integrated DSP and digital I2S routing for demanding stage and studio environments.",
+                price: 3890,
+                images: ["picture/Aspen Module/Aspen Module.png" ],
+            },
         ];
 
         const params = new URLSearchParams(window.location.search);
         const currentId = params.get('id') || "item-001";
         const currentProduct = products.find(p => p.id === currentId) || products[0];
+
+        function getProductImages(product) {
+            if (Array.isArray(product.images) && product.images.length > 0) {
+                return product.images;
+            }
+            if (product.image) {
+                return [product.image];
+            }
+            return [];
+        }
+
+        const currentProductImages = getProductImages(currentProduct);
 
         function updateProductPrice() {
             document.getElementById('p-price').textContent = formatPrice(currentProduct.price);
@@ -363,7 +399,7 @@
         document.getElementById('p-title').textContent = currentProduct.name;
         document.getElementById('p-tagline').textContent = currentProduct.tagline;
         document.getElementById('p-description').textContent = currentProduct.description;
-        document.getElementById('p-image').src = currentProduct.image;
+        document.getElementById('p-image').src = currentProductImages[0] || '';
         document.getElementById('p-image').alt = currentProduct.name;
         updateProductPrice();
         renderProductSpecs();
@@ -385,6 +421,7 @@
         function addProductToCart() {
             let cart = getCart();
             const existing = cart.find(item => item.id === currentProduct.id);
+            const firstImg = currentProductImages[0] || '';
 
             if (existing) {
                 existing.quantity += 1;
@@ -393,7 +430,7 @@
                     id: currentProduct.id,
                     name: currentProduct.name,
                     price: currentProduct.price,
-                    image: currentProduct.image,
+                    image: firstImg,
                     quantity: 1
                 });
             }

@@ -188,6 +188,10 @@
         let currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
 
         function formatPrice(amountInSek) {
+            if (typeof amountInSek !== 'number' || isNaN(amountInSek)) {
+                return amountInSek;
+            }
+
             const config = currencies[currentCurrency] || currencies.SEK;
             const converted = Math.round(amountInSek * config.rate);
             const formattedNum = converted.toLocaleString(config.locale);
@@ -196,7 +200,7 @@
                 return `${config.symbol}${formattedNum}`;
             }
             return `${formattedNum} ${config.symbol}`;
-        }
+}
 
         function changeCurrency(newCurrency) {
             if (!currencies[newCurrency]) return;
@@ -221,7 +225,7 @@
                 name: "Aspen Module",
                 tagline: "DSP RECEIVER & HUB INTERFACE",
                 description: "Central hardware hub featuring integrated DSP and digital I2S routing for demanding stage and studio environments.",
-                price: 3890,
+                price: "Contact for pricing",
                 images: ["picture/Aspen Module/Aspen Module_USB.png", "picture/Aspen Module/Aspen Module.png" ]
             },
             {
@@ -248,7 +252,15 @@
                 description: "Compact transmitter unit encased in CNC-machined aluminum with custom antenna design for maximum range.",
                 price: 1590,
                 images: ["picture/Aspen Aura Transmitter.png"]
-            }
+            },
+            {
+                id: "item-006",
+                name: "Aspen Module",
+                tagline: "DSP RECEIVER & HUB INTERFACE",
+                description: "Central hardware hub featuring integrated DSP and digital I2S routing for demanding stage and studio environments.",
+                price: "Contact for pricing",
+                images: ["picture/Aspen Module/Aspen Module.png"]
+            },
         ];
 
         // hämta alla bilder och skapa array
@@ -262,27 +274,6 @@
             return [];
         }
 
-        // Växla bild på produktkortet
-        function setCardImage(productId, index) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-            const imgs = getProductImages(product);
-            if (!imgs[index]) return;
-
-            const imgEl = document.getElementById(`p-img-${productId}`);
-            if (imgEl) imgEl.src = imgs[index];
-
-            imgs.forEach((_, idx) => {
-                const dot = document.getElementById(`p-dot-${productId}-${idx}`);
-                if (dot) {
-                    if (idx === index) {
-                        dot.className = 'h-1.5 w-3 rounded-full bg-blue-600 transition-all';
-                    } else {
-                        dot.className = 'h-1.5 w-1.5 rounded-full bg-slate-300 hover:bg-slate-400 transition-all';
-                    }
-                }
-            });
-        }
 
         //  LocalStorage Varukorgshantering 
         function getCart() {
@@ -312,24 +303,10 @@
                 const imgs = getProductImages(product);
                 const firstImg = imgs[0] || '';
 
-                const dotsHtml = imgs.length > 1 ? `
-                    <div class="absolute bottom-2.5 inset-x-0 flex justify-center items-center gap-1.5 z-10 pointer-events-auto">
-                        ${imgs.map((_, idx) => `
-                            <button type="button" 
-                                    id="p-dot-${product.id}-${idx}"
-                                    onclick="event.preventDefault(); event.stopPropagation(); setCardImage('${product.id}',${idx})" 
-                                    onmouseenter="setCardImage('${product.id}',${idx})"
-                                    class="h-1.5 rounded-full transition-all ${idx === 0 ? 'w-3 bg-blue-600' : 'w-1.5 bg-slate-300 hover:bg-slate-400'}" 
-                                    aria-label="Image ${idx + 1}"></button>
-                        `).join('')}
-                    </div>
-                ` : '';
-
                 card.innerHTML = `
                     <a href="product.html?id=${product.id}" class="block flex-grow relative overflow-hidden group cursor-pointer p-5 sm:p-7 lg:p-8">
                         <div class="aspect-square bg-[#f8f9fb] rounded-xl sm:rounded-2xl overflow-hidden relative border border-slate-100 flex items-center justify-center p-6 sm:p-8 mb-5 sm:mb-6">
                             <img id="p-img-${product.id}" src="${firstImg}" alt="${product.name}" class="object-contain w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out">
-                            ${dotsHtml}
                         </div>
                         <div>
                             <p class="text-[10px] sm:text-[11px] font-mono text-blue-600 font-semibold uppercase tracking-wider mb-1.5 sm:mb-2">${product.tagline}</p>
