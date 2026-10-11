@@ -15,9 +15,10 @@ module.exports = async (req, res) => {
     const data = req.body || {};
 
     // POSTNORD API
-    const postnord_api_key    = process.env.POSTNORD_API_KEY || "0dcf57ae801653934a0b868e8fb81f87";
-    const sender_postal_code  = "90336"; 
-    const sender_country_code = "SE";
+    const postnord_api_key         = process.env.POSTNORD_API_KEY || "0dcf57ae801653934a0b868e8fb81f87";
+    const postnord_customer_number = process.env.POSTNORD_CUSTOMER_NUMBER || "20934030";
+    const sender_postal_code       = "90336"; 
+    const sender_country_code      = "SE";
 
     const shipping_address = data.shipping_address || {};
     const dest_country     = String(shipping_address.country || 'SE').toUpperCase();
@@ -48,6 +49,10 @@ module.exports = async (req, res) => {
             weight: weight_kg.toString(),
             serviceCode: isNordic ? '19' : '18'
         });
+
+        if (postnord_customer_number && postnord_customer_number !== "DITT_KUNDNUMMER_HAR") {
+            priceParams.append('customerAgreementId', postnord_customer_number);
+        }
 
         const priceRes = await fetch(`https://api2.postnord.com/rest/transport/v1/price?${priceParams.toString()}`, {
             headers: { 'Accept': 'application/json' }
