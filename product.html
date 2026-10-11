@@ -213,15 +213,19 @@
         let currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
 
         function formatPrice(amountInSek) {
+            if (typeof amountInSek !== 'number' || isNaN(amountInSek)) {
+                return amountInSek;
+    }
+
             const config = currencies[currentCurrency] || currencies.SEK;
             const converted = Math.round(amountInSek * config.rate);
             const formattedNum = converted.toLocaleString(config.locale);
             
             if (config.position === 'prefix') {
                 return `${config.symbol}${formattedNum}`;
-            }
-            return `${formattedNum} ${config.symbol}`;
         }
+            return `${formattedNum} ${config.symbol}`;
+}
 
         function changeCurrency(newCurrency) {
             if (!currencies[newCurrency]) return;
@@ -268,7 +272,7 @@
                 name: "Aspen Module",
                 tagline: "DSP RECEIVER & HUB INTERFACE",
                 description: "Central hardware hub featuring integrated DSP and digital I2S routing for demanding stage and studio environments.",
-                price: 3890,
+                price: "Contact for pricing",
                 images: ["picture/Aspen Module/Aspen Module_USB.png", "picture/Aspen Module/Aspen Module.png" ],
                 specs: [
                     { label: "DSP Architecture", value: "32-bit Floating Point Hub" },
