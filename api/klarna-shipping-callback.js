@@ -32,21 +32,24 @@ module.exports = async (req, res) => {
 
 
     // beräknande av baspris (POSTNORD LIVE PRICE ELLER PORTOTABELL)
-    let base_collect_price = null;
+    let home_minor = 0;
+    let collect_minor = 0;
 
     if (dest_country === 'SE') {
-        base_collect_price = 69;
+        home_minor    = 5520; // 55,20 kr (Home Small Prio)
+        collect_minor = 8400; // 84,00 kr (Service Point)
     } else if (isNordic) {
-        base_collect_price = 139;
+        home_minor    = 11900; // Tracked Letter Norden
+        collect_minor = 13900; // Pickup Point Norden
     } else if (['DE', 'FR', 'NL', 'GB', 'ES', 'IT', 'AT', 'BE', 'PL'].includes(dest_country)) {
-        base_collect_price = 159;
+        home_minor    = 13900; // Tracked Letter Europa
+        collect_minor = 16900; // Parcel Collect Europa
     } else {
-        base_collect_price = 209;
+        home_minor    = 17900; // Tracked Letter Övriga världen (ex. AU/US)
+        collect_minor = 22900; // Tracked Parcel Övriga världen
     }
 
-    const collect_minor = Math.round(base_collect_price * 100);
-    const home_minor    = collect_minor + 6000; // +60 kr för hemleverans direkt till dörren
-    const tax_rate      = isNordic ? 2500 : 0;
+    const tax_rate = isNordic ? 2500 : 0;
 
     // hämta närmaste ombud (postnord service point API) -- fungerar enbart till elverans i norden
 
@@ -100,7 +103,7 @@ module.exports = async (req, res) => {
     shipping_options.push({
         id: "postnord_home",
         type: "home",
-        name: isNordic ? "PostNord Hemleverans (Direkt till dörren)" : `PostNord Home Delivery (${dest_country})`,
+        name: isNordic ? "PostNord Hemleverans (Home Small Prio)" : `PostNord Home Delivery (${dest_country})`,
         description: `Levereras direkt hem till ${streetText}`,
         price: home_minor,
         tax_rate: tax_rate,
