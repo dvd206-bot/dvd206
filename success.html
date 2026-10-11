@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Order Confirmed | Emendion</title>
 
-  <!-- Favicon -->
+  <!-- logga -->
   <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
   <link rel="alternate icon" href="https://emendion.com/favicon.ico">
 
@@ -46,11 +46,11 @@
                 </a>
   </header>
 
-  <!-- Success Card -->
+  <!-- när man har gjort en beställning (success) -->
   <main class="flex-grow flex items-center justify-center p-4 sm:p-6 my-8">
     <div class="max-w-lg w-full bg-white border border-slate-200/80 p-8 sm:p-10 rounded-3xl shadow-sm text-center">
       
-      <!-- Checkmark Icon -->
+      <!-- checkmärke -->
       <div class="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
@@ -61,7 +61,7 @@
       <h1 class="text-2xl sm:text-3xl font-light tracking-tight text-slate-900 mb-3">Tack för din beställning!</h1>
       <p class="text-xs text-slate-500 mb-6">En orderbekräftelse skickas till din e-postadress.</p>
 
-      <!-- Orderdetaljer -->
+      <!--Orderdetaljer -->
       <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 mb-6 text-left space-y-2.5">
         <div class="flex justify-between items-center text-xs font-mono">
             <span class="text-slate-400">ORDER-ID</span>
@@ -79,7 +79,7 @@
                     Skickar orderbekräftelse...
                 </span>
             </div>
-            <!-- Ruta för exakt felmeddelande från backend -->
+            <!-- backend felmeedelande -->
             <div id="error-details" class="hidden mt-2 p-3 bg-red-50 border border-red-200 rounded-xl text-left">
                 <p class="text-[11px] font-mono text-red-700 font-semibold mb-1">Felrapport från /api/send-order --></p>
                 <pre id="error-message" class="text-[11px] font-mono text-red-600 whitespace-pre-wrap break-all"></pre>
@@ -87,7 +87,7 @@
         </div>
       </div>
 
-      <!-- Hemknapp -->
+      <!--Hemknapp -->
       <a href="index.html" class="inline-block w-full bg-slate-900 hover:bg-slate-800 text-white font-mono text-xs uppercase tracking-wider font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm">
         Tillbaka till startsidan
       </a>
@@ -117,7 +117,7 @@
         if (orderIdEl) orderIdEl.textContent = orderId;
         if (shippingNameEl && shipping) shippingNameEl.textContent = shipping.name;
 
-        // Förhindra duplicerade utskick om ordern redan har skickats framgångsrikt
+        // Förhindra duplicerade skickade om ordern redan har skickats framgångsrikt
         if (sessionStorage.getItem('order_submitted_' + orderId)) {
             if (emailStatusEl) {
                 emailStatusEl.className = 'text-emerald-600 font-semibold';
