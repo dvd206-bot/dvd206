@@ -46,7 +46,7 @@ module.exports = async (req, res) => {
             toCountryCode: dest_country,
             toPostalCode: dest_postal_code,
             weight: weight_kg.toString(),
-            serviceCode: isNordic ? '19' : '52'
+            serviceCode: isNordic ? '19' : '18'
         });
 
         const priceRes = await fetch(`https://api2.postnord.com/rest/transport/v1/price?${priceParams.toString()}`, {
@@ -55,7 +55,13 @@ module.exports = async (req, res) => {
 
         if (priceRes.ok) {
             const priceData = await priceRes.json();
-            const val = priceData?.price?.amount ?? priceData?.grossPrice ?? priceData?.netAmount;
+            const val = priceData?.priceCalculationResponse?.price?.amount
+                ?? priceData?.priceCalculationResponse?.prices?.[0]?.amount
+                ?? priceData?.priceCalculation?.grossPrice
+                ?? priceData?.price?.amount
+                ?? priceData?.grossPrice
+                ?? priceData?.netAmount
+                ?? priceData?.amount;
             if (val !== undefined && val !== null && !isNaN(Number(val))) {
                 base_collect_price = Number(val);
             }
@@ -66,13 +72,21 @@ module.exports = async (req, res) => {
 
     if (base_collect_price === null) {
         if (dest_country === 'SE') {
-            base_collect_price = weight_kg <= 1.0 ? 69 : 89;
+            const destZone = parseInt(dest_postal_code.substring(0, 2), 10) || 50;
+            const isLocal = destZone >= 90 && destZone <= 93;
+            const isGotland = destZone === 62;
+            const isFarSouth = destZone <= 40;
+            let dynamicRate = 69;
+            if (isGotland) dynamicRate = 99;
+            else if (isFarSouth) dynamicRate = 85;
+            else if (!isLocal) dynamicRate = 75;
+            base_collect_price = dynamicRate + (weight_kg > 1.0 ? 30 : 0);
         } else if (isNordic) {
-            base_collect_price = 129;
+            base_collect_price = 119 + Math.round(weight_kg * 20);
         } else if (['DE', 'FR', 'NL', 'GB', 'ES', 'IT'].includes(dest_country)) {
-            base_collect_price = 169;
+            base_collect_price = 159 + Math.round(weight_kg * 25);
         } else {
-            base_collect_price = 229;
+            base_collect_price = 219 + Math.round(weight_kg * 35);
         }
     }
 
