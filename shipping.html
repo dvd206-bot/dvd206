@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Leverans & Frakt - Emendion</title>
+    <title>Delivery & Shipping - Emendion</title>
 
     <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,9 +25,9 @@
                          class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
                 </a>
                 <div class="flex items-center gap-2 text-xs font-mono font-semibold">
-                    <span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">1. Leverans & Ombud</span>
+                    <span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">1. Delivery & Pickup</span>
                     <span class="text-slate-300">───</span>
-                    <span class="text-slate-400">2. Betalning (Klarna)</span>
+                    <span class="text-slate-400">2. Payment </span>
                 </div>
             </div>
         </div>
@@ -41,15 +41,15 @@
                 
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <div class="flex justify-between items-start mb-1">
-                        <h2 class="text-lg font-bold text-slate-900 tracking-tight">Mottagaradress</h2>
+                        <h2 class="text-lg font-bold text-slate-900 tracking-tight">Recipient Address</h2>
                     </div>
-                    <p class="text-xs text-slate-500 mb-6">Skriv in din adress för att se hemleverans och närmaste PostNord-ombud.</p>
+                    <p class="text-xs text-slate-500 mb-6">Enter your address to see home delivery and the nearest PostNord outlet</p>
 
                     <form id="shipping-form" onsubmit="event.preventDefault(); fetchShippingOptions();" class="space-y-4">
                         
                         <!-- Land -->
                         <div>
-                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Land / Destination</label>
+                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Country / Destination</label>
                             <select id="country" onchange="onCountryChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50 font-mono">
                                 <optgroup label="Norden">
                                     <option value="SE" selected>Sweden (SE)</option>
@@ -137,11 +137,11 @@
                     <div class="mt-8 pt-6 border-t border-slate-100">
                         <div class="flex justify-between items-center mb-3">
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider">
-                                Välj leveranssätt & utlämningsställe
+                                Choose delivery method & pickup location
                             </label>
                             <span id="loading-spinner" class="hidden text-xs text-blue-600 font-mono flex items-center gap-1.5">
                                 <span class="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
-                                Söker närmaste ombud...
+                                Searching for the nearest outlet...
                             </span>
                         </div>
 
@@ -260,7 +260,7 @@
         function updateTotals() {
             const shippingCost = selectedShippingOption ? Math.round(selectedShippingOption.price / 100) : 0;
             document.getElementById('summary-subtotal').textContent = cartSubtotal + " kr";
-            document.getElementById('summary-shipping').textContent = selectedShippingOption ? shippingCost + " kr" : "Välj frakt";
+            document.getElementById('summary-shipping').textContent = selectedShippingOption ? shippingCost + " kr" : "Choose shipping";
             document.getElementById('summary-total').textContent = (cartSubtotal + shippingCost) + " kr";
         }
 
@@ -304,7 +304,7 @@
                 } else {
                     container.innerHTML = `
                         <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
-                            ${data.error || "Inga leveransalternativ hittades för denna adress."}
+                            ${data.error || "No shipping options available for the provided address."}
                         </div>
                     `;
                 }
@@ -312,7 +312,7 @@
                 spinner.classList.add('hidden');
                 container.innerHTML = `
                     <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
-                        Kunde inte kontakta servern (/api/klarna-shipping-callback). Kontrollera att filen ligger i mappen api/ och är deployad.
+                        Could not contact the server (/api/klarna-shipping-callback). Please check that the file is in the api/ folder and is deployed.
                     </div>
                 `;
             }
@@ -328,7 +328,7 @@
             if (homeOptions.length > 0) {
                 const homeHeader = document.createElement('div');
                 homeHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-2';
-                homeHeader.textContent = 'Leverans till dörren';
+                homeHeader.textContent = 'Delivery to Door';
                 container.appendChild(homeHeader);
 
                 homeOptions.forEach(opt => {
@@ -339,7 +339,7 @@
             if (pickupOptions.length > 0) {
                 const pickupHeader = document.createElement('div');
                 pickupHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-4';
-                pickupHeader.textContent = 'Välj PostNord-ombud';
+                pickupHeader.textContent = 'Choose PostNord Outlet';
                 container.appendChild(pickupHeader);
 
                 pickupOptions.forEach(opt => {
@@ -386,7 +386,7 @@
 
         function goToPaymentStep() {
             if (!selectedShippingOption) {
-                alert("Vänligen välj ett fraktalternativ.");
+                alert("Please select a shipping option.");
                 return;
             }
 
@@ -406,7 +406,7 @@
             };
 
             if (!customer.firstName || !customer.email || !rawPhone || !customer.zip) {
-                alert("Vänligen fyll i namn, e-post, mobilnummer och postnummer.");
+                alert("Please fill in name, email, mobile number and postal code.");
                 return;
             }
 
