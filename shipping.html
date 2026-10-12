@@ -52,27 +52,27 @@
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Land / Destination</label>
                             <select id="country" onchange="onCountryChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50 font-mono">
                                 <optgroup label="Norden">
-                                    <option value="SE" selected>Sverige (SE)</option>
+                                    <option value="SE" selected>Sweden (SE)</option>
                                     <option value="FI">Finland (FI)</option>
-                                    <option value="NO">Norge (NO)</option>
-                                    <option value="DK">Danmark (DK)</option>
+                                    <option value="NO">Norway (NO)</option>
+                                    <option value="DK">Denmark (DK)</option>
                                 </optgroup>
                                 <optgroup label="Europa">
-                                    <option value="DE">Tyskland (DE)</option>
-                                    <option value="FR">Frankrike (FR)</option>
-                                    <option value="NL">Nederländerna (NL)</option>
-                                    <option value="GB">Storbritannien (GB)</option>
-                                    <option value="ES">Spanien (ES)</option>
-                                    <option value="IT">Italien (IT)</option>
+                                    <option value="DE">Germany (DE)</option>
+                                    <option value="FR">France (FR)</option>
+                                    <option value="NL">Netherlands (NL)</option>
+                                    <option value="GB">United Kingdom (GB)</option>
+                                    <option value="ES">Spain (ES)</option>
+                                    <option value="IT">Italy (IT)</option>
                                 </optgroup>
                                 <optgroup label="Resten av världen">
                                     <option value="US">USA (US)</option>
-                                    <option value="CA">Kanada (CA)</option>
+                                    <option value="CA">Canada (CA)</option>
                                     <option value="JP">Japan (JP)</option>
-                                    <option value="AU">Australien (AU)</option>
+                                    <option value="AU">Australia (AU)</option>
                                 </optgroup>
                                 <optgroup label="Övrigt">
-                                    <option value="WORLD">Övriga länder (Internationell frakt)</option>
+                                    <option value="WORLD">Other countries (International shipping)</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -80,19 +80,19 @@
                         <!-- Förnamn och Efternamn -->
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Förnamn</label>
-                                <input type="text" id="firstname" required placeholder="Förnamn" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">First name</label>
+                                <input type="text" id="firstname" required placeholder="First name" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Efternamn</label>
-                                <input type="text" id="lastname" required placeholder="Efternamn" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Last name</label>
+                                <input type="text" id="lastname" required placeholder="Last name" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                             </div>
                         </div>
 
                         <!-- E-postadress -->
                         <div>
-                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">E-postadress</label>
-                            <input type="email" id="email" required placeholder="namn@exempel.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Email address</label>
+                            <input type="email" id="email" required placeholder="name@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Landskod + Telefonnummer -->
@@ -100,35 +100,35 @@
                             <div class="grid grid-cols-12 gap-2 sm:gap-3">
                                 <!-- Landskod -->
                                 <div class="col-span-4 sm:col-span-3">
-                                    <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1 truncate">Landskod</label>
+                                    <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1 truncate">Country code</label>
                                     <input type="text" id="phone-prefix" value="+46" placeholder="+46" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-mono text-center focus:ring-2 focus:ring-blue-500 bg-slate-50">
                                 </div>
                                 <!-- Mobilnummer -->
                                 <div class="col-span-8 sm:col-span-9">
-                                    <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Mobilnummer</label>
-                                    <input type="tel" id="phone-number" placeholder="ex. 70 123 45 67" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-blue-500">
+                                    <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Mobile number</label>
+                                    <input type="tel" id="phone-number" placeholder="e.g., 70 123 45 67" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-blue-500">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Gatuadress -->
                         <div>
-                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Gatuadress</label>
-                            <input type="text" id="street" placeholder="Gata och nummer" onblur="fetchShippingOptions()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Street address</label>
+                            <input type="text" id="street" placeholder="Street and number" onblur="fetchShippingOptions()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Postnummer & Ort -->
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Postnummer</label>
+                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Postal code</label>
                                 <div class="flex gap-2">
-                                    <input type="text" id="zip" required value="90336" placeholder="ex. 90336" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
-                                    <button type="button" onclick="fetchShippingOptions()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-mono font-bold uppercase transition-all">Sök</button>
+                                    <input type="text" id="zip" required value="90336" placeholder="e.g., 90336" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
+                                    <button type="button" onclick="fetchShippingOptions()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-mono font-bold uppercase transition-all">Search</button>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Ort / Stad</label>
-                                <input type="text" id="city" required value="Umeå" placeholder="Stad" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                                <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">City</label>
+                                <input type="text" id="city" required value="Umeå" placeholder="City" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                             </div>
                         </div>
                     </form>
@@ -153,7 +153,7 @@
                     <!-- Fortsätt-knapp -->
                     <div class="mt-8 pt-6 border-t border-slate-100">
                         <button type="button" id="proceed-btn" onclick="goToPaymentStep()" disabled class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white py-4 px-6 rounded-xl font-mono font-bold tracking-wider uppercase text-sm shadow-md transition-all flex items-center justify-center gap-2">
-                            <span>Fortsätt till betalning</span>
+                            <span>Continue to payment</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </button>
                     </div>
@@ -165,7 +165,7 @@
             <!-- Högerkolumn - Varukorgssammanfattning -->
             <div class="lg:col-span-5">
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm sticky top-24">
-                    <h2 class="text-base font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Varukorg</h2>
+                    <h2 class="text-base font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Shopping Cart</h2>
                     <div id="order-items-list" class="space-y-3 mb-6"></div>
 
                     <div class="space-y-2.5 pt-4 border-t border-slate-100 text-xs font-mono">
@@ -174,11 +174,11 @@
                             <span id="summary-subtotal">0 kr</span>
                         </div>
                         <div class="flex justify-between text-slate-500">
-                            <span>Frakt</span>
+                            <span>Shipping</span>
                             <span id="summary-shipping" class="text-blue-600 font-bold">0 kr</span>
                         </div>
                         <div class="flex justify-between text-sm font-bold text-slate-900 pt-3 border-t border-slate-100">
-                            <span>Totalt att betala</span>
+                            <span>Total to pay</span>
                             <span id="summary-total">0 kr</span>
                         </div>
                     </div>
