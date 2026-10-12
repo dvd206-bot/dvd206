@@ -103,7 +103,7 @@ module.exports = async (req, res) => {
     shipping_options.push({
         id: "postnord_home",
         type: "home",
-        name: isNordic ? "PostNord Hemleverans (Home Small Prio)" : `PostNord Home Delivery (${dest_country})`,
+        name: isNordic ? "PostNord Homedelivery (Home Small Prio)" : `PostNord Home Delivery (${dest_country})`,
         description: `Delivers to ${streetText}`,
         price: home_minor,
         tax_rate: tax_rate,
