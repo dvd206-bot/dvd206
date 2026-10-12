@@ -117,7 +117,7 @@ module.exports = async (req, res) => {
             const streetName = sp.visitingAddress?.streetName ? `${sp.visitingAddress.streetName}` : '';
             const streetNumber = sp.visitingAddress?.streetNumber ? ` ${sp.visitingAddress.streetNumber}` : '';
             const city = sp.visitingAddress?.city || '';
-            const distance = sp.routeDistance ? ` (${(sp.routeDistance / 1000).toFixed(1)} km bort)` : '';
+            const distance = sp.routeDistance ? ` (${(sp.routeDistance / 1000).toFixed(1)} km away)` : '';
 
             shipping_options.push({
                 id: `pn_sp_${sp.servicePointId}`,

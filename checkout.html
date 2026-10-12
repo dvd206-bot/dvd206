@@ -37,26 +37,26 @@
                 <!-- val av frakt -->
                 <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex items-center justify-between">
                     <div>
-                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Valt utlämningsställe / leverans</span>
-                        <h3 id="display-shipping-name" class="text-sm font-bold text-slate-900 mt-0.5">PostNord Ombud</h3>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Selected Pickup Location / Delivery</span>
+                        <h3 id="display-shipping-name" class="text-sm font-bold text-slate-900 mt-0.5">Postnord Outlet</h3>
                         <p id="display-shipping-address" class="text-xs text-slate-500 font-mono mt-0.5"></p>
                     </div>
                     <a href="shipping.html" class="text-xs font-mono text-blue-600 hover:underline font-bold shrink-0 ml-4">
-                        Ändra ombud
+                        Change Outlet
                     </a>
                 </div>
 
                 <!-- Klarna Checkout Container -->
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-                        <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Klarna Checkout</h2>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Checkout</h2>
                         <span class="text-xs font-mono font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-200">Klarna.</span>
                     </div>
 
                     <div id="klarna-checkout-container" class="min-h-[300px] flex items-center justify-center">
                         <div id="klarna-loading" class="text-center font-mono text-xs text-slate-400">
                             <div class="w-6 h-6 border-2 border-slate-300 border-t-pink-600 rounded-full animate-spin mx-auto mb-2"></div>
-                            Laddar säker Klarna-kassa...
+                            Loading secure Klarna checkout...
                         </div>
                     </div>
                 </div>
@@ -66,20 +66,20 @@
             <!-- Totalbelopp -->
             <div class="lg:col-span-5">
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm sticky top-24">
-                    <h2 class="text-base font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Orderöversikt</h2>
+                    <h2 class="text-base font-bold text-slate-900 mb-4 pb-4 border-b border-slate-100">Order Overview</h2>
                     <div id="checkout-items" class="space-y-3 mb-6"></div>
 
                     <div class="space-y-2.5 pt-4 border-t border-slate-100 text-xs font-mono">
                         <div class="flex justify-between text-slate-500">
-                            <span>Varor</span>
+                            <span>Products</span>
                             <span id="co-subtotal">0 kr</span>
                         </div>
                         <div class="flex justify-between text-slate-500">
-                            <span>PostNord Frakt</span>
+                            <span>PostNord Shipping</span>
                             <span id="co-shipping" class="text-blue-600 font-bold">0 kr</span>
                         </div>
                         <div class="flex justify-between text-sm font-bold text-slate-900 pt-3 border-t border-slate-100">
-                            <span>Totalsumma att betala</span>
+                            <span>Total Amount to Pay</span>
                             <span id="co-total">0 kr</span>
                         </div>
                     </div>
@@ -175,16 +175,16 @@
                     // testköp hos klarna
                     container.innerHTML = `
                         <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center">
-                            <span class="text-xs font-mono text-pink-600 font-bold uppercase tracking-wider block mb-2">Klarna Redo</span>
+                            <span class="text-xs font-mono text-pink-600 font-bold uppercase tracking-wider block mb-2">Klarna Ready</span>
                             <p class="text-xs text-slate-600 leading-relaxed">${data.message}</p>
                             <button onclick="window.location.href='success.html?order_id=TEST-ORD'" class="mt-4 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-mono text-xs uppercase font-bold">
-                                Slutför testköp direkt
+                                Purchase Directly
                             </button>
                         </div>
                     `;
                 }
             } catch (err) {
-                console.error("Fel vid start av Klarna -->", err);
+                console.error("Problem starting Klarna -->", err);
             }
         }
     </script>
