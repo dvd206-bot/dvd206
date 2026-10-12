@@ -16,6 +16,10 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Kunduppgifter eller e-post saknas.' });
     }
 
+    // Generera ett realistiskt femsiffrigt/sexsiffrigt ordernummer om det är tomt eller ett test-ID
+    const isTestOrder = !order_id || String(order_id).toUpperCase().includes('TEST');
+    const finalOrderId = isTestOrder ? String(Math.floor(100000 + Math.random() * 900000)) : String(order_id);
+
     // Spara ordern Loopia MariaDB (emendion_com_db_2)
     let dbSuccess = false;
     let dbError = null;
@@ -42,7 +46,7 @@ module.exports = async (req, res) => {
         const shippingCost = shipping?.price ? Math.round(Number(shipping.price) / 100) : 0;
 
         await db.execute(insertSql, [
-            order_id || `ORD-${Date.now()}`,
+            finalOrderId,
             customer.firstName || '',
             customer.lastName || '',
             customer.email,
@@ -103,7 +107,7 @@ module.exports = async (req, res) => {
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b; background: #ffffff; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px;">
             <div style="margin-bottom: 24px;">
                 <h2 style="color: #0f172a; margin: 0 0 6px 0; font-size: 22px;">Tack för din beställning hos Emendion!</h2>
-                <p style="font-size: 13px; color: #64748b; margin: 0; font-family: monospace;">Ordernummer --> <strong>${order_id || 'BEKRÄFTAD'}</strong></p>
+                <p style="font-size: 13px; color: #64748b; margin: 0; font-family: monospace;">Ordernummer --> <strong>#${finalOrderId}</strong></p>
             </div>
 
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
@@ -141,12 +145,13 @@ module.exports = async (req, res) => {
             from: `"Emendion" <${mailUser}>`,
             to: customer.email,
             bcc: mailUser,
-            subject: `Orderbekräftelse #${order_id || ''} - Emendion`,
+            subject: `Orderbekräftelse #${finalOrderId} - Emendion`,
             html: mailHtml
         });
 
         return res.status(200).json({ 
             success: true, 
+            order_id: finalOrderId,
             db_saved: dbSuccess,
             db_error: dbError,
             message: "Bekräftelsemejl skickat och order sparad i databas." 
@@ -155,6 +160,7 @@ module.exports = async (req, res) => {
         console.error("Fel vid Loopia SMTP-anrop -->", err);
         return res.status(500).json({ 
             error: `Kunde inte skicka mejl --> ${err.message}`,
+            order_id: finalOrderId,
             db_saved: dbSuccess,
             db_error: dbError
         });
