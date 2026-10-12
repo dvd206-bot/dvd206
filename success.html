@@ -50,7 +50,7 @@
 
   <!-- när man har gjort en beställning (success) -->
   <main class="flex-grow flex items-center justify-center p-4 sm:p-6 my-8">
-    <div class="max-w-lg w-full bg-white border border-slate-200/80 p-8 sm:p-10 rounded-3xl shadow-sm text-center">
+    <div class="max-w-lg w-full bg-white border border-slate-200/80 p-8 sm:pad-10 rounded-3xl shadow-sm text-center">
       
       <!-- checkmärke -->
       <div class="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
@@ -60,36 +60,36 @@
       </div>
 
       <p class="text-xs font-mono text-blue-600 font-semibold uppercase tracking-widest mb-2">Klarna Checkout</p>
-      <h1 class="text-2xl sm:text-3xl font-light tracking-tight text-slate-900 mb-3">Tack för din beställning!</h1>
-      <p class="text-xs text-slate-500 mb-6">En orderbekräftelse skickas till din e-postadress.</p>
+      <h1 class="text-2xl sm:text-3xl font-light tracking-tight text-slate-900 mb-3">Thank you for your order!</h1>
+      <p class="text-xs text-slate-500 mb-6">An order confirmation will be sent to your email address.</p>
 
       <!--Orderdetaljer -->
       <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 mb-6 text-left space-y-3">
         <div class="flex justify-between items-center text-xs font-mono">
-            <span class="text-slate-400">ORDER-ID</span>
-            <span id="display-order-id" class="font-bold text-slate-800">Laddar...</span>
+            <span class="text-slate-400">ORDER ID</span>
+            <span id="display-order-id" class="font-bold text-slate-800">Loading...</span>
         </div>
         <div class="flex justify-between items-center text-xs font-mono">
-            <span class="text-slate-400">LEVERANS</span>
+            <span class="text-slate-400">SHIPPING</span>
             <span id="display-shipping-name" class="font-semibold text-slate-700 truncate max-w-[220px]">PostNord</span>
         </div>
         <div id="display-shipping-desc-row" class="text-xs text-slate-500 font-mono hidden border-t border-slate-200/60 pt-2">
-            <span class="text-slate-400 block mb-0.5">UTLÄMNINGSSTÄLLE / ADRESS</span>
+            <span class="text-slate-400 block mb-0.5">PICKUP POINT / ADDRESS</span>
             <span id="display-shipping-desc" class="text-slate-700 font-medium"></span>
         </div>
 
         <!-- Beställda artiklar -->
         <div id="order-items-wrapper" class="border-t border-slate-200/60 pt-3 hidden">
-            <span class="text-slate-400 text-xs font-mono uppercase tracking-wider block mb-2">Beställda artiklar</span>
+            <span class="text-slate-400 text-xs font-mono uppercase tracking-wider block mb-2">Ordered items</span>
             <div id="display-order-items" class="space-y-1.5 text-xs font-mono mb-3"></div>
             
             <div class="border-t border-slate-200/60 pt-2 space-y-1 text-xs font-mono">
                 <div class="flex justify-between text-slate-500">
-                    <span>Frakt</span>
+                    <span>Shipping</span>
                     <span id="display-shipping-price">0 kr</span>
                 </div>
                 <div class="flex justify-between text-sm font-bold text-slate-900 pt-1 border-t border-slate-200">
-                    <span>Totalt betalt</span>
+                    <span>Total paid</span>
                     <span id="display-total-amount" class="text-blue-600">0 kr</span>
                 </div>
             </div>
@@ -97,10 +97,10 @@
 
         <div class="border-t border-slate-200/60 pt-2.5 flex flex-col gap-1">
             <div class="flex justify-between items-center text-xs font-mono">
-                <span class="text-slate-400">STATUS MEJL</span>
+                <span class="text-slate-400">EMAIL STATUS</span>
                 <span id="email-status" class="text-blue-600 font-semibold flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-                    Skickar orderbekräftelse...
+                    Sending order confirmation...
                 </span>
             </div>
             <!-- backend felmeedelande -->
@@ -113,13 +113,13 @@
 
       <!--Hemknapp -->
       <a href="index.html" class="inline-block w-full bg-slate-900 hover:bg-slate-800 text-white font-mono text-xs uppercase tracking-wider font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm">
-        Tillbaka till startsidan
+        Back to homepage
       </a>
     </div>
   </main>
 
   <footer class="border-t border-slate-200/70 py-6 text-center text-xs font-mono text-slate-400">
-    Emendion • Alla rättigheter förbehållna
+    Emendion • All rights reserved
   </footer>
 
   <!-- skicka orderbekräftelse -->
@@ -163,7 +163,7 @@
             orderItemsEl.innerHTML = cart.map(item => `
                 <div class="flex justify-between items-center text-slate-700">
                     <span class="truncate pr-2">${item.name} × ${item.quantity}</span>
-                    <span class="font-semibold shrink-0">${item.price * item.quantity} kr</span>
+                    <span class="font-semibold shrink-0">${(item.price * item.quantity).toFixed(2)} kr</span>
                 </div>
             `).join('');
 
@@ -179,7 +179,7 @@
         if (sessionStorage.getItem('order_submitted_' + orderId)) {
             if (emailStatusEl) {
                 emailStatusEl.className = 'text-emerald-600 font-semibold';
-                emailStatusEl.textContent = '✓ Skickat tidigare';
+                emailStatusEl.textContent = '✓ Previously sent';
             }
             return;
         }
@@ -211,13 +211,13 @@
                     }
                     if (emailStatusEl) {
                         emailStatusEl.className = 'text-emerald-600 font-semibold';
-                        emailStatusEl.textContent = '✓ Skickat till ' + customer.email;
+                        emailStatusEl.textContent = '✓ Sent to ' + customer.email;
                     }
                     localStorage.removeItem('emendion_cart');
                 } else {
                     if (emailStatusEl) {
                         emailStatusEl.className = 'text-red-600 font-semibold';
-                        emailStatusEl.textContent = 'Misslyckades';
+                        emailStatusEl.textContent = 'Failed';
                     }
                     if (errorDetailsEl && errorMessageEl) {
                         errorDetailsEl.classList.remove('hidden');
@@ -227,7 +227,7 @@
             } catch (err) {
                 if (emailStatusEl) {
                     emailStatusEl.className = 'text-red-600 font-semibold';
-                    emailStatusEl.textContent = 'Nätverksfel';
+                    emailStatusEl.textContent = 'Network error';
                 }
                 if (errorDetailsEl && errorMessageEl) {
                     errorDetailsEl.classList.remove('hidden');
@@ -237,7 +237,7 @@
         } else {
             if (emailStatusEl) {
                 emailStatusEl.className = 'text-slate-400 font-semibold';
-                emailStatusEl.textContent = 'Ingen aktiv session (saknar kund/varukorg)';
+                emailStatusEl.textContent = 'No active session (missing customer/cart)';
             }
         }
     });
