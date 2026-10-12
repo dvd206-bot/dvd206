@@ -98,13 +98,13 @@ module.exports = async (req, res) => {
 
     let shipping_options = [];
 
-    // Alternativ A --> Hemleverans direkt till dörren
-    const streetText = dest_street ? `${dest_street}, ${dest_postal_code}` : `din adress (${dest_postal_code})`;
+    // Hemleverans direkt till dörren
+    const streetText = dest_street ? `${dest_street}, ${dest_postal_code}` : `your address (${dest_postal_code})`;
     shipping_options.push({
         id: "postnord_home",
         type: "home",
         name: isNordic ? "PostNord Hemleverans (Home Small Prio)" : `PostNord Home Delivery (${dest_country})`,
-        description: `Levereras direkt hem till ${streetText}`,
+        description: `Delivers to ${streetText}`,
         price: home_minor,
         tax_rate: tax_rate,
         tax_amount: Math.round(home_minor * (tax_rate > 0 ? 0.20 : 0)),
@@ -139,7 +139,7 @@ module.exports = async (req, res) => {
             id: "postnord_parcel_collect",
             type: "pickup_point",
             name: `PostNord Tracked Parcel (${dest_country})`,
-            description: `Spårbar transport via närmaste lokala utlämningsställe (${dest_postal_code})`,
+            description: `Tracked transport via nearest local pickup point (${dest_postal_code})`,
             price: collect_minor,
             tax_rate: tax_rate,
             tax_amount: Math.round(collect_minor * (tax_rate > 0 ? 0.20 : 0)),
