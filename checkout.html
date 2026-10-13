@@ -105,11 +105,36 @@
     </footer>
 
     <script>
+        // omväxlig valuta (Bas --> SEK)
+        const currencies = {
+            SEK: { symbol: 'kr', rate: 1, position: 'suffix', locale: 'sv-SE' },
+            USD: { symbol: '$', rate: 0.095, position: 'prefix', locale: 'en-US' },
+            EUR: { symbol: '€', rate: 0.088, position: 'prefix', locale: 'de-DE' }
+        };
+
+        let currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
+
+        function formatPrice(amountInSek) {
+            if (typeof amountInSek !== 'number' || isNaN(amountInSek)) {
+                return amountInSek;
+            }
+
+            const config = currencies[currentCurrency] || currencies.SEK;
+            const converted = Math.round(amountInSek * config.rate);
+            const formattedNum = converted.toLocaleString(config.locale);
+            
+            if (config.position === 'prefix') {
+                return `${config.symbol}${formattedNum}`;
+            }
+            return `${formattedNum} ${config.symbol}`;
+        }
+
         let customer = null;
         let selectedShipping = null;
         let cart = [];
 
         document.addEventListener('DOMContentLoaded', () => {
+            currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
             customer = JSON.parse(localStorage.getItem('emendion_customer_address'));
             selectedShipping = JSON.parse(localStorage.getItem('emendion_selected_shipping'));
             cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
@@ -127,23 +152,33 @@
             initKlarnaOrder();
         });
 
+        // Synka valutaval och varukorg mellan flikar
+        window.addEventListener('storage', () => {
+            currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
+            customer = JSON.parse(localStorage.getItem('emendion_customer_address'));
+            selectedShipping = JSON.parse(localStorage.getItem('emendion_selected_shipping'));
+            cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
+            renderOrderSummary();
+        });
+
         function renderOrderSummary() {
             const list = document.getElementById('checkout-items');
             list.innerHTML = '';
             let subtotal = 0;
 
             cart.forEach(item => {
-                subtotal += (item.price * item.quantity);
+                const lineTotalSek = item.price * item.quantity;
+                subtotal += lineTotalSek;
                 const d = document.createElement('div');
                 d.className = 'flex justify-between text-xs';
-                d.innerHTML = `<span>${item.name} × ${item.quantity}</span><span class="font-mono">${item.price * item.quantity} kr</span>`;
+                d.innerHTML = `<span>${item.name} × ${item.quantity}</span><span class="font-mono">${formatPrice(lineTotalSek)}</span>`;
                 list.appendChild(d);
             });
 
-            const shippingKr = Math.round(selectedShipping.price / 100);
-            document.getElementById('co-subtotal').textContent = subtotal + " kr";
-            document.getElementById('co-shipping').textContent = shippingKr + " kr";
-            document.getElementById('co-total').textContent = (subtotal + shippingKr) + " kr";
+            const shippingKr = selectedShipping ? Math.round(selectedShipping.price / 100) : 0;
+            document.getElementById('co-subtotal').textContent = formatPrice(subtotal);
+            document.getElementById('co-shipping').textContent = formatPrice(shippingKr);
+            document.getElementById('co-total').textContent = formatPrice(subtotal + shippingKr);
         }
 
         async function initKlarnaOrder() {
@@ -155,7 +190,7 @@
                         items: cart,
                         shipping_option: selectedShipping,
                         customer: customer,
-                        currency: 'SEK'
+                        currency: currentCurrency
                     })
                 });
 
