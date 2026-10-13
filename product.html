@@ -125,6 +125,11 @@
                         <svg class="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         <span>Add to Order</span>
                     </button>
+
+                    <a id="contact-pricing-box" href="mailto:info@emendion.com" class="hidden w-full bg-blue-50 hover:bg-blue-100/80 border border-blue-200 text-blue-700 py-3.5 sm:py-4 px-6 rounded-xl font-mono font-bold tracking-wider text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-3 text-center">
+                        <svg class="w-4 sm:w-5 h-4 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span>Write to info@emendion.com</span>
+                    </a>
                     
                 </div>
 
@@ -434,7 +439,19 @@
         const currentProductImages = getProductImages(currentProduct);
 
         function updateProductPrice() {
+            const isContactPrice = typeof currentProduct.price !== 'number' || isNaN(currentProduct.price);
             document.getElementById('p-price').textContent = formatPrice(currentProduct.price);
+
+            const addBtn = document.getElementById('add-to-cart-btn');
+            const contactBox = document.getElementById('contact-pricing-box');
+
+            if (isContactPrice) {
+                if (addBtn) addBtn.classList.add('hidden');
+                if (contactBox) contactBox.classList.remove('hidden');
+            } else {
+                if (addBtn) addBtn.classList.remove('hidden');
+                if (contactBox) contactBox.classList.add('hidden');
+            }
         }
         // specs är minskad
         let isSpecsExpanded = false;
@@ -517,6 +534,8 @@
         }
 
         function addProductToCart() {
+            if (typeof currentProduct.price !== 'number' || isNaN(currentProduct.price)) return;
+
             let cart = getCart();
             const existing = cart.find(item => item.id === currentProduct.id);
             const firstImg = currentProductImages[0] || '';
