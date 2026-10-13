@@ -14,13 +14,8 @@ module.exports = async (req, res) => {
 
     const data = req.body || {};
 
-    // POSTNORD API
-    const postnord_api_key         = process.env.POSTNORD_API_KEY || "0dcf57ae801653934a0b868e8fb81f87";
-    const sender_postal_code       = "90336"; 
-    const sender_country_code      = "SE";
-
     const shipping_address = data.shipping_address || {};
-    const dest_country     = String(shipping_address.country || 'SE').toUpperCase();
+    const dest_country     = String(shipping_address.country || 'SE').trim().toUpperCase();
     const dest_postal_code = String(shipping_address.postal_code || '').replace(/\s+/g, '');
     const dest_street      = String(shipping_address.street_address || '').trim();
 
@@ -28,20 +23,21 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: "Postnummer saknas." });
     }
 
-    const isNordic = ['SE', 'DK', 'FI', 'NO'].includes(dest_country);
+    const isSweden = ['SE', 'SWEDEN', 'SVERIGE'].includes(dest_country);
+    const isNordic = isSweden || ['DK', 'DENMARK', 'DANMARK', 'FI', 'FINLAND', 'NO', 'NORWAY', 'NORGE'].includes(dest_country);
+    const isEurope = ['DE', 'GERMANY', 'TYSKLAND', 'FR', 'FRANCE', 'FRANKRIKE', 'NL', 'NETHERLANDS', 'NEDERLÄNDERNA', 'GB', 'UK', 'UNITED KINGDOM', 'STORBRITANNIEN', 'ES', 'SPAIN', 'SPANIEN', 'IT', 'ITALY', 'ITALIEN', 'AT', 'AUSTRIA', 'ÖSTERRIKE', 'BE', 'BELGIUM', 'BELGIEN', 'PL', 'POLAND', 'POLEN'].includes(dest_country);
 
-
-    // beräknande av baspris (POSTNORD LIVE PRICE ELLER PORTOTABELL - 250g)
+    // beräknande av baspris (PORTOTABELL - 250g)
     let home_minor = 0;
     let collect_minor = 0;
 
-    if (dest_country === 'SE') {
+    if (isSweden) {
         home_minor    = 5520;  // 55,20 kr (Home Small Prio)
         collect_minor = 8400;  // 84,00 kr (Service Point)
     } else if (isNordic) {
         home_minor    = 11825; // 118,25 kr (PostNord Tracked Letter enstaka 250g: 105 kr + 0,25 * 53 kr)
         collect_minor = 17100; // 171,00 kr (Rek utrikes EDI Europa 250g)
-    } else if (['DE', 'FR', 'NL', 'GB', 'ES', 'IT', 'AT', 'BE', 'PL'].includes(dest_country)) {
+    } else if (isEurope) {
         home_minor    = 11825; // 118,25 kr (PostNord Tracked Letter enstaka 250g: 105 kr + 0,25 * 53 kr)
         collect_minor = 17100; // 171,00 kr (Rek utrikes EDI Europa 250g)
     } else {
@@ -51,51 +47,7 @@ module.exports = async (req, res) => {
 
     const tax_rate = isNordic ? 2500 : 0;
 
-    // hämta närmaste ombud (postnord service point API) -- fungerar enbart till elverans i norden
-
-    let ombud_list = [];
-
-    if (isNordic) {
-        try {
-            // Sök med gatuadress och postnummer
-            const spParams = new URLSearchParams({
-                apikey: postnord_api_key,
-                returnType: 'json',
-                countryCode: dest_country,
-                postalCode: dest_postal_code,
-                numberOfServicePoints: '5'
-            });
-
-            if (dest_street) {
-                // Skicka med gatunamn för exakt avstånd
-                spParams.append('streetName', dest_street);
-            }
-
-            let spRes = await fetch(`https://api2.postnord.com/rest/businesslocation/v5/servicepoints/nearest/byaddress?${spParams.toString()}`, {
-                headers: { 'Accept': 'application/json' }
-            });
-
-            if (spRes.ok) {
-                const spData = await spRes.json();
-                ombud_list = spData?.servicePointInformationResponse?.servicePoints || [];
-            }
-
-            // Fallback på enbart postnummer om gatuadressen inte gav någon träff
-            if (ombud_list.length === 0) {
-                const fallbackUrl = `https://api2.postnord.com/rest/businesslocation/v5/servicepoints/bypostalcode?apikey=${encodeURIComponent(postnord_api_key)}&returnType=json&countryCode=${encodeURIComponent(dest_country)}&postalCode=${encodeURIComponent(dest_postal_code)}`;
-                const fbRes = await fetch(fallbackUrl, { headers: { 'Accept': 'application/json' } });
-                if (fbRes.ok) {
-                    const fbData = await fbRes.json();
-                    ombud_list = fbData?.servicePointInformationResponse?.servicePoints || [];
-                }
-            }
-        } catch (err) {
-            console.error("Fel vid uppslag av PostNord-ombud -->", err);
-        }
-    }
-
     // skapa leveransalternativ
-
     let shipping_options = [];
 
     // Hemleverans direkt till dörren
@@ -108,48 +60,19 @@ module.exports = async (req, res) => {
         price: home_minor,
         tax_rate: tax_rate,
         tax_amount: Math.round(home_minor * (tax_rate > 0 ? 0.20 : 0)),
-        preselected: false
+        preselected: true
     });
 
-    // Ombud / Utlämningsställen
-    if (ombud_list.length > 0) {
-        ombud_list.forEach((sp, idx) => {
-            const streetName = sp.visitingAddress?.streetName ? `${sp.visitingAddress.streetName}` : '';
-            const streetNumber = sp.visitingAddress?.streetNumber ? ` ${sp.visitingAddress.streetNumber}` : '';
-            const city = sp.visitingAddress?.city || '';
-            const distance = sp.routeDistance ? ` (${(sp.routeDistance / 1000).toFixed(1)} km away)` : '';
-
-            shipping_options.push({
-                id: `pn_sp_${sp.servicePointId}`,
-                type: "pickup_point",
-                name: `PostNord Ombud --> ${sp.name}`,
-                description: `${streetName}${streetNumber}, ${city}${distance}`,
-                service_point_id: sp.servicePointId,
-                service_point_name: sp.name,
-                service_point_address: `${streetName}${streetNumber}, ${city}`,
-                price: collect_minor,
-                tax_rate: tax_rate,
-                tax_amount: Math.round(collect_minor * (tax_rate > 0 ? 0.20 : 0)),
-                preselected: idx === 0 // Första ombudet är förvalt
-            });
-        });
-    } else {
-        // Internationellt eller om inga ombud finns i registret (utanför norden)
-        shipping_options.push({
-            id: "postnord_parcel_collect",
-            type: "pickup_point",
-            name: `PostNord Tracked Parcel (${dest_country})`,
-            description: `Tracked transport via nearest local pickup point (${dest_postal_code})`,
-            price: collect_minor,
-            tax_rate: tax_rate,
-            tax_amount: Math.round(collect_minor * (tax_rate > 0 ? 0.20 : 0)),
-            preselected: true
-        });
-    }
-
-    // Se till att det första alternativet alltid är markerat som förvalt
-    shipping_options.forEach((opt, idx) => {
-        opt.preselected = (idx === 0); // Första alternativet är förvalt
+    // Leverans till utlämningsställe (generellt utan API-uppslag)
+    shipping_options.push({
+        id: "postnord_parcel_collect",
+        type: "pickup_point",
+        name: `PostNord Tracked Parcel (${dest_country})`,
+        description: `Tracked transport via nearest local pickup point (${dest_postal_code})`,
+        price: collect_minor,
+        tax_rate: tax_rate,
+        tax_amount: Math.round(collect_minor * (tax_rate > 0 ? 0.20 : 0)),
+        preselected: false
     });
 
     return res.status(200).json({

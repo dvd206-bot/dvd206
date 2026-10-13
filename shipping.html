@@ -25,7 +25,8 @@
                          class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
                 </a>
                 <div class="flex items-center gap-2 text-xs font-mono font-semibold">
-1.                     <span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Delivery & Pickup
+1.                     
+<span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Delivery & Pickup
 </span>
                     <span class="text-slate-300">───</span>
                     <span class="text-slate-400">2. Payment </span>
@@ -37,21 +38,21 @@
     <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Vänsterkolumn: Adressformulär och val av leverans -->
+            <!-- Vänsterkolumn: Adressformulär -->
             <div class="lg:col-span-7 space-y-6">
                 
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <div class="flex justify-between items-start mb-1">
                         <h2 class="text-lg font-bold text-slate-900 tracking-tight">Recipient Address</h2>
                     </div>
-                    <p class="text-xs text-slate-500 mb-6">Enter your address to see home delivery and the nearest PostNord outlet</p>
+                    <p class="text-xs text-slate-500 mb-6">Enter your delivery details below</p>
 
-                    <form id="shipping-form" onsubmit="event.preventDefault(); fetchShippingOptions();" class="space-y-4">
+                    <form id="shipping-form" onsubmit="event.preventDefault(); goToPaymentStep();" class="space-y-4">
                         
                         <!-- Land -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Country / Destination</label>
-                            <input type="text" id="country" required value="Sweden" placeholder="Country" onblur="fetchShippingOptions()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="country" required value="Sweden" placeholder="Country" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Förnamn och Efternamn -->
@@ -69,7 +70,7 @@
                         <!-- E-postadress -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Email address</label>
-                            <input type="email" id="email" required placeholder="name@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="email" id="email" required pattern=".*@.*" title="Please enter a valid email address containing @" placeholder="name@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Landskod + Telefonnummer -->
@@ -91,49 +92,29 @@
                         <!-- Gatuadress -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Street address</label>
-                            <input type="text" id="street" placeholder="Street and number" onblur="fetchShippingOptions()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="street" required placeholder="Street and number" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Postnummer & Ort -->
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Postal code</label>
-                                <div class="flex gap-2">
-                                    <input type="text" id="zip" required value="90336" placeholder="e.g., 90336" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
-                                    <button type="button" onclick="fetchShippingOptions()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-mono font-bold uppercase transition-all">Search</button>
-                                </div>
+                                <input type="text" id="zip" required value="90336" placeholder="e.g., 90336" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">City</label>
                                 <input type="text" id="city" required value="Umeå" placeholder="City" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                             </div>
                         </div>
+
+                        <!-- Fortsätt-knapp -->
+                        <div class="pt-6 border-t border-slate-100 mt-8">
+                            <button type="submit" id="proceed-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-mono font-bold tracking-wider uppercase text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                                <span>Continue to payment</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </div>
                     </form>
-
-                    <!-- Val av Leverans -->
-                    <div class="mt-8 pt-6 border-t border-slate-100">
-                        <div class="flex justify-between items-center mb-3">
-                            <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider">
-                                Choose delivery method & pickup location
-                            </label>
-                            <span id="loading-spinner" class="hidden text-xs text-blue-600 font-mono flex items-center gap-1.5">
-                                <span class="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
-                                Searching for the nearest outlet...
-                            </span>
-                        </div>
-
-                        <div id="shipping-options-list" class="space-y-3">
-                            <!-- Fylls från PostNord API -->
-                        </div>
-                    </div>
-
-                    <!-- Fortsätt-knapp -->
-                    <div class="mt-8 pt-6 border-t border-slate-100">
-                        <button type="button" id="proceed-btn" onclick="goToPaymentStep()" disabled class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white py-4 px-6 rounded-xl font-mono font-bold tracking-wider uppercase text-sm shadow-md transition-all flex items-center justify-center gap-2">
-                            <span>Continue to payment</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </button>
-                    </div>
 
                 </div>
 
@@ -168,9 +149,6 @@
     <script>
         let cart = [];
         let cartSubtotal = 0;
-        let totalGrams = 180;
-        let availableOptions = [];
-        let selectedShippingOption = null;
 
         function init() {
             try {
@@ -178,22 +156,19 @@
             } catch(e) { cart = []; }
 
             if (cart.length === 0) {
-                cart = [{ id: "item-001", name: "Emendion LE-Node Mic", price: 1890, quantity: 1, weight: 180 }];
+                cart = [{ id: "item-001", name: "Emendion LE-Node Mic", price: 1890, quantity: 1 }];
             }
 
             renderCart();
-            fetchShippingOptions();
         }
 
         function renderCart() {
             const list = document.getElementById('order-items-list');
             list.innerHTML = '';
             cartSubtotal = 0;
-            totalGrams = 0;
 
             cart.forEach(item => {
                 cartSubtotal += (item.price * item.quantity);
-                totalGrams += (item.weight || 180) * item.quantity;
 
                 const div = document.createElement('div');
                 div.className = 'flex justify-between items-center text-xs';
@@ -208,135 +183,18 @@
         }
 
         function updateTotals() {
-            const shippingCost = selectedShippingOption ? Math.round(selectedShippingOption.price / 100) : 0;
             document.getElementById('summary-subtotal').textContent = cartSubtotal + " kr";
-            document.getElementById('summary-shipping').textContent = selectedShippingOption ? shippingCost + " kr" : "Choose shipping";
-            document.getElementById('summary-total').textContent = (cartSubtotal + shippingCost) + " kr";
-        }
-
-        async function fetchShippingOptions() {
-            const country = document.getElementById('country').value.trim();
-            const zip = document.getElementById('zip').value.trim();
-            const street = document.getElementById('street').value.trim();
-            const spinner = document.getElementById('loading-spinner');
-            const container = document.getElementById('shipping-options-list');
-            const proceedBtn = document.getElementById('proceed-btn');
-
-            spinner.classList.remove('hidden');
-            container.innerHTML = '';
-            proceedBtn.disabled = true;
-
-            try {
-                const res = await fetch('/api/klarna-shipping-callback', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        shipping_address: {
-                            country: country,
-                            postal_code: zip,
-                            street_address: street
-                        },
-                        package_weight_grams: totalGrams,
-                        purchase_currency: 'SEK'
-                    })
-                });
-
-                const data = await res.json();
-                spinner.classList.add('hidden');
-
-                if (res.ok && data.shipping_options && data.shipping_options.length > 0) {
-                    availableOptions = data.shipping_options;
-                    const defaultPick = availableOptions.find(o => o.type === 'pickup_point') || availableOptions[0];
-                    selectedShippingOption = defaultPick;
-                    renderShippingOptions(availableOptions);
-                    proceedBtn.disabled = false;
-                    updateTotals();
-                } else {
-                    container.innerHTML = `
-                        <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
-                            ${data.error || "No shipping options available for the provided address."}
-                        </div>
-                    `;
-                }
-            } catch (err) {
-                spinner.classList.add('hidden');
-                container.innerHTML = `
-                    <div class="p-4 bg-red-50 text-red-700 text-xs font-mono rounded-xl border border-red-200">
-                        Could not contact the server (/api/klarna-shipping-callback). Please check that the file is in the api/ folder and is deployed.
-                    </div>
-                `;
-            }
-        }
-
-        function renderShippingOptions(options) {
-            const container = document.getElementById('shipping-options-list');
-            container.innerHTML = '';
-
-            const homeOptions = options.filter(o => o.type === 'home');
-            const pickupOptions = options.filter(o => o.type === 'pickup_point');
-
-            if (homeOptions.length > 0) {
-                const homeHeader = document.createElement('div');
-                homeHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-2';
-                homeHeader.textContent = 'Delivery to Door';
-                container.appendChild(homeHeader);
-
-                homeOptions.forEach(opt => {
-                    container.appendChild(createOptionCard(opt));
-                });
-            }
-
-            if (pickupOptions.length > 0) {
-                const pickupHeader = document.createElement('div');
-                pickupHeader.className = 'text-[11px] font-mono text-slate-400 uppercase tracking-wider pt-4';
-                pickupHeader.textContent = 'Choose PostNord Outlet';
-                container.appendChild(pickupHeader);
-
-                pickupOptions.forEach(opt => {
-                    container.appendChild(createOptionCard(opt));
-                });
-            }
-        }
-
-        function createOptionCard(opt) {
-            const cost = Math.round(opt.price / 100);
-            const isSelected = selectedShippingOption && selectedShippingOption.id === opt.id;
-
-            const label = document.createElement('label');
-            label.id = `label-${opt.id}`;
-            label.className = `flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${isSelected ? 'border-blue-600 bg-blue-50/20 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white'}`;
-            
-            label.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <input type="radio" name="shipping_choice" value="${opt.id}" ${isSelected ? 'checked' : ''} onchange="selectShipping('${opt.id}')" class="text-blue-600 focus:ring-blue-500 h-4 w-4">
-                    <div>
-                        <p class="text-xs font-bold text-slate-900">${opt.name}</p>
-                        <p class="text-[11px] text-slate-500">${opt.description}</p>
-                    </div>
-                </div>
-                <span class="text-xs font-mono font-bold text-blue-600 shrink-0 ml-3">${cost} kr</span>
-            `;
-            return label;
-        }
-
-        function selectShipping(id) {
-            selectedShippingOption = availableOptions.find(o => o.id === id);
-            updateTotals();
-
-            document.querySelectorAll('#shipping-options-list label').forEach(lbl => {
-                lbl.classList.remove('border-blue-600', 'bg-blue-50/20', 'shadow-sm');
-                lbl.classList.add('border-slate-200');
-            });
-            const active = document.getElementById(`label-${id}`);
-            if (active) {
-                active.classList.remove('border-slate-200');
-                active.classList.add('border-blue-600', 'bg-blue-50/20', 'shadow-sm');
-            }
+            document.getElementById('summary-shipping').textContent = "0 kr";
+            document.getElementById('summary-total').textContent = cartSubtotal + " kr";
         }
 
         function goToPaymentStep() {
-            if (!selectedShippingOption) {
-                alert("Please select a shipping option.");
+            const emailInput = document.getElementById('email');
+            const emailValue = emailInput.value.trim();
+
+            if (!emailValue.includes('@')) {
+                alert("Please enter a valid email address containing '@'.");
+                emailInput.focus();
                 return;
             }
 
@@ -347,7 +205,7 @@
             const customer = {
                 firstName: document.getElementById('firstname').value.trim(),
                 lastName: document.getElementById('lastname').value.trim(),
-                email: document.getElementById('email').value.trim(),
+                email: emailValue,
                 phone: fullPhone,
                 street: document.getElementById('street').value.trim(),
                 zip: document.getElementById('zip').value.trim(),
@@ -355,14 +213,21 @@
                 country: document.getElementById('country').value.trim()
             };
 
-            if (!customer.firstName || !customer.email || !rawPhone || !customer.zip || !customer.country) {
-                alert("Please fill in country, name, email, mobile number and postal code.");
+            if (!customer.firstName || !customer.lastName || !customer.email || !rawPhone || !customer.street || !customer.zip || !customer.city || !customer.country) {
+                alert("Please fill in all fields.");
                 return;
             }
 
-            // Spara kund & vald frakt inför nästa steg
+            const defaultShipping = {
+                id: "standard_shipping",
+                name: "Standard Delivery",
+                description: "Delivers to your address",
+                price: 0
+            };
+
+            // Spara kund & frakt inför nästa steg
             localStorage.setItem('emendion_customer_address', JSON.stringify(customer));
-            localStorage.setItem('emendion_selected_shipping', JSON.stringify(selectedShippingOption));
+            localStorage.setItem('emendion_selected_shipping', JSON.stringify(defaultShipping));
 
             window.location.href = 'checkout.html';
         }
