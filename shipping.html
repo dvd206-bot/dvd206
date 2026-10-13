@@ -52,7 +52,7 @@
                         <!-- Land -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Country / Destination</label>
-                            <input type="text" id="country" required value="Sweden" placeholder="Country" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="country" required value="Sweden" placeholder="Country" oninput="calculateShipping()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Förnamn och Efternamn -->
@@ -92,18 +92,30 @@
                         <!-- Gatuadress -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Street address</label>
-                            <input type="text" id="street" required placeholder="Street and number" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="street" required placeholder="Street and number" oninput="calculateShipping()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Postnummer & Ort -->
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Postal code</label>
-                                <input type="text" id="zip" required value="90336" placeholder="e.g., 90336" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
+                                <input type="text" id="zip" required value="90336" placeholder="e.g., 90336" oninput="calculateShipping()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 font-mono">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">City</label>
-                                <input type="text" id="city" required value="Umeå" placeholder="City" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                                <input type="text" id="city" required value="Umeå" placeholder="City" oninput="calculateShipping()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <!-- Fraktkostnad som visas när adressen är inmatad -->
+                        <div id="shipping-cost-box" class="hidden pt-4">
+                            <div class="p-4 rounded-2xl bg-blue-50/50 border border-blue-200/80 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[10px] font-mono uppercase tracking-wider text-blue-600 font-bold block">Calculated Shipping</span>
+                                    <p id="bottom-shipping-name" class="text-xs font-bold text-slate-900 mt-0.5">PostNord Delivery</p>
+                                    <p id="bottom-shipping-desc" class="text-[11px] text-slate-500 font-mono mt-0.5"></p>
+                                </div>
+                                <span id="bottom-shipping-price" class="text-sm font-mono font-bold text-blue-600 shrink-0 ml-3">0 kr</span>
                             </div>
                         </div>
 
@@ -133,7 +145,7 @@
                         </div>
                         <div class="flex justify-between text-slate-500">
                             <span>Shipping</span>
-                            <span id="summary-shipping" class="text-blue-600 font-bold">0 kr</span>
+                            <span id="summary-shipping" class="text-blue-600 font-bold">Enter address</span>
                         </div>
                         <div class="flex justify-between text-sm font-bold text-slate-900 pt-3 border-t border-slate-100">
                             <span>Total to pay</span>
@@ -147,10 +159,37 @@
     </main>
 
     <script>
+        // omväxlig valuta (Bas --> SEK)
+        const currencies = {
+            SEK: { symbol: 'kr', rate: 1, position: 'suffix', locale: 'sv-SE' },
+            USD: { symbol: '$', rate: 0.095, position: 'prefix', locale: 'en-US' },
+            EUR: { symbol: '€', rate: 0.088, position: 'prefix', locale: 'de-DE' }
+        };
+
+        let currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
+
+        function formatPrice(amountInSek) {
+            if (typeof amountInSek !== 'number' || isNaN(amountInSek)) {
+                return amountInSek;
+            }
+
+            const config = currencies[currentCurrency] || currencies.SEK;
+            const converted = Math.round(amountInSek * config.rate);
+            const formattedNum = converted.toLocaleString(config.locale);
+            
+            if (config.position === 'prefix') {
+                return `${config.symbol}${formattedNum}`;
+            }
+            return `${formattedNum} ${config.symbol}`;
+        }
+
         let cart = [];
         let cartSubtotal = 0;
+        let currentShippingMinor = 0;
+        let currentShippingOption = null;
 
         function init() {
+            currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
             try {
                 cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
             } catch(e) { cart = []; }
@@ -160,7 +199,18 @@
             }
 
             renderCart();
+            calculateShipping();
         }
+
+        // Synka valutaval och varukorg mellan flikar
+        window.addEventListener('storage', () => {
+            currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
+            try {
+                cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
+            } catch(e) { cart = []; }
+            renderCart();
+            calculateShipping();
+        });
 
         function renderCart() {
             const list = document.getElementById('order-items-list');
@@ -168,13 +218,14 @@
             cartSubtotal = 0;
 
             cart.forEach(item => {
-                cartSubtotal += (item.price * item.quantity);
+                const lineTotalSek = item.price * item.quantity;
+                cartSubtotal += lineTotalSek;
 
                 const div = document.createElement('div');
                 div.className = 'flex justify-between items-center text-xs';
                 div.innerHTML = `
                     <span class="text-slate-800">${item.name} × ${item.quantity}</span>
-                    <span class="font-mono font-semibold">${item.price * item.quantity} kr</span>
+                    <span class="font-mono font-semibold">${formatPrice(lineTotalSek)}</span>
                 `;
                 list.appendChild(div);
             });
@@ -182,10 +233,65 @@
             updateTotals();
         }
 
+        function calculateShipping() {
+            const countryRaw = document.getElementById('country').value.trim();
+            const street = document.getElementById('street').value.trim();
+            const zip = document.getElementById('zip').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const box = document.getElementById('shipping-cost-box');
+
+            // Visa och lägg på frakten först när adressfälten är ifyllda
+            if (!countryRaw || !street || !zip || !city) {
+                currentShippingMinor = 0;
+                currentShippingOption = null;
+                box.classList.add('hidden');
+                updateTotals();
+                return;
+            }
+
+            const dest_country = countryRaw.toUpperCase();
+            const isSweden = ['SE', 'SWEDEN', 'SVERIGE'].includes(dest_country);
+            const isNordic = isSweden || ['DK', 'DENMARK', 'DANMARK', 'FI', 'FINLAND', 'NO', 'NORWAY', 'NORGE'].includes(dest_country);
+            const isEurope = isNordic || [
+                'DE', 'GERMANY', 'TYSKLAND', 'FR', 'FRANCE', 'FRANKRIKE', 'NL', 'NETHERLANDS', 'NEDERLÄNDERNA',
+                'GB', 'UK', 'UNITED KINGDOM', 'STORBRITANNIEN', 'ES', 'SPAIN', 'SPANIEN', 'IT', 'ITALY', 'ITALIEN',
+                'AT', 'AUSTRIA', 'ÖSTERRIKE', 'BE', 'BELGIUM', 'BELGIEN', 'PL', 'POLAND', 'POLEN', 'CH', 'SWITZERLAND', 'SCHWEIZ',
+                'IE', 'IRELAND', 'IRLAND', 'PT', 'PORTUGAL', 'GR', 'GREECE', 'GREKLAND', 'CZ', 'CZECHIA', 'TJECKIEN', 'HU', 'HUNGARY', 'UNGERN'
+            ].includes(dest_country);
+
+            if (isSweden) {
+                currentShippingMinor = 8400;  // 84 kr (PostNord Service Point Inrikes)
+            } else if (isEurope) {
+                currentShippingMinor = 17100; // 171 kr (PostNord Rek/Tracked Europa 250g)
+            } else {
+                currentShippingMinor = 18000; // 180 kr (PostNord Rek/Tracked Utanför Europa 250g)
+            }
+
+            const shippingKr = Math.round(currentShippingMinor / 100);
+            const shippingName = isSweden ? "PostNord Service Point" : `PostNord Tracked (${countryRaw})`;
+            const shippingDesc = `Delivers to ${street}, ${zip} ${city}`;
+
+            currentShippingOption = {
+                id: isSweden ? "postnord_se" : "postnord_intl",
+                type: "pickup_point",
+                name: shippingName,
+                description: shippingDesc,
+                price: currentShippingMinor
+            };
+
+            document.getElementById('bottom-shipping-name').textContent = shippingName;
+            document.getElementById('bottom-shipping-desc').textContent = shippingDesc;
+            document.getElementById('bottom-shipping-price').textContent = formatPrice(shippingKr);
+            box.classList.remove('hidden');
+
+            updateTotals();
+        }
+
         function updateTotals() {
-            document.getElementById('summary-subtotal').textContent = cartSubtotal + " kr";
-            document.getElementById('summary-shipping').textContent = "0 kr";
-            document.getElementById('summary-total').textContent = cartSubtotal + " kr";
+            const shippingKr = currentShippingOption ? Math.round(currentShippingMinor / 100) : 0;
+            document.getElementById('summary-subtotal').textContent = formatPrice(cartSubtotal);
+            document.getElementById('summary-shipping').textContent = currentShippingOption ? formatPrice(shippingKr) : "Enter address";
+            document.getElementById('summary-total').textContent = formatPrice(cartSubtotal + shippingKr);
         }
 
         function goToPaymentStep() {
@@ -197,6 +303,8 @@
                 emailInput.focus();
                 return;
             }
+
+            calculateShipping();
 
             const prefix = document.getElementById('phone-prefix').value.trim();
             const rawPhone = document.getElementById('phone-number').value.trim();
@@ -218,16 +326,9 @@
                 return;
             }
 
-            const defaultShipping = {
-                id: "standard_shipping",
-                name: "Standard Delivery",
-                description: "Delivers to your address",
-                price: 0
-            };
-
-            // Spara kund & frakt inför nästa steg
+            // Spara kund & uträknad frakt inför nästa steg
             localStorage.setItem('emendion_customer_address', JSON.stringify(customer));
-            localStorage.setItem('emendion_selected_shipping', JSON.stringify(defaultShipping));
+            localStorage.setItem('emendion_selected_shipping', JSON.stringify(currentShippingOption));
 
             window.location.href = 'checkout.html';
         }
