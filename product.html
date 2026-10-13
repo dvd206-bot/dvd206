@@ -239,10 +239,42 @@
         const products = [
             {
                 id: "item-001",
-                name: "Aspen Aura",
-                tagline: "ULTRA-LOW LATENCY LE AUDIO SYSTEM",
-                description: "Professional wireless microphone system engineered for ultra-low latency and robust audio transmission via Bluetooth LE Audio.",
-                price: 2490,
+                name: "Aspen Aura Microphone and Receiver",
+                tagline: "ULTRA-LOW NOISE, LOW LATENCY LE AUDIO MICROPHONE & RECEIVER",
+                description: "Professional wireless microphone engineered for ultra-low noise with patent pending solution and low latency for robust audio transmission via Bluetooth LE Audio including USB-C Receiver.",
+                price: 2990,
+                images: ["picture/Aspen kit.png"],
+                specs: [
+                    { label: "Dimensions Microphone", value: "28 × 20 × 11 mm" },
+                    { label: "Weight Microphone", value: "5 g" },
+                    { label: "Dimensions Receiver", value: "20 × 18 × 6 mm" },
+                    { label: "Weight Microphone", value: "4 g" },
+                    { label: "Acoustic Principle", value: "Combined MEMS microphones" },
+                    { label: "Polar Pattern", value: "Omnidirectional" },
+                    { label: "Frequency Range", value: "20–24,000 Hz" },
+                    { label: "Maximum SPL", value: "122 dBSPL" },
+                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
+                    { label: "Noise Level", value: "15 dB(A)" },
+                    { label: "Signal-to-Noise Ratio", value: "79 dB" },
+                    { label: "Power", value: "Built-in rechargeable LiPo" },
+                    { label: "Battery Life", value: "upp to 5 h" },
+                    { label: "Broadcast Range", value: "20 m" },
+                    { label: "Transmission Type", value: "Bluetooth LE Audio, USB-C" },
+                    { label: "Firmware Upgrade", value: "USB-C" },
+                    { label: "Codec (Bluetooth LE Audio)", value: "LC3" },
+                    { label: "Modes", value: "Line level, mic level" },
+                    { label: "Operating Modes", value: "Bluetooth LE Audio, USB" },
+                    { label: "Bit Depth (Bluetooth LE Audio)", value: "16 bit (LC3)" },
+                    { label: "Bit Depth (USB)", value: "24 bit" },
+                    { label: "Latency (Bluetooth LE Audio)", value: "33.5 ms"}
+                ]
+            },
+            {
+                id: "item-002",
+                name: "Aspen Aura Microphone",
+                tagline: "ULTRA-LOW NOISE, LOW LATENCY LE AUDIO MICROPHONE",
+                description: "Professional wireless microphone engineered for ultra-low noise with patent pending solution and low latency for robust audio transmission via Bluetooth LE Audio.",
+                price: 2249,
                 images: ["picture/Aspen Aura.png"],
                 specs: [
                     { label: "Dimensions", value: "28 × 20 × 11 mm" },
@@ -255,7 +287,7 @@
                     { label: "Noise Level", value: "15 dB(A)" },
                     { label: "Signal-to-Noise Ratio", value: "79 dB" },
                     { label: "Power", value: "Built-in rechargeable LiPo" },
-                    { label: "Battery Life", value: "5 h" },
+                    { label: "Battery Life", value: "upp to 5 h" },
                     { label: "Broadcast Range", value: "20 m" },
                     { label: "Transmission Type", value: "Bluetooth LE Audio, USB-C" },
                     { label: "Firmware Upgrade", value: "USB-C" },
@@ -264,32 +296,16 @@
                     { label: "Operating Modes", value: "Bluetooth LE Audio, USB" },
                     { label: "Bit Depth (Bluetooth LE Audio)", value: "16 bit (LC3)" },
                     { label: "Bit Depth (USB)", value: "24 bit" },
-                    { label: "Latency (Bluetooth LE Audio)", value: "33.5 ms", highlight: true }
-                ]
-            },
-            {
-                id: "item-002",
-                name: "Aspen Module",
-                tagline: "DSP RECEIVER & HUB INTERFACE",
-                description: "Central hardware hub featuring integrated DSP and digital I2S routing for demanding stage and studio environments.",
-                price: "Contact for pricing",
-                images: ["picture/Aspen Module/Aspen Module_USB.png", "picture/Aspen Module/Aspen Module.png" ],
-                specs: [
-                    { label: "DSP Architecture", value: "32-bit Floating Point Hub" },
-                    { label: "Audio Interface", value: "Digital I2S & USB-C Audio Class" },
-                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
-                    { label: "Power Input", value: "5V USB-C / Low-Noise LDO" },
-                    { label: "Enclosure", value: "Milled Aluminum Chassis" },
-                    { label: "Shipping", value: "International Tracked Courier" }
+                    { label: "Latency (Bluetooth LE Audio)", value: "33.5 ms"}
                 ]
             },
             {
                 id: "item-003",
-                name: "Aspen Kit",
-                tagline: "EMBEDDED MINIATURE TRANSMITTER",
-                description: "Compact transmitter unit encased in CNC-machined aluminum with custom antenna design for maximum range.",
-                price: 1590,
-                images: ["picture/Aspen Kit.png"],
+                name: "Aspen Aura LE Audio Transmitter",
+                tagline: "MINIATURE TRANSMITTER",
+                description: "Aspen Compact transmitter unit",
+                price: 890,
+                images: ["picture/Aspen TxRx.png"],
                 specs: [
                     { label: "Sampling Frequency", value: "Up to 48 kHz" },
                     { label: "Firmware Upgrade", value: "USB-C" },
@@ -299,27 +315,121 @@
             },
             {
                 id: "item-004",
-                name: "Aspen Wind",
-                tagline: "EMBEDDED MINIATURE TRANSMITTER",
-                description: "Compact transmitter unit encased in CNC-machined aluminum with custom antenna design for maximum range.",
-                price: 1590,
-                images: ["picture/Aspen Wind.png"]
+                name: "Aspen Aura LE Audio Receiver",
+                tagline: "MINIATURE RECEIVER",
+                description: "Aspen Compact receiver unit",
+                price: 890,
+                images: ["picture/Aspen TxRx.png"],
+                specs: [
+                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
+                    { label: "Firmware Upgrade", value: "USB-C" },
+                    { label: "Codec (BLE Audio)", value: "LC3" },
+                    { label: "Bit Depth", value: "24 bit" }
+                ]
             },
             {
                 id: "item-005",
-                name: "Aspen Transmitter/Receiver",
-                tagline: "EMBEDDED MINIATURE TRANSMITTER",
-                description: "Compact transmitter unit encased in CNC-machined aluminum with custom antenna design for maximum range.",
-                price: 1590,
-                images: ["picture/Aspen Aura Transmitter.png"]
+                name: "Aspen Wind",
+                tagline: "Wind Protection Cover",
+                description: "High Quality Wind Protection for use with Aspen Microphone",
+                price: 269,
+                images: ["picture/Aspen Wind.png"]
             },
             {
                 id: "item-006",
-                name: "Aspen Module",
-                tagline: "DSP RECEIVER & HUB INTERFACE",
-                description: "Central hardware hub featuring integrated DSP and digital I2S routing for demanding stage and studio environments.",
-                price: 3890,
+                name: "Aspen Dock",
+                tagline: "ASPEN DOCKING/CHARGING PLATE",
+                description: "Charging plate for use with Aspen Microphone",
+                price: 219,
+                images: ["picture/Aspen Dock.png"]
+            },
+            {
+                id: "item-007",
+                name: "Aspen Case",
+                tagline: "ASPEN CASE",
+                description: "Case for Aspen microphone and accessories",
+                price: 89,
+                images: ["picture/Aspen Case.png"]
+            },
+            {
+                id: "item-008",
+                name: "Aspen Transmitter Module",
+                tagline: "LE AUDIO TRANSMITTER MODULE",
+                description: "LE Audio transmitter with USB (pads), UART and digital I2S routing for demanding stage and studio environments.",
+                price: "Contact for pricing",
                 images: ["picture/Aspen Module/Aspen Module.png" ],
+                specs: [
+                    { label: "DSP Architecture", value: "32-bit Floating Point" },
+                    { label: "Audio Interface", value: "Digital I2S & USB Audio Class" },
+                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
+                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
+                    { label: "Firmware Upgrade", value: "USB-C" },
+                    { label: "Codec (BLE Audio)", value: "LC3" },
+                    { label: "Bit Depth", value: "24 bit" },
+                    { label: "Power Input", value: "2.5-5.5 V" },
+                    { label: "Enclosure", value: "None" },
+                    { label: "Shipping", value: "International Tracked Courier" }
+                ]
+            },
+            {
+                id: "item-009",
+                name: "Aspen Receiver Module",
+                tagline: "LE AUDIO RECEIVER MODULE",
+                description: "LE Audio receiver with USB (pads), UART and digital I2S routing for demanding stage and studio environments.",
+                price: "Contact for pricing",
+                images: ["picture/Aspen Module/Aspen Module.png" ],
+                specs: [
+                    { label: "DSP Architecture", value: "32-bit Floating Point" },
+                    { label: "Audio Interface", value: "Digital I2S & USB Audio Class" },
+                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
+                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
+                    { label: "Firmware Upgrade", value: "USB-C" },
+                    { label: "Codec (BLE Audio)", value: "LC3" },
+                    { label: "Bit Depth", value: "24 bit" },
+                    { label: "Power Input", value: "2.5-5.5 V" },
+                    { label: "Enclosure", value: "None" },
+                    { label: "Shipping", value: "International Tracked Courier" }
+                ]
+            },
+            {
+                id: "item-010",
+                name: "Aspen Module with USB-C connector",
+                tagline: "LE AUDIO TRANSMITTER MODULE",
+                description: "LE Audio transmitter with USB, UART and digital I2S routing for demanding stage and studio environments.",
+                price: "Contact for pricing",
+                images: ["picture/Aspen Module/Aspen Module_USB.png"],
+                specs: [
+                    { label: "DSP Architecture", value: "32-bit Floating Point" },
+                    { label: "Audio Interface", value: "Digital I2S & USB Audio Class" },
+                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
+                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
+                    { label: "Firmware Upgrade", value: "USB-C" },
+                    { label: "Codec (BLE Audio)", value: "LC3" },
+                    { label: "Bit Depth", value: "24 bit" },
+                    { label: "Power Input", value: "2.5-5.5 V" },
+                    { label: "Enclosure", value: "None" },
+                    { label: "Shipping", value: "International Tracked Courier" }
+                ]
+            },
+            {
+                id: "item-011",
+                name: "Aspen Module with USB-C connector",
+                tagline: "LE AUDIO RECEIVER MODULE",
+                description: "LE Audio receiver with USB, UART and digital I2S routing for demanding stage and studio environments.",
+                price: "Contact for pricing",
+                images: ["picture/Aspen Module/Aspen Module_USB.png"],
+                specs: [
+                    { label: "DSP Architecture", value: "32-bit Floating Point" },
+                    { label: "Audio Interface", value: "Digital I2S & USB Audio Class" },
+                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
+                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
+                    { label: "Firmware Upgrade", value: "USB-C" },
+                    { label: "Codec (BLE Audio)", value: "LC3" },
+                    { label: "Bit Depth", value: "24 bit" },
+                    { label: "Power Input", value: "2.5-5.5 V" },
+                    { label: "Enclosure", value: "None" },
+                    { label: "Shipping", value: "International Tracked Courier" }
+                ]
             },
         ];
 
