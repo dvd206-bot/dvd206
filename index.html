@@ -346,8 +346,8 @@
 
                 card.innerHTML = `
                     <a href="product.html?id=${product.id}" class="block flex-grow relative overflow-hidden group cursor-pointer p-5 sm:p-7 lg:p-8">
-                        <div class="aspect-square bg-[#f8f9fb] rounded-xl sm:rounded-2xl overflow-hidden relative border border-slate-100 flex items-center justify-center p-6 sm:p-8 mb-5 sm:mb-6">
-                            <img id="p-img-${product.id}" src="${firstImg}" alt="${product.name}" class="object-contain w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out">
+                        <div class="aspect-square bg-[#f8f9fb] rounded-xl sm:rounded-2xl overflow-hidden relative border border-slate-100 flex items-center justify-center mb-5 sm:mb-6">
+                            <img id="p-img-${product.id}" src="${firstImg}" alt="${product.name}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out">
                         </div>
                         <div>
                             <p class="text-[10px] sm:text-[11px] font-mono text-blue-600 font-semibold uppercase tracking-wider mb-1.5 sm:mb-2">${product.tagline}</p>
