@@ -25,7 +25,8 @@
                          class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
                 </a>
                 <div class="flex items-center gap-2 text-xs font-mono font-semibold">
-                    <span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">1. Delivery & Pickup</span>
+1.                     <span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Delivery & Pickup
+</span>
                     <span class="text-slate-300">───</span>
                     <span class="text-slate-400">2. Payment </span>
                 </div>
@@ -50,31 +51,7 @@
                         <!-- Land -->
                         <div>
                             <label class="block text-[11px] font-mono text-slate-500 uppercase tracking-wider mb-1">Country / Destination</label>
-                            <select id="country" onchange="onCountryChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50 font-mono">
-                                <optgroup label="Norden">
-                                    <option value="SE" selected>Sweden (SE)</option>
-                                    <option value="FI">Finland (FI)</option>
-                                    <option value="NO">Norway (NO)</option>
-                                    <option value="DK">Denmark (DK)</option>
-                                </optgroup>
-                                <optgroup label="Europa">
-                                    <option value="DE">Germany (DE)</option>
-                                    <option value="FR">France (FR)</option>
-                                    <option value="NL">Netherlands (NL)</option>
-                                    <option value="GB">United Kingdom (GB)</option>
-                                    <option value="ES">Spain (ES)</option>
-                                    <option value="IT">Italy (IT)</option>
-                                </optgroup>
-                                <optgroup label="Resten av världen">
-                                    <option value="US">USA (US)</option>
-                                    <option value="CA">Canada (CA)</option>
-                                    <option value="JP">Japan (JP)</option>
-                                    <option value="AU">Australia (AU)</option>
-                                </optgroup>
-                                <optgroup label="Övrigt">
-                                    <option value="WORLD">Other countries (International shipping)</option>
-                                </optgroup>
-                            </select>
+                            <input type="text" id="country" required value="Sweden" placeholder="Country" onblur="fetchShippingOptions()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <!-- Förnamn och Efternamn -->
@@ -195,33 +172,6 @@
         let availableOptions = [];
         let selectedShippingOption = null;
 
-        const countryPrefixMap = {
-            'SE': '+46',
-            'FI': '+358',
-            'NO': '+47',
-            'DK': '+45',
-            'DE': '+49',
-            'GB': '+44',
-            'FR': '+33',
-            'NL': '+31',
-            'ES': '+34',
-            'IT': '+39',
-            'US': '+1',
-            'CA': '+1',
-            'JP': '+81',
-            'AU': '+61'
-        };
-
-        function onCountryChange() {
-            const country = document.getElementById('country').value;
-            const prefix = countryPrefixMap[country] || '+46';
-            const prefixInput = document.getElementById('phone-prefix');
-            if (prefixInput) {
-                prefixInput.value = prefix;
-            }
-            fetchShippingOptions();
-        }
-
         function init() {
             try {
                 cart = JSON.parse(localStorage.getItem('emendion_cart')) || [];
@@ -265,7 +215,7 @@
         }
 
         async function fetchShippingOptions() {
-            const country = document.getElementById('country').value;
+            const country = document.getElementById('country').value.trim();
             const zip = document.getElementById('zip').value.trim();
             const street = document.getElementById('street').value.trim();
             const spinner = document.getElementById('loading-spinner');
@@ -402,11 +352,11 @@
                 street: document.getElementById('street').value.trim(),
                 zip: document.getElementById('zip').value.trim(),
                 city: document.getElementById('city').value.trim(),
-                country: document.getElementById('country').value
+                country: document.getElementById('country').value.trim()
             };
 
-            if (!customer.firstName || !customer.email || !rawPhone || !customer.zip) {
-                alert("Please fill in name, email, mobile number and postal code.");
+            if (!customer.firstName || !customer.email || !rawPhone || !customer.zip || !customer.country) {
+                alert("Please fill in country, name, email, mobile number and postal code.");
                 return;
             }
 
