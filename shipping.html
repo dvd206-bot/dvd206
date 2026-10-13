@@ -240,7 +240,7 @@
             const city = document.getElementById('city').value.trim();
             const box = document.getElementById('shipping-cost-box');
 
-            // Visa och lägg på frakten först när adressfälten är ifyllda
+            // visa frakten 
             if (!countryRaw || !street || !zip || !city) {
                 currentShippingMinor = 0;
                 currentShippingOption = null;

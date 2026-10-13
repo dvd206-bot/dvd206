@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Hardware Specifications - Emendion</title>
+    <title>Emendion | The Aspen Aura Series</title>
 
-    <!-- favicon -->
+    <!-- hemsidans ikon -->
     <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
     <link rel="alternate icon" href="https://emendion.com/favicon.ico">
 
@@ -43,32 +43,40 @@
         .cart-slide { transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
         .cart-hidden { transform: translateX(100%); }
         .cart-visible { transform: translateX(0); }
+        
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .product-card {
+            background-color: #ffffff;
+            border: 1px solid #e8edf3;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @media (min-width: 1024px) {
+            .product-card:hover {
+                border-color: #cbd5e1;
+                box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+                transform: translateY(-2px);
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
-    <!-- Navigation Bar -->
+    <!-- övre navigationsfält -->
     <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200/70">
         <div class="w-full px-4 sm:px-10 lg:px-16 2xl:px-24">
             <div class="flex justify-between items-center h-16 sm:h-20">
-                <!-- Left -->
-                <div class="flex items-center gap-4 sm:gap-6">
-                    <a href="index.html" class="flex items-center group py-2">
-                        <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" 
-                             alt="Emendion" 
-                             class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
-                    </a>
-                    <a href="index.html" class="inline-flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-mono text-slate-500 hover:text-blue-600 transition-colors pl-3 sm:pl-4 border-l border-slate-200 py-1">
-                        <svg class="w-3.5 sm:w-4 h-3.5 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        <span><span class="hidden sm:inline">Back to </span>overview</span>
-                    </a>
-                </div>
+                <!-- Logotyp -->
+                <a href="index.html" class="flex items-center group py-2">
+                    <img src="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg" 
+                         alt="Emendion" 
+                         class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
+                </a>
                 
-                <!-- valuta och varukorg -->
+                <!-- Valuta och varukorg -->
                 <div class="flex items-center gap-2 sm:gap-3">
-                    <!-- val av valuta -->
+                    <!-- Valuta -->
                     <div class="relative">
                         <select id="currency-select" onchange="changeCurrency(this.value)" class="text-[11px] sm:text-xs font-mono font-medium text-slate-700 bg-white border border-slate-200 rounded-xl pl-2.5 sm:pl-3 pr-7 sm:pr-8 py-2 sm:py-2.5 hover:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all cursor-pointer shadow-sm appearance-none">
                             <option value="SEK">SEK (kr)</option>
@@ -82,7 +90,7 @@
                         </div>
                     </div>
 
-                    <!-- Shopping Cart knapp -->
+                    <!-- Varukorgsknapp -->
                     <button onclick="toggleCart()" class="relative p-2 sm:p-2.5 rounded-xl border border-slate-200 bg-white hover:border-blue-500 hover:bg-slate-50 transition-all focus:outline-none shadow-sm touch-manipulation" aria-label="Open Shopping Cart">
                         <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
@@ -96,69 +104,27 @@
         </div>
     </header>
 
-    <!-- Produkt detalj -->
-    <main class="flex-grow w-full px-4 sm:px-10 lg:px-16 2xl:px-24 py-6 sm:py-12 lg:py-16">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 2xl:gap-24 items-start w-full">
-            
-            <!-- panel för bild -->
-            <div class="w-full">
-                <div class="aspect-square rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/80 bg-[#f8f9fb] relative flex items-center justify-center shadow-sm">
-                    <img id="p-image" src="" alt="Product Image" class="w-full h-full object-cover">
-                </div>
+    <!-- Huvudinnehåll -->
+    <main class="flex-grow w-full px-4 sm:px-10 lg:px-16 2xl:px-24 py-8 sm:py-12 lg:py-16">
+        <div class="mb-10 sm:mb-14">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/60 text-blue-600 text-[10px] sm:text-xs font-mono font-medium tracking-wider uppercase mb-3 sm:mb-5">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                HARDWARE ARCHITECTURE & AUDIO SYSTEMS
             </div>
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-light tracking-tight text-slate-900 mb-3 sm:mb-4">
+                The Aspen Aura Series
+            </h1>
+            <p class="text-slate-500 max-w-3xl text-sm sm:text-base lg:text-lg leading-relaxed font-normal">
+                High-performance wireless audio equipment designed for professional clarity, low latency, and direct Auracast broadcasting.
+            </p>
+        </div>
 
-            <!-- specs för produkt -->
-            <div class="flex flex-col">
-                <p id="p-tagline" class="text-[10px] sm:text-xs font-mono text-blue-600 font-semibold uppercase tracking-wider mb-1.5 sm:mb-2">--</p>
-                <h1 id="p-title" class="text-2xl sm:text-4xl lg:text-5xl font-light tracking-tight text-slate-900 mb-2 sm:mb-4">Loading device...</h1>
-                <div class="text-2xl sm:text-3xl font-bold font-mono text-slate-900 mb-4 sm:mb-6">
-                    <span id="p-price">0</span>
-                </div>
-
-                <div class="border-t border-b border-slate-200/70 py-4 sm:py-6 mb-6 sm:mb-8">
-                    <p id="p-description" class="text-slate-600 leading-relaxed text-xs sm:text-sm sm:text-base">--</p>
-                </div>
-
-                <!-- köp -->
-                <div class="space-y-3">
-                    <button id="add-to-cart-btn" onclick="addProductToCart()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 sm:py-4 px-6 rounded-xl font-mono font-bold tracking-wider uppercase text-xs sm:text-sm shadow-sm transition-all active:scale-[0.99] flex items-center justify-center gap-3 touch-manipulation">
-                        <svg class="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        <span>Add to Order</span>
-                    </button>
-
-                    <a id="contact-pricing-box" href="mailto:info@emendion.com" class="hidden w-full bg-blue-50 hover:bg-blue-100/80 border border-blue-200 text-blue-700 py-3.5 sm:py-4 px-6 rounded-xl font-mono font-bold tracking-wider text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-3 text-center">
-                        <svg class="w-4 sm:w-5 h-4 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        <span>Write to info@emendion.com</span>
-                    </a>
-
-                    <a href="index.html" class="w-full block text-center py-2.5 sm:py-3 text-xs font-mono text-slate-400 hover:text-slate-700 transition-colors">
-                        Continue Shopping
-                    </a>
-                </div>
-
-                <!-- hårdvara och utökad hårdvara -->
-                <div class="mt-8 sm:mt-10 bg-slate-50 border border-slate-200/70 rounded-2xl p-4 sm:p-6 sm:p-8 transition-all duration-300">
-                    <div class="flex justify-between items-center mb-3 sm:mb-4 border-b border-slate-200 pb-2.5 sm:pb-3 gap-2">
-                        <h3 class="text-[11px] sm:text-xs font-mono uppercase tracking-widest text-slate-500 truncate">Hardware Specifications</h3>
-                        <span id="p-specs-count" class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase tracking-wider shrink-0 whitespace-nowrap">4 OF 20 SPECIFICATIONS</span>
-                    </div>
-
-                    <dl id="p-specs" class="space-y-2.5 sm:space-y-3.5 text-xs sm:text-sm font-mono">
-                    </dl>
-
-                    <!-- utöka/minska specifikationer -->
-                    <button id="toggle-specs-btn" onclick="toggleSpecs()" class="w-full mt-4 sm:mt-5 pt-3 sm:pt-3.5 border-t border-slate-200/60 flex items-center justify-center gap-2 text-xs font-mono text-blue-600 hover:text-blue-700 transition-colors focus:outline-none cursor-pointer touch-manipulation">
-                        <span id="toggle-specs-text">View all specifications</span>
-                        <svg id="specs-arrow-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
+        <!-- grid för produkterna -->
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 2xl:gap-10 w-full">
         </div>
     </main>
 
-    <!-- footer -->
+    <!-- Sidfot -->
     <footer class="border-t border-slate-200 bg-slate-50/70 mt-auto py-8 sm:py-10">
         <div class="w-full px-4 sm:px-10 lg:px-16 2xl:px-24 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500 text-center md:text-left">
             <div class="flex items-center gap-2">
@@ -169,14 +135,13 @@
         </div>
     </footer>
 
-    <!-- shopping cart overview -->
+    <!-- Shopping Cart (det som kommer fram) -->
     <div id="cart-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleCart()"></div>
     
     <div id="cart-panel" class="fixed inset-y-0 right-0 w-full sm:max-w-md bg-white border-l border-slate-200 shadow-2xl z-50 cart-slide cart-hidden flex flex-col">
         <div class="px-5 sm:px-6 py-5 sm:py-6 border-b border-slate-100 flex justify-between items-center">
             <div>
                 <h2 class="text-base sm:text-lg font-semibold text-slate-900 tracking-wide font-mono uppercase">Shopping Cart</h2>
-                <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 font-mono">Synchronized across active sessions</p>
             </div>
             <button onclick="toggleCart()" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors touch-manipulation" aria-label="Close cart">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -199,7 +164,11 @@
                 <span class="text-xs uppercase tracking-widest text-slate-500">Total Amount</span>
                 <span id="cart-total" class="text-xl sm:text-2xl font-bold text-slate-900">0 kr</span>
             </div>
+            
             <button id="checkout-btn" onclick="handleCheckout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl font-bold text-xs sm:text-sm tracking-wider uppercase font-mono shadow-sm transition-all active:scale-[0.99] flex justify-center items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation" disabled>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
                 <span>Proceed to Checkout</span>
             </button>
             <p class="text-center text-[10px] sm:text-[11px] font-mono text-slate-400 mt-2.5 sm:mt-3">
@@ -209,7 +178,7 @@
     </div>
 
     <script>
-        // valuta (Base --> SEK)
+        // omväxlig valuta (Bas --> SEK)
         const currencies = {
             SEK: { symbol: 'kr', rate: 1, position: 'suffix', locale: 'sv-SE' },
             USD: { symbol: '$', rate: 0.095, position: 'prefix', locale: 'en-US' },
@@ -231,13 +200,13 @@
                 return `${config.symbol}${formattedNum}`;
             }
             return `${formattedNum} ${config.symbol}`;
-        }
+}
 
         function changeCurrency(newCurrency) {
             if (!currencies[newCurrency]) return;
             currentCurrency = newCurrency;
             localStorage.setItem('emendion_currency', newCurrency);
-            updateProductPrice();
+            renderProducts();
             updateCartUI();
         }
 
@@ -249,31 +218,7 @@
                 tagline: "ULTRA-LOW NOISE, LOW LATENCY LE AUDIO MICROPHONE & RECEIVER",
                 description: "Professional wireless microphone engineered for ultra-low noise with patent pending solution and low latency for robust audio transmission via Bluetooth LE Audio including USB-C Receiver.",
                 price: 2990,
-                images: ["picture/Aspen Kit.png"],
-                specs: [
-                    { label: "Dimensions Microphone", value: "28 × 20 × 11 mm" },
-                    { label: "Weight Microphone", value: "5 g" },
-                    { label: "Dimensions Receiver", value: "20 × 18 × 6 mm" },
-                    { label: "Weight Microphone", value: "4 g" },
-                    { label: "Acoustic Principle", value: "Combined MEMS microphones" },
-                    { label: "Polar Pattern", value: "Omnidirectional" },
-                    { label: "Frequency Range", value: "20–24,000 Hz" },
-                    { label: "Maximum SPL", value: "122 dBSPL" },
-                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
-                    { label: "Noise Level", value: "15 dB(A)" },
-                    { label: "Signal-to-Noise Ratio", value: "79 dB" },
-                    { label: "Power", value: "Built-in rechargeable LiPo" },
-                    { label: "Battery Life", value: "upp to 5 h" },
-                    { label: "Broadcast Range", value: "20 m" },
-                    { label: "Transmission Type", value: "Bluetooth LE Audio, USB-C" },
-                    { label: "Firmware Upgrade", value: "USB-C" },
-                    { label: "Codec (Bluetooth LE Audio)", value: "LC3" },
-                    { label: "Modes", value: "Line level, mic level" },
-                    { label: "Operating Modes", value: "Bluetooth LE Audio, USB" },
-                    { label: "Bit Depth (Bluetooth LE Audio)", value: "16 bit (LC3)" },
-                    { label: "Bit Depth (USB)", value: "24 bit" },
-                    { label: "Latency (Bluetooth LE Audio)", value: "33.5 ms"}
-                ]
+                images: ["picture/Aspen Kit.png"]
             },
             {
                 id: "item-002",
@@ -281,29 +226,7 @@
                 tagline: "ULTRA-LOW NOISE, LOW LATENCY LE AUDIO MICROPHONE",
                 description: "Professional wireless microphone engineered for ultra-low noise with patent pending solution and low latency for robust audio transmission via Bluetooth LE Audio.",
                 price: 2249,
-                images: ["picture/Aspen Aura.png"],
-                specs: [
-                    { label: "Dimensions", value: "28 × 20 × 11 mm" },
-                    { label: "Weight", value: "5 g" },
-                    { label: "Acoustic Principle", value: "Combined MEMS microphones" },
-                    { label: "Polar Pattern", value: "Omnidirectional" },
-                    { label: "Frequency Range", value: "20–24,000 Hz" },
-                    { label: "Maximum SPL", value: "122 dBSPL" },
-                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
-                    { label: "Noise Level", value: "15 dB(A)" },
-                    { label: "Signal-to-Noise Ratio", value: "79 dB" },
-                    { label: "Power", value: "Built-in rechargeable LiPo" },
-                    { label: "Battery Life", value: "upp to 5 h" },
-                    { label: "Broadcast Range", value: "20 m" },
-                    { label: "Transmission Type", value: "Bluetooth LE Audio, USB-C" },
-                    { label: "Firmware Upgrade", value: "USB-C" },
-                    { label: "Codec (Bluetooth LE Audio)", value: "LC3" },
-                    { label: "Modes", value: "Line level, mic level" },
-                    { label: "Operating Modes", value: "Bluetooth LE Audio, USB" },
-                    { label: "Bit Depth (Bluetooth LE Audio)", value: "16 bit (LC3)" },
-                    { label: "Bit Depth (USB)", value: "24 bit" },
-                    { label: "Latency (Bluetooth LE Audio)", value: "33.5 ms"}
-                ]
+                images: ["picture/Aspen Aura.png"]
             },
             {
                 id: "item-003",
@@ -311,13 +234,7 @@
                 tagline: "MINIATURE TRANSMITTER",
                 description: "Aspen Compact transmitter unit",
                 price: 890,
-                images: ["picture/Receiver_Transmitter.png"],
-                specs: [
-                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
-                    { label: "Firmware Upgrade", value: "USB-C" },
-                    { label: "Codec (BLE Audio)", value: "LC3" },
-                    { label: "Bit Depth", value: "24 bit" }
-                ]
+                images: ["picture/Receiver_Transmitter.png"]
             },
             {
                 id: "item-004",
@@ -349,19 +266,7 @@
                 tagline: "LE AUDIO TRANSMITTER MODULE",
                 description: "LE Audio transmitter with USB (pads), UART and digital I2S routing for demanding stage and studio environments.",
                 price: "Contact for pricing",
-                images: ["picture/Module.png" ],
-                specs: [
-                    { label: "DSP Architecture", value: "32-bit Floating Point" },
-                    { label: "Audio Interface", value: "Digital I2S & USB Audio Class" },
-                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
-                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
-                    { label: "Firmware Upgrade", value: "USB-C" },
-                    { label: "Codec (BLE Audio)", value: "LC3" },
-                    { label: "Bit Depth", value: "24 bit" },
-                    { label: "Power Input", value: "2.5-5.5 V" },
-                    { label: "Enclosure", value: "None" },
-                    { label: "Shipping", value: "International Tracked Courier" }
-                ]
+                images: ["picture/Module.png" ]
             },
             {
                 id: "item-008",
@@ -369,19 +274,7 @@
                 tagline: "LE AUDIO RECEIVER MODULE",
                 description: "LE Audio receiver with USB (pads), UART and digital I2S routing for demanding stage and studio environments.",
                 price: "Contact for pricing",
-                images: ["picture/Module.png" ],
-                specs: [
-                    { label: "DSP Architecture", value: "32-bit Floating Point" },
-                    { label: "Audio Interface", value: "Digital I2S & USB Audio Class" },
-                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
-                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
-                    { label: "Firmware Upgrade", value: "USB-C" },
-                    { label: "Codec (BLE Audio)", value: "LC3" },
-                    { label: "Bit Depth", value: "24 bit" },
-                    { label: "Power Input", value: "2.5-5.5 V" },
-                    { label: "Enclosure", value: "None" },
-                    { label: "Shipping", value: "International Tracked Courier" }
-                ]
+                images: ["picture/Module.png" ]
             },
             {
                 id: "item-009",
@@ -389,19 +282,7 @@
                 tagline: "LE AUDIO TRANSMITTER MODULE",
                 description: "LE Audio transmitter with USB, UART and digital I2S routing for demanding stage and studio environments.",
                 price: "Contact for pricing",
-                images: ["picture/Module_USB.png"],
-                specs: [
-                    { label: "DSP Architecture", value: "32-bit Floating Point" },
-                    { label: "Audio Interface", value: "Digital I2S & USB Audio Class" },
-                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
-                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
-                    { label: "Firmware Upgrade", value: "USB-C" },
-                    { label: "Codec (BLE Audio)", value: "LC3" },
-                    { label: "Bit Depth", value: "24 bit" },
-                    { label: "Power Input", value: "2.5-5.5 V" },
-                    { label: "Enclosure", value: "None" },
-                    { label: "Shipping", value: "International Tracked Courier" }
-                ]
+                images: ["picture/Module_USB.png"]
             },
             {
                 id: "item-010",
@@ -409,26 +290,12 @@
                 tagline: "LE AUDIO RECEIVER MODULE",
                 description: "LE Audio receiver with USB, UART and digital I2S routing for demanding stage and studio environments.",
                 price: "Contact for pricing",
-                images: ["picture/Module_USB.png"],
-                specs: [
-                    { label: "DSP Architecture", value: "32-bit Floating Point" },
-                    { label: "Audio Interface", value: "Digital I2S & USB Audio Class" },
-                    { label: "Routing Latency", value: "< 2 ms internal processing", highlight: true },
-                    { label: "Sampling Frequency", value: "Up to 48 kHz" },
-                    { label: "Firmware Upgrade", value: "USB-C" },
-                    { label: "Codec (BLE Audio)", value: "LC3" },
-                    { label: "Bit Depth", value: "24 bit" },
-                    { label: "Power Input", value: "2.5-5.5 V" },
-                    { label: "Enclosure", value: "None" },
-                    { label: "Shipping", value: "International Tracked Courier" }
-                ]
+                images: ["picture/Module_USB.png"]
             },
+
         ];
 
-        const params = new URLSearchParams(window.location.search);
-        const currentId = params.get('id') || "item-001";
-        const currentProduct = products.find(p => p.id === currentId) || products[0];
-
+        // hämta alla bilder och skapa array
         function getProductImages(product) {
             if (Array.isArray(product.images) && product.images.length > 0) {
                 return product.images;
@@ -439,91 +306,8 @@
             return [];
         }
 
-        const currentProductImages = getProductImages(currentProduct);
 
-        function updateProductPrice() {
-            const isContactPrice = typeof currentProduct.price !== 'number' || isNaN(currentProduct.price);
-            document.getElementById('p-price').textContent = formatPrice(currentProduct.price);
-
-            const addBtn = document.getElementById('add-to-cart-btn');
-            const contactBox = document.getElementById('contact-pricing-box');
-
-            if (isContactPrice) {
-                if (addBtn) addBtn.classList.add('hidden');
-                if (contactBox) contactBox.classList.remove('hidden');
-            } else {
-                if (addBtn) addBtn.classList.remove('hidden');
-                if (contactBox) contactBox.classList.add('hidden');
-            }
-        }
-
-        // specs är minskad
-        let isSpecsExpanded = false;
-
-        function toggleSpecs() {
-            isSpecsExpanded = !isSpecsExpanded;
-            renderProductSpecs();
-        }
-
-        function renderProductSpecs() {
-            const container = document.getElementById('p-specs');
-            const toggleBtn = document.getElementById('toggle-specs-btn');
-            const toggleText = document.getElementById('toggle-specs-text');
-            const arrowIcon = document.getElementById('specs-arrow-icon');
-            const countEl = document.getElementById('p-specs-count');
-
-            if (!container || !currentProduct.specs) return;
-
-            const totalSpecs = currentProduct.specs.length;
-            const hasMore = totalSpecs > 4;
-
-            if (toggleBtn) {
-                if (hasMore) {
-                    toggleBtn.classList.remove('hidden');
-                    if (isSpecsExpanded) {
-                        toggleText.textContent = 'Hide specifications';
-                        arrowIcon.classList.add('rotate-180');
-                        if (countEl) countEl.textContent = `${totalSpecs} OF ${totalSpecs} SPECIFICATIONS`;
-                    } else {
-                        toggleText.textContent = 'View all specifications';
-                        arrowIcon.classList.remove('rotate-180');
-                        if (countEl) countEl.textContent = `4 OF ${totalSpecs} SPECIFICATIONS`;
-                    }
-                } else {
-                    toggleBtn.classList.add('hidden');
-                    if (countEl) countEl.textContent = `${totalSpecs} OF ${totalSpecs} SPECIFICATIONS`;
-                }
-            }
-
-            const visibleSpecs = (isSpecsExpanded || !hasMore) 
-                ? currentProduct.specs 
-                : currentProduct.specs.slice(0, 4);
-
-            container.innerHTML = visibleSpecs.map((spec, index) => {
-                const isLast = index === visibleSpecs.length - 1;
-                const borderClass = isLast ? '' : 'border-b border-slate-200/60';
-                const valueClass = spec.highlight ? 'text-blue-600 font-semibold' : 'text-slate-800 font-medium';
-
-                return `
-                    <div class="flex items-center justify-between py-1.5 sm:py-1 ${borderClass} gap-3">
-                        <dt class="text-slate-500 break-words">${spec.label}</dt>
-                        <dd class="${valueClass} text-right shrink-0 whitespace-nowrap">${spec.value}</dd>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // fyll ut sidor
-        document.title = `${currentProduct.name} | Emendion`;
-        document.getElementById('p-title').textContent = currentProduct.name;
-        document.getElementById('p-tagline').textContent = currentProduct.tagline;
-        document.getElementById('p-description').textContent = currentProduct.description;
-        document.getElementById('p-image').src = currentProductImages[0] || '';
-        document.getElementById('p-image').alt = currentProduct.name;
-        updateProductPrice();
-        renderProductSpecs();
-
-        // localstorage för shopping cart
+        //  LocalStorage Varukorgshantering 
         function getCart() {
             try {
                 return JSON.parse(localStorage.getItem('emendion_cart')) || [];
@@ -537,21 +321,68 @@
             updateCartUI();
         }
 
-        function addProductToCart() {
-            if (typeof currentProduct.price !== 'number' || isNaN(currentProduct.price)) return;
+        let isCartOpen = false;
+
+        // rendera produkterna
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden';
+                
+                const imgs = getProductImages(product);
+                const firstImg = imgs[0] || '';
+                const isContactPrice = typeof product.price !== 'number' || isNaN(product.price);
+
+                card.innerHTML = `
+                    <a href="product.html?id=${product.id}" class="block flex-grow relative overflow-hidden group cursor-pointer p-5 sm:p-7 lg:p-8">
+                        <div class="aspect-square bg-[#f8f9fb] rounded-xl sm:rounded-2xl overflow-hidden relative border border-slate-100 flex items-center justify-center mb-5 sm:mb-6">
+                            <img id="p-img-${product.id}" src="${firstImg}" alt="${product.name}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out">
+                        </div>
+                        <div>
+                            <p class="text-[10px] sm:text-[11px] font-mono text-blue-600 font-semibold uppercase tracking-wider mb-1.5 sm:mb-2">${product.tagline}</p>
+                            <h3 class="text-xl sm:text-2xl font-light text-slate-900 mb-2 sm:mb-3">${product.name}</h3>
+                            <p class="text-slate-500 text-xs sm:text-sm leading-relaxed">${product.description}</p>
+                        </div>
+                    </a>
+                    
+                    <div class="px-5 pb-5 sm:px-7 sm:pb-7 lg:px-8 lg:pb-8 pt-3 flex items-center justify-between mt-auto border-t border-slate-100/80 gap-3">
+                        <div class="min-w-0">
+                            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase tracking-widest block mb-0.5 truncate">Unit Price</span>
+                            <span class="text-xl sm:text-2xl font-bold text-slate-900 font-mono whitespace-nowrap">${formatPrice(product.price)}</span>
+                            ${isContactPrice ? `<a href="mailto:info@emendion.com" class="block text-xs font-mono text-blue-600 hover:underline mt-1">Write to info@emendion.com</a>` : ''}
+                        </div>
+                        ${!isContactPrice ? `
+                        <button onclick="addToCart('${product.id}')" class="bg-blue-600 hover:bg-blue-700 text-white p-3 sm:p-3.5 rounded-xl transition-all duration-200 active:scale-95 shadow-sm shrink-0 touch-manipulation" title="Add to cart" aria-label="Add to cart">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                        </button>
+                        ` : ''}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product || typeof product.price !== 'number' || isNaN(product.price)) return;
 
             let cart = getCart();
-            const existing = cart.find(item => item.id === currentProduct.id);
-            const firstImg = currentProductImages[0] || '';
+            const existing = cart.find(item => item.id === productId);
+            const imgs = getProductImages(product);
 
             if (existing) {
                 existing.quantity += 1;
             } else {
                 cart.push({
-                    id: currentProduct.id,
-                    name: currentProduct.name,
-                    price: currentProduct.price,
-                    image: firstImg,
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: imgs[0] || '',
                     quantity: 1
                 });
             }
@@ -587,8 +418,7 @@
 
             container.querySelectorAll('.cart-item-row').forEach(el => el.remove());
 
-            const config = currencies[currentCurrency] || currencies.SEK;
-            let grandTotalConverted = 0;
+            let totalInSek = 0;
             let totalItems = 0;
 
             if (cart.length === 0) {
@@ -601,14 +431,9 @@
                 badge.classList.remove('hidden');
 
                 cart.forEach(item => {
-                    const unitPriceConverted = Math.round(item.price * config.rate);
-                    const lineTotalConverted = unitPriceConverted * item.quantity;
-                    grandTotalConverted += lineTotalConverted;
+                    const itemTotalInSek = item.price * item.quantity;
+                    totalInSek += itemTotalInSek;
                     totalItems += item.quantity;
-
-                    const formattedUnitPrice = config.position === 'prefix'
-                        ? `${config.symbol}${unitPriceConverted.toLocaleString(config.locale)}`
-                        : `${unitPriceConverted.toLocaleString(config.locale)} ${config.symbol}`;
 
                     const div = document.createElement('div');
                     div.className = 'cart-item-row flex items-center gap-3 sm:gap-4 bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200/80';
@@ -616,7 +441,7 @@
                         <img src="${item.image}" alt="${item.name}" class="w-14 sm:w-16 h-14 sm:h-16 object-contain rounded-xl bg-white border border-slate-200/60 p-1 shrink-0">
                         <div class="flex-1 min-w-0">
                             <h4 class="text-xs font-semibold text-slate-900 truncate">${item.name}</h4>
-                            <p class="text-slate-500 font-mono text-[11px] sm:text-xs mt-0.5">${formattedUnitPrice}</p>
+                            <p class="text-slate-500 font-mono text-[11px] sm:text-xs mt-0.5">${formatPrice(item.price)}</p>
                             
                             <div class="flex items-center mt-2 border border-slate-200 rounded-lg w-fit overflow-hidden bg-white">
                                 <button onclick="changeQuantity('${item.id}', -1)" class="px-2.5 py-0.5 hover:bg-slate-100 text-slate-600 text-xs font-mono touch-manipulation">-</button>
@@ -632,15 +457,10 @@
                 });
             }
 
-            const formattedGrandTotal = config.position === 'prefix'
-                ? `${config.symbol}${grandTotalConverted.toLocaleString(config.locale)}`
-                : `${grandTotalConverted.toLocaleString(config.locale)} ${config.symbol}`;
-
-            totalElement.textContent = formattedGrandTotal;
+            totalElement.textContent = formatPrice(totalInSek);
             badge.textContent = totalItems;
         }
 
-        let isCartOpen = false;
         function toggleCart() {
             isCartOpen = !isCartOpen;
             const overlay = document.getElementById('cart-overlay');
@@ -663,7 +483,7 @@
             }
         }
 
-        // Kopplad direkt till kassan
+        // skickar kunden  till checkout.html
         function handleCheckout() {
             const cart = getCart();
             if (cart.length === 0) return;
@@ -671,19 +491,19 @@
             window.location.href = 'checkout.html';
         }
 
-        // synka valutor/varugor näör man byter fil
+        // Synka valutaval och varukorg mellan flikar
         window.addEventListener('storage', () => {
             currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
             const selectEl = document.getElementById('currency-select');
             if (selectEl) selectEl.value = currentCurrency;
-            updateProductPrice();
+            renderProducts();
             updateCartUI();
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             const selectEl = document.getElementById('currency-select');
             if (selectEl) selectEl.value = currentCurrency;
-            updateProductPrice();
+            renderProducts();
             updateCartUI();
         });
     </script>
