@@ -31,22 +31,22 @@ module.exports = async (req, res) => {
     const isNordic = ['SE', 'DK', 'FI', 'NO'].includes(dest_country);
 
 
-    // beräknande av baspris (POSTNORD LIVE PRICE ELLER PORTOTABELL)
+    // beräknande av baspris (POSTNORD LIVE PRICE ELLER PORTOTABELL - 250g)
     let home_minor = 0;
     let collect_minor = 0;
 
     if (dest_country === 'SE') {
-        home_minor    = 5520; // 55,20 kr (Home Small Prio)
-        collect_minor = 8400; // 84,00 kr (Service Point)
+        home_minor    = 5520;  // 55,20 kr (Home Small Prio)
+        collect_minor = 8400;  // 84,00 kr (Service Point)
     } else if (isNordic) {
-        home_minor    = 11900; // Tracked Letter Norden
-        collect_minor = 13900; // Pickup Point Norden
+        home_minor    = 11825; // 118,25 kr (PostNord Tracked Letter enstaka 250g: 105 kr + 0,25 * 53 kr)
+        collect_minor = 17100; // 171,00 kr (Rek utrikes EDI Europa 250g)
     } else if (['DE', 'FR', 'NL', 'GB', 'ES', 'IT', 'AT', 'BE', 'PL'].includes(dest_country)) {
-        home_minor    = 13900; // Tracked Letter Europa
-        collect_minor = 16900; // Parcel Collect Europa
+        home_minor    = 11825; // 118,25 kr (PostNord Tracked Letter enstaka 250g: 105 kr + 0,25 * 53 kr)
+        collect_minor = 17100; // 171,00 kr (Rek utrikes EDI Europa 250g)
     } else {
-        home_minor    = 17900; // Tracked Letter Övriga världen (ex. AU/US)
-        collect_minor = 22900; // Tracked Parcel Övriga världen
+        home_minor    = 11825; // 118,25 kr (PostNord Tracked Letter enstaka 250g: 105 kr + 0,25 * 53 kr)
+        collect_minor = 18000; // 180,00 kr (Rek utrikes EDI Utanför Europa 250g)
     }
 
     const tax_rate = isNordic ? 2500 : 0;
