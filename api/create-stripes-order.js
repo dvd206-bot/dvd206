@@ -1,6 +1,5 @@
-// api/create-stripe-order.js (eller behåll namnet api/create-klarna-order.js om du inte vill ändra URL i fetch än)
+// api/create-stripes-order.js
 
-// Hjälpfunktion för att konvertera nästlade objekt till Stripes x-www-form-urlencoded-format
 function toFormUrlEncoded(obj, prefix = '') {
     const str = [];
     for (const p in obj) {
@@ -16,7 +15,6 @@ function toFormUrlEncoded(obj, prefix = '') {
 }
 
 module.exports = async (req, res) => {
-    // Sätt CORS- och innehålls-headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -36,15 +34,13 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Varukorgen är tom.' });
     }
 
-    // Testläge       --> sk_test_...
-    // Produktionsläge --> sk_live_...
+    // Hämtar dina miljövariabler från Vercel
     const stripe_endpoint   = "https://api.stripe.com/v1/checkout/sessions";
-    const stripe_secret_key = process.env.STRIPE_SECRET_KEY || "EMENDION_STRIPE_SECRET_KEY";
-    const stripe_public_key = process.env.STRIPE_PUBLIC_KEY || "EMENDION_STRIPE_PUBLIC_KEY";
+    const stripe_secret_key = process.env.EMENDION_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    const stripe_public_key = process.env.EMENDION_STRIPE_PUBLIC_KEY || process.env.STRIPE_PUBLIC_KEY;
 
-    // Valuta och konverteringskurser (matchar frontend: SEK som bas)
     const currencyRaw = String(data.currency || 'SEK').toUpperCase();
-    const currency    = currencyRaw.toLowerCase(); // Stripe kräver gemener (sek, usd, eur)
+    const currency    = currencyRaw.toLowerCase();
     const rates       = { SEK: 1, USD: 0.095, EUR: 0.088 };
     const rate        = rates[currencyRaw] || 1;
 
@@ -57,19 +53,16 @@ module.exports = async (req, res) => {
     let order_amount = 0;
     let order_tax_amount = 0;
 
-    // Momsberäkning (25 % moms inrikes/EU, 0 % utanför EU)
     const euCountries = ['SE', 'SWEDEN', 'SVERIGE', 'DK', 'DENMARK', 'DANMARK', 'FI', 'FINLAND', 'DE', 'GERMANY', 'TYSKLAND', 'FR', 'FRANCE', 'FRANKRIKE', 'NL', 'NETHERLANDS', 'ES', 'SPAIN', 'IT', 'ITALY', 'BE', 'BELGIUM', 'AT', 'AUSTRIA', 'PL', 'POLAND'];
     const isEU = euCountries.includes(country);
 
-    // Orderrader för produkterna
     data.items.forEach(item => {
         const qty = parseInt(item.quantity, 10) || 1;
-        // Konvertera pris från SEK till vald valuta och omvandla till öre/cents
         const convertedPrice = Math.round(Number(item.price) * rate);
         const unit_price = Math.round(convertedPrice * 100);
         const total_line_amount = unit_price * qty;
 
-        const line_tax_amount = isEU ? Math.round(total_line_amount * 0.20) : 0; // 20 % av pris inkl. moms motsvarar 25 % moms
+        const line_tax_amount = isEU ? Math.round(total_line_amount * 0.20) : 0;
 
         order_amount += total_line_amount;
         order_tax_amount += line_tax_amount;
@@ -86,7 +79,6 @@ module.exports = async (req, res) => {
         });
     });
 
-    // Fraktkostnad (shipping_option.price kommer in i SEK ören, ex. 8900 för 89 kr)
     const shipping_price_sek_minor = parseInt(shipping_option.price, 10) || 0;
     const shipping_price = Math.round((shipping_price_sek_minor / 100) * rate) * 100;
     const shipping_tax_amount = isEU ? Math.round(shipping_price * 0.20) : 0;
@@ -98,10 +90,8 @@ module.exports = async (req, res) => {
     const host = req.headers.host;
     const base_url = `${protocol}://${host}`;
 
-    // Välj om du vill ha 'embedded' (inbäddad i checkout.html) eller 'hosted' (omdirigering till Stripe)
     const ui_mode = data.ui_mode === 'embedded' ? 'embedded' : 'hosted';
 
-    // Stripe Checkout-payload med låst frakt och förifyllnad av kundens e-post och adress i metadata
     const payload = {
         mode: 'payment',
         locale: locale,
@@ -139,17 +129,16 @@ module.exports = async (req, res) => {
         payload.cancel_url = `${base_url}/checkout.html`;
     }
 
-    // Testläge (om ingen Stripe-nyckel är inlagd i miljövariablerna än)
-    if (stripe_secret_key === "EMENDION_STRIPE_SECRET_KEY" || !process.env.STRIPE_SECRET_KEY) {
+    // Testläge om EMENDION_STRIPE_SECRET_KEY saknas i Vercel
+    if (!stripe_secret_key) {
         return res.status(200).json({
             mock: true,
-            message: "Stripe API-nyckel (STRIPE_SECRET_KEY) är inte tillagd än.",
+            message: "Stripe API-nyckel (EMENDION_STRIPE_SECRET_KEY) är inte tillagd än.",
             order_amount: order_amount,
             shipping_applied: shipping_option
         });
     }
 
-    // Anrop mot Stripe Checkout API
     try {
         const stripeRes = await fetch(stripe_endpoint, {
             method: 'POST',
@@ -169,7 +158,6 @@ module.exports = async (req, res) => {
             });
         }
 
-        // Returnerar både url (för redirect), client_secret (för inbäddad kassa) och public_key
         return res.status(200).json({
             id: stripeData.id,
             url: stripeData.url,
