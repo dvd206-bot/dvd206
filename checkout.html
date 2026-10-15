@@ -7,6 +7,8 @@
 
     <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Stripe JS SDK för inbäddad kassa -->
+    <script src="https://js.stripe.com/v3/"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fb; color: #0f172a; }
@@ -31,7 +33,7 @@
     <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- vald frakt/klarana -->
+            <!-- vald frakt / Stripe -->
             <div class="lg:col-span-7 space-y-6">
                 
                 <!-- val av frakt -->
@@ -46,17 +48,17 @@
                     </a>
                 </div>
 
-                <!-- Klarna Checkout Container -->
+                <!-- Stripe Checkout Container -->
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                         <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Checkout</h2>
-                        <span class="text-xs font-mono font-bold text-pink-600 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-200">Klarna.</span>
+                        <span class="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200">Stripe</span>
                     </div>
 
-                    <div id="klarna-checkout-container" class="min-h-[300px] flex items-center justify-center">
-                        <div id="klarna-loading" class="text-center font-mono text-xs text-slate-400">
-                            <div class="w-6 h-6 border-2 border-slate-300 border-t-pink-600 rounded-full animate-spin mx-auto mb-2"></div>
-                            Loading secure Klarna checkout...
+                    <div id="stripe-checkout-container" class="min-h-[300px] flex items-center justify-center">
+                        <div id="stripe-loading" class="text-center font-mono text-xs text-slate-400">
+                            <div class="w-6 h-6 border-2 border-slate-300 border-t-indigo-600 rounded-full animate-spin mx-auto mb-2"></div>
+                            Loading secure Stripe checkout...
                         </div>
                     </div>
                 </div>
@@ -132,6 +134,7 @@
         let customer = null;
         let selectedShipping = null;
         let cart = [];
+        let embeddedCheckoutInstance = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
@@ -149,7 +152,7 @@
             document.getElementById('display-shipping-address').textContent = `${selectedShipping.description} (${customer.street}, ${customer.zip} ${customer.city})`;
 
             renderOrderSummary();
-            initKlarnaOrder();
+            initStripeOrder('embedded');
         });
 
         // Synka valutaval och varukorg mellan flikar
@@ -181,45 +184,79 @@
             document.getElementById('co-total').textContent = formatPrice(subtotal + shippingKr);
         }
 
-        async function initKlarnaOrder() {
+        async function initStripeOrder(mode = 'embedded') {
+            const container = document.getElementById('stripe-checkout-container');
+
             try {
-                const res = await fetch('/api/create-klarna-order', {
+                const res = await fetch('/api/create-stripes-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         items: cart,
                         shipping_option: selectedShipping,
                         customer: customer,
-                        currency: currentCurrency
+                        currency: currentCurrency,
+                        ui_mode: mode
                     })
                 });
 
                 const data = await res.json();
-                const container = document.getElementById('klarna-checkout-container');
 
-                if (data.html_snippet) {
-                    container.innerHTML = data.html_snippet;
-                    // Kör Klarnas JavaScript
-                    const scripts = container.getElementsByTagName("script");
-                    for (let s of scripts) {
-                        const newScript = document.createElement("script");
-                        newScript.text = s.text;
-                        document.body.appendChild(newScript);
+                if (!res.ok) {
+                    throw new Error(data.error || 'Could not initialize Stripe session.');
+                }
+
+                // 1. Inbäddad Stripe Checkout (om både client_secret och giltig public_key finns)
+                if (data.client_secret && data.public_key && data.public_key !== "EMENDION_STRIPE_PUBLIC_KEY" && window.Stripe) {
+                    container.innerHTML = '';
+                    container.classList.remove('flex', 'items-center', 'justify-center');
+
+                    if (embeddedCheckoutInstance) {
+                        embeddedCheckoutInstance.destroy();
                     }
-                } else if (data.mock) {
-                    // testköp hos klarna
+
+                    const stripe = Stripe(data.public_key);
+                    embeddedCheckoutInstance = await stripe.initEmbeddedCheckout({
+                        clientSecret: data.client_secret
+                    });
+                    embeddedCheckoutInstance.mount('#stripe-checkout-container');
+                }
+                // 2. Fallback till Hosted Redirect om STRIPE_PUBLIC_KEY saknas men STRIPE_SECRET_KEY finns
+                else if (data.client_secret && (!data.public_key || data.public_key === "EMENDION_STRIPE_PUBLIC_KEY")) {
+                    return initStripeOrder('hosted');
+                }
+                // 3. Hosted Redirect-läge (knapp som skickar till Stripes betalsida)
+                else if (data.url) {
                     container.innerHTML = `
-                        <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center">
-                            <span class="text-xs font-mono text-pink-600 font-bold uppercase tracking-wider block mb-2">Klarna Ready</span>
+                        <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center w-full">
+                            <span class="text-xs font-mono text-indigo-600 font-bold uppercase tracking-wider block mb-2">Stripe Secure Payment</span>
+                            <p class="text-xs text-slate-600 leading-relaxed mb-4">Click below to complete your purchase securely via Stripe Checkout.</p>
+                            <a href="${data.url}" class="inline-block w-full bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3.5 rounded-xl font-mono text-xs uppercase font-bold shadow-sm transition-all">
+                                Pay with Stripe →
+                            </a>
+                        </div>
+                    `;
+                }
+                // 4. Testläge (Mock) när API-nycklar inte är inlagda än
+                else if (data.mock) {
+                    container.innerHTML = `
+                        <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center w-full">
+                            <span class="text-xs font-mono text-indigo-600 font-bold uppercase tracking-wider block mb-2">Stripe Ready (Test Mode)</span>
                             <p class="text-xs text-slate-600 leading-relaxed">${data.message}</p>
-                            <button onclick="window.location.href='success.html?order_id=TEST-ORD'" class="mt-4 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-mono text-xs uppercase font-bold">
+                            <button onclick="window.location.href='success.html?order_id=TEST-ORD'" class="mt-4 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-mono text-xs uppercase font-bold transition-all">
                                 Purchase Directly
                             </button>
                         </div>
                     `;
                 }
             } catch (err) {
-                console.error("Problem starting Klarna -->", err);
+                console.error("Problem starting Stripe -->", err);
+                container.innerHTML = `
+                    <div class="p-6 bg-red-50 border border-red-200 rounded-2xl text-center w-full">
+                        <span class="text-xs font-mono text-red-600 font-bold uppercase tracking-wider block mb-1">Checkout Error</span>
+                        <p class="text-xs text-red-600 font-mono">${err.message}</p>
+                    </div>
+                `;
             }
         }
     </script>
