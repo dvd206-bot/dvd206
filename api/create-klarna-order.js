@@ -1,4 +1,19 @@
-// api/create-klarna-order.js
+// api/create-stripe-order.js (eller behåll namnet api/create-klarna-order.js om du inte vill ändra URL i fetch än)
+
+// Hjälpfunktion för att konvertera nästlade objekt till Stripes x-www-form-urlencoded-format
+function toFormUrlEncoded(obj, prefix = '') {
+    const str = [];
+    for (const p in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, p) && obj[p] !== undefined && obj[p] !== null) {
+            const k = prefix ? `${prefix}[${p}]` : p;
+            const v = obj[p];
+            str.push((v !== null && typeof v === 'object')
+                ? toFormUrlEncoded(v, k)
+                : `${encodeURIComponent(k)}=${encodeURIComponent(v)}`);
+        }
+    }
+    return str.join('&');
+}
 
 module.exports = async (req, res) => {
     // Sätt CORS- och innehålls-headers
@@ -21,134 +36,149 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Varukorgen är tom.' });
     }
 
-    // Playground  --> https://api.playground.klarna.com
-    // Production  --> https://api.klarna.com
+    // Testläge       --> sk_test_...
+    // Produktionsläge --> sk_live_...
+    const stripe_endpoint   = "https://api.stripe.com/v1/checkout/sessions";
+    const stripe_secret_key = process.env.STRIPE_SECRET_KEY || "EMENDION_STRIPE_SECRET_KEY";
+    const stripe_public_key = process.env.STRIPE_PUBLIC_KEY || "EMENDION_STRIPE_PUBLIC_KEY";
 
-    const klarna_endpoint = process.env.KLARNA_ENDPOINT || "https://api.playground.klarna.com/checkout/v3/orders";
-    const klarna_uid      = process.env.KLARNA_UID || "DITT_KLARNA_UID";
-    const klarna_password = process.env.KLARNA_PASSWORD || "DITT_KLARNA_PASSWORD";
+    // Valuta och konverteringskurser (matchar frontend: SEK som bas)
+    const currencyRaw = String(data.currency || 'SEK').toUpperCase();
+    const currency    = currencyRaw.toLowerCase(); // Stripe kräver gemener (sek, usd, eur)
+    const rates       = { SEK: 1, USD: 0.095, EUR: 0.088 };
+    const rate        = rates[currencyRaw] || 1;
 
+    const customer        = data.customer || {};
+    const shipping_option = data.shipping_option || {};
+    const country         = String(customer.country || (currencyRaw === 'SEK' ? 'SE' : 'US')).toUpperCase();
+    const locale          = (country === 'SE' && currencyRaw === 'SEK') ? 'sv' : 'en';
 
-    const currency = String(data.currency || 'SEK').toUpperCase();
-    const customer = data.customer || {};
-    const country  = String(customer.country || (currency === 'SEK' ? 'SE' : 'US')).toUpperCase();
-    const locale   = (country === 'SE' && currency === 'SEK') ? 'sv-SE' : 'en-US';
-
-    const order_lines = [];
+    const line_items = [];
     let order_amount = 0;
     let order_tax_amount = 0;
 
-    //  orderrader för produkterna
+    // Momsberäkning (25 % moms inrikes/EU, 0 % utanför EU)
+    const euCountries = ['SE', 'SWEDEN', 'SVERIGE', 'DK', 'DENMARK', 'DANMARK', 'FI', 'FINLAND', 'DE', 'GERMANY', 'TYSKLAND', 'FR', 'FRANCE', 'FRANKRIKE', 'NL', 'NETHERLANDS', 'ES', 'SPAIN', 'IT', 'ITALY', 'BE', 'BELGIUM', 'AT', 'AUSTRIA', 'PL', 'POLAND'];
+    const isEU = euCountries.includes(country);
+
+    // Orderrader för produkterna
     data.items.forEach(item => {
         const qty = parseInt(item.quantity, 10) || 1;
-        const unit_price = Math.round(Number(item.price) * 100); // Belopp i öre/cents
+        // Konvertera pris från SEK till vald valuta och omvandla till öre/cents
+        const convertedPrice = Math.round(Number(item.price) * rate);
+        const unit_price = Math.round(convertedPrice * 100);
         const total_line_amount = unit_price * qty;
 
-        // Momsberäkning (25 % moms inrikes/EU, 0 % utanför EU) (måste fixas)
-        const isEU = ['SE', 'DK', 'FI', 'DE', 'FR', 'NL', 'ES', 'IT', 'BE', 'AT', 'PL'].includes(country);
-        const tax_rate = isEU ? 2500 : 0;
-        const line_tax_amount = tax_rate > 0 ? Math.round(total_line_amount * 0.20) : 0;
+        const line_tax_amount = isEU ? Math.round(total_line_amount * 0.20) : 0; // 20 % av pris inkl. moms motsvarar 25 % moms
 
         order_amount += total_line_amount;
         order_tax_amount += line_tax_amount;
 
-        order_lines.push({
-            type: "physical",
-            name: item.name,
-            quantity: qty,
-            unit_price: unit_price,
-            tax_rate: tax_rate,
-            total_amount: total_line_amount,
-            total_tax_amount: line_tax_amount
+        line_items.push({
+            price_data: {
+                currency: currency,
+                unit_amount: unit_price,
+                product_data: {
+                    name: item.name
+                }
+            },
+            quantity: qty
         });
     });
 
-    const shipping_price = parseInt(shipping_option.price, 10) || 0;
-    const shipping_tax_rate = shipping_option.tax_rate ?? 2500;
-    const shipping_tax_amount = shipping_option.tax_amount ?? Math.round(shipping_price * 0.20);
+    // Fraktkostnad (shipping_option.price kommer in i SEK ören, ex. 8900 för 89 kr)
+    const shipping_price_sek_minor = parseInt(shipping_option.price, 10) || 0;
+    const shipping_price = Math.round((shipping_price_sek_minor / 100) * rate) * 100;
+    const shipping_tax_amount = isEU ? Math.round(shipping_price * 0.20) : 0;
 
     order_amount += shipping_price;
     order_tax_amount += shipping_tax_amount;
-
-    order_lines.push({
-        type: "shipping_fee",
-        name: shipping_option.name || "PostNord Frakt",
-        quantity: 1,
-        unit_price: shipping_price,
-        tax_rate: shipping_tax_rate,
-        total_amount: shipping_price,
-        total_tax_amount: shipping_tax_amount
-    });
 
     const protocol = req.headers['x-forwarded-proto'] || 'https';
     const host = req.headers.host;
     const base_url = `${protocol}://${host}`;
 
-    // Klarna Checkout-payload med förvald adress och låst frakt (så man inte kan ändra och betala mindre)
+    // Välj om du vill ha 'embedded' (inbäddad i checkout.html) eller 'hosted' (omdirigering till Stripe)
+    const ui_mode = data.ui_mode === 'embedded' ? 'embedded' : 'hosted';
+
+    // Stripe Checkout-payload med låst frakt och förifyllnad av kundens e-post och adress i metadata
     const payload = {
-        purchase_country: country,
-        purchase_currency: currency,
+        mode: 'payment',
         locale: locale,
-        order_amount: order_amount,
-        order_tax_amount: order_tax_amount,
-        order_lines: order_lines,
-        billing_address: {
-            given_name: customer.firstName || undefined,
-            family_name: customer.lastName || undefined,
-            email: customer.email || undefined,
-            street_address: customer.street || undefined,
-            postal_code: customer.zip || undefined,
-            city: customer.city || undefined,
-            country: country
-        },
-        shipping_address: {
-            given_name: customer.firstName || undefined,
-            family_name: customer.lastName || undefined,
-            email: customer.email || undefined,
-            street_address: customer.street || undefined,
-            postal_code: customer.zip || undefined,
-            city: customer.city || undefined,
-            country: country
-        },
-        options: {
-            allow_separate_shipping_address: false,
-            shipping_details: `Vald leverans --> ${shipping_option.name}`
-        },
-        merchant_urls: {
-            terms: `${base_url}/terms.html`,
-            checkout: `${base_url}/checkout.html`,
-            confirmation: `${base_url}/success.html?order_id={checkout.order.id}`,
-            push: `${base_url}/api/create-order?order_id={checkout.order.id}`
+        customer_email: customer.email || undefined,
+        line_items: line_items,
+        shipping_options: [
+            {
+                shipping_rate_data: {
+                    type: 'fixed_amount',
+                    fixed_amount: {
+                        amount: shipping_price,
+                        currency: currency
+                    },
+                    display_name: shipping_option.name || "PostNord Frakt"
+                }
+            }
+        ],
+        metadata: {
+            customer_name: `${customer.firstName || ''} ${customer.lastName || ''}`.trim(),
+            customer_phone: customer.phone || '',
+            shipping_street: customer.street || '',
+            shipping_zip: customer.zip || '',
+            shipping_city: customer.city || '',
+            shipping_country: customer.country || '',
+            shipping_method: `Vald leverans --> ${shipping_option.name || 'PostNord'}`,
+            estimated_tax_minor: String(order_tax_amount)
         }
     };
 
-    // testläge
-    if (klarna_uid === "DITT_KLARNA_UID" || !process.env.KLARNA_UID) {
+    if (ui_mode === 'embedded') {
+        payload.ui_mode = 'embedded';
+        payload.return_url = `${base_url}/success.html?order_id={CHECKOUT_SESSION_ID}`;
+    } else {
+        payload.success_url = `${base_url}/success.html?order_id={CHECKOUT_SESSION_ID}`;
+        payload.cancel_url = `${base_url}/checkout.html`;
+    }
+
+    // Testläge (om ingen Stripe-nyckel är inlagd i miljövariablerna än)
+    if (stripe_secret_key === "EMENDION_STRIPE_SECRET_KEY" || !process.env.STRIPE_SECRET_KEY) {
         return res.status(200).json({
             mock: true,
-            message: "Klarna API är inte tillagd ",
+            message: "Stripe API-nyckel (STRIPE_SECRET_KEY) är inte tillagd än.",
             order_amount: order_amount,
             shipping_applied: shipping_option
         });
     }
 
-    // Klarna checkout API 
+    // Anrop mot Stripe Checkout API
     try {
-        const authString = Buffer.from(`${klarna_uid}:${klarna_password}`).toString('base64');
-        const klarnaRes = await fetch(klarna_endpoint, {
+        const stripeRes = await fetch(stripe_endpoint, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Basic ${authString}`
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${stripe_secret_key}`
             },
-            body: JSON.stringify(payload)
+            body: toFormUrlEncoded(payload)
         });
 
-        const klarnaData = await klarnaRes.json();
-        return res.status(klarnaRes.status).json(klarnaData);
+        const stripeData = await stripeRes.json();
+
+        if (!stripeRes.ok) {
+            return res.status(stripeRes.status).json({
+                error: stripeData.error?.message || 'Ett fel uppstod hos Stripe.',
+                details: stripeData
+            });
+        }
+
+        // Returnerar både url (för redirect), client_secret (för inbäddad kassa) och public_key
+        return res.status(200).json({
+            id: stripeData.id,
+            url: stripeData.url,
+            client_secret: stripeData.client_secret,
+            public_key: stripe_public_key
+        });
     } catch (err) {
         return res.status(500).json({
-            error: `Serverfel vid anrop mot Klarna --> ${err.message}`
+            error: `Serverfel vid anrop mot Stripe --> ${err.message}`
         });
     }
 };
