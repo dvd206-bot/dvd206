@@ -1,5 +1,23 @@
+// api/send-order.js
 const nodemailer = require('nodemailer');
 const mysql = require('mysql2/promise');
+
+// Gör om långa Stripe-session-ID:n (cs_test_...) till ett snyggt 6-siffrigt ordernummer
+function formatOrderNumber(rawId) {
+    if (!rawId || String(rawId).toUpperCase().includes('TEST-ORD')) {
+        return String(Math.floor(100000 + Math.random() * 900000));
+    }
+    const str = String(rawId).trim();
+    if (/^\d{5,8}$/.test(str)) {
+        return str;
+    }
+    // Skapa ett konsekvent 6-siffrigt nummer utifrån Stripe-sessionens ID
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = (hash * 31 + str.charCodeAt(i)) % 900000;
+    }
+    return String(100000 + Math.abs(hash));
+}
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,20 +34,19 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Kunduppgifter eller e-post saknas.' });
     }
 
-    // generera ordernummer
-    const isTestOrder = !order_id || String(order_id).toUpperCase().includes('TEST');
-    const finalOrderId = isTestOrder ? String(Math.floor(100000 + Math.random() * 900000)) : String(order_id);
+    // Generera snyggt 6-siffrigt ordernummer
+    const finalOrderId = formatOrderNumber(order_id);
 
-    // Spara ordern Loopia MariaDB (emendion_com_db_1)
+    // Spara ordern i Loopia MariaDB (matchar dina variabelnamn i Vercel)
     let dbSuccess = false;
     let dbError = null;
 
     try {
         const db = await mysql.createConnection({
-            host: process.env.LOOPIA_DB_HOST || 'DATABASE_HOST',
-            user: process.env.LOOPIA_DB_USER || 'DATABAS_ANVANDARNAMN',
-            password: process.env.LOOPIA_DB_PASSWORD || 'DATABAS_LOSENORD',
-            database: process.env.LOOPIA_DB_NAME || 'DATABAS_NAMN',
+            host: (process.env.DATABASE_HOST || process.env.LOOPIA_DB_HOST || '').trim(),
+            user: (process.env.DATABAS_ANVANDARNAMN || process.env.LOOPIA_DB_USER || '').trim(),
+            password: (process.env.DATABAS_LOSENORD || process.env.LOOPIA_DB_PASSWORD || '').trim(),
+            database: (process.env.DATABAS_NAME || process.env.LOOPIA_DB_NAME || '').trim(),
             connectTimeout: 8000
         });
 
@@ -40,7 +57,7 @@ module.exports = async (req, res) => {
                 shipping_cost,
                 items_json, total_amount
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE payment_status = VALUES(payment_status)
+            ON DUPLICATE KEY UPDATE total_amount = VALUES(total_amount)
         `;
 
         const shippingCost = shipping?.price ? Math.round(Number(shipping.price) / 100) : 0;
@@ -67,11 +84,10 @@ module.exports = async (req, res) => {
         dbError = err.message;
     }
 
-    //  orderbekräftelsemejl via Loopia 
-    const mailUser = process.env.LOOPIA_EMAIL || 'LOOPIA_EMAIL_ADDRESS';
-    const mailPass = process.env.LOOPIA_EMAIL_PASS || 'LOOPIA_EMAIL_PASSWORD';
+    // Orderbekräftelsemejl via Loopia (läser LOOPIA_EMAIL_ADRESS från Vercel)
+    const mailUser = (process.env.LOOPIA_EMAIL_ADRESS || process.env.LOOPIA_EMAIL_ADDRESS || process.env.LOOPIA_EMAIL || '').trim();
+    const mailPass = (process.env.LOOPIA_EMAIL_PASS || '').trim();
 
-    // Loopia SMTP
     const transporter = nodemailer.createTransport({
         host: 'mailcluster.loopia.se',
         port: 587,
@@ -85,7 +101,6 @@ module.exports = async (req, res) => {
         }
     });
 
-    // artikellistan för mejlet
     const itemsHtml = (items || []).map(i => {
         const qty = parseInt(i.quantity, 10) || 1;
         const lineTotal = (Number(i.price) || 0) * qty;
@@ -112,7 +127,7 @@ module.exports = async (req, res) => {
             <p style="font-size: 14px; line-height: 1.6; margin: 0; color: #334155;">
                 <strong>Recipient --></strong> ${customer.firstName} ${customer.lastName}<br>
                 <strong>Phone-Number --></strong> ${customer.phone || 'Ej angivet'}<br>
-                <strong>Location / Dropoff --></strong> ${customer.street || ''}
+                <strong>Location / Dropoff --></strong> ${customer.street || ''}, ${customer.zip || ''} ${customer.city || ''}
             </p>
 
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
@@ -154,7 +169,7 @@ module.exports = async (req, res) => {
     } catch (err) {
         console.error("Fel vid Loopia SMTP-anrop -->", err);
         return res.status(500).json({ 
-            error: `Kunde inte skicka mejl --> ${err.message}`,
+            error: `Kunde inte skicka mejl (användare: ${mailUser || 'SAKNAS'}) --> ${err.message}`,
             order_id: finalOrderId,
             db_saved: dbSuccess,
             db_error: dbError
