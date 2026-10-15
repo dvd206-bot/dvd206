@@ -21,8 +21,8 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Varukorgen är tom.' });
     }
 
-    // Playground (Test) --> https://api.playground.klarna.com
-    // Production (Skarpt) --> https://api.klarna.com
+    // Playground  --> https://api.playground.klarna.com
+    // Production  --> https://api.klarna.com
 
     const klarna_endpoint = process.env.KLARNA_ENDPOINT || "https://api.playground.klarna.com/checkout/v3/orders";
     const klarna_uid      = process.env.KLARNA_UID || "DITT_KLARNA_UID";
@@ -62,15 +62,6 @@ module.exports = async (req, res) => {
             total_tax_amount: line_tax_amount
         });
     });
-
-    //Lägg till vald PostNord-frakt som en fast fraktrad
-    const shipping_option = data.shipping_option || {
-        id: 'postnord_standard',
-        name: 'PostNord Frakt',
-        price: 6900,
-        tax_rate: 2500,
-        tax_amount: 1380
-    };
 
     const shipping_price = parseInt(shipping_option.price, 10) || 0;
     const shipping_tax_rate = shipping_option.tax_rate ?? 2500;
@@ -135,7 +126,7 @@ module.exports = async (req, res) => {
     if (klarna_uid === "DITT_KLARNA_UID" || !process.env.KLARNA_UID) {
         return res.status(200).json({
             mock: true,
-            message: "Klarna API-nycklar (KLARNA_UID / KLARNA_PASSWORD) saknas i Vercels miljövariabler. När du har lagt till dem laddas Klarnas betalningsfönster här med din valda PostNord-frakt.",
+            message: "Klarna API är inte tillagd ",
             order_amount: order_amount,
             shipping_applied: shipping_option
         });

@@ -16,20 +16,20 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Kunduppgifter eller e-post saknas.' });
     }
 
-    // Generera ett realistiskt femsiffrigt/sexsiffrigt ordernummer om det är tomt eller ett test-ID
+    // generera ordernummer
     const isTestOrder = !order_id || String(order_id).toUpperCase().includes('TEST');
     const finalOrderId = isTestOrder ? String(Math.floor(100000 + Math.random() * 900000)) : String(order_id);
 
-    // Spara ordern Loopia MariaDB (emendion_com_db_2)
+    // Spara ordern Loopia MariaDB (emendion_com_db_1)
     let dbSuccess = false;
     let dbError = null;
 
     try {
         const db = await mysql.createConnection({
-            host: process.env.LOOPIA_DB_HOST || 'mysql681.loopia.se',
-            user: process.env.LOOPIA_DB_USER || 'DITT_DATABAS_ANVANDARNAMN',
-            password: process.env.LOOPIA_DB_PASSWORD || 'DITT_DATABAS_LOSENORD',
-            database: process.env.LOOPIA_DB_NAME || 'emendion_com_db_2',
+            host: process.env.LOOPIA_DB_HOST || 'DATABASE_HOST',
+            user: process.env.LOOPIA_DB_USER || 'DATABAS_ANVANDARNAMN',
+            password: process.env.LOOPIA_DB_PASSWORD || 'DATABAS_LOSENORD',
+            database: process.env.LOOPIA_DB_NAME || 'DATABAS_NAMN',
             connectTimeout: 8000
         });
 
@@ -37,9 +37,9 @@ module.exports = async (req, res) => {
             INSERT INTO orders (
                 order_id, first_name, last_name, email, phone,
                 street_address, postal_code, city, country,
-                shipping_name, shipping_details, shipping_cost,
+                shipping_cost,
                 items_json, total_amount
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE payment_status = VALUES(payment_status)
         `;
 
@@ -55,8 +55,6 @@ module.exports = async (req, res) => {
             customer.zip || '',
             customer.city || '',
             customer.country || 'SE',
-            shipping?.name || 'PostNord',
-            shipping?.description || '',
             shippingCost,
             JSON.stringify(items || []),
             total_amount || 0
@@ -69,11 +67,11 @@ module.exports = async (req, res) => {
         dbError = err.message;
     }
 
-    //  orderbekräftelsemejl via Loopia SMTP
-    const mailUser = process.env.LOOPIA_EMAIL || 'order@emendion.com';
-    const mailPass = process.env.LOOPIA_EMAIL_PASS || 'perspolis11#X';
+    //  orderbekräftelsemejl via Loopia 
+    const mailUser = process.env.LOOPIA_EMAIL || 'LOOPIA_EMAIL_ADDRESS';
+    const mailPass = process.env.LOOPIA_EMAIL_PASS || 'LOOPIA_EMAIL_PASSWORD';
 
-    // Loopia SMTP via port 587 (STARTTLS)
+    // Loopia SMTP
     const transporter = nodemailer.createTransport({
         host: 'mailcluster.loopia.se',
         port: 587,
@@ -100,37 +98,34 @@ module.exports = async (req, res) => {
     }).join('');
 
     const shippingPrice = shipping?.price ? Math.round(Number(shipping.price) / 100) : 0;
-    const shippingName = shipping?.name || 'PostNord';
-    const shippingDesc = shipping?.description || customer.street || '';
 
     const mailHtml = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b; background: #ffffff; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px;">
             <div style="margin-bottom: 24px;">
-                <h2 style="color: #0f172a; margin: 0 0 6px 0; font-size: 22px;">Tack för din beställning hos Emendion!</h2>
-                <p style="font-size: 13px; color: #64748b; margin: 0; font-family: monospace;">Ordernummer --> <strong>#${finalOrderId}</strong></p>
+                <h2 style="color: #0f172a; margin: 0 0 6px 0; font-size: 22px;">Thank you for your order at Emendion!</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 0; font-family: monospace;">Order number --> <strong>#${finalOrderId}</strong></p>
             </div>
 
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
 
-            <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0 0 10px 0;">Leveransdetaljer</h3>
+            <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0 0 10px 0;">Order Specification</h3>
             <p style="font-size: 14px; line-height: 1.6; margin: 0; color: #334155;">
                 <strong>Recipient --></strong> ${customer.firstName} ${customer.lastName}<br>
                 <strong>Phone-Number --></strong> ${customer.phone || 'Ej angivet'}<br>
-                <strong>Way of Delivery --></strong> ${shippingName}<br>
-                <strong>Location / Dropoff --></strong> ${shippingDesc}
+                <strong>Location / Dropoff --></strong> ${customer.street || ''}
             </p>
 
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
 
-            <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0 0 10px 0;">Beställda artiklar</h3>
+            <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0 0 10px 0;">Order Items</h3>
             <table style="width: 100%; font-size: 14px; border-collapse: collapse; margin-bottom: 12px;">
                 ${itemsHtml}
                 <tr>
-                    <td style="padding: 10px 0 6px 0; color: #64748b;">Frakt (${shippingName})</td>
+                    <td style="padding: 10px 0 6px 0; color: #64748b;">Frakt</td>
                     <td style="padding: 10px 0 6px 0; text-align: right; font-family: monospace; font-weight: 600; color: #0f172a;">${shippingPrice} kr</td>
                 </tr>
                 <tr>
-                    <td style="padding: 12px 0 0 0; font-weight: bold; font-size: 16px; border-top: 2px solid #0f172a; color: #0f172a;">Totalt att betala</td>
+                    <td style="padding: 12px 0 0 0; font-weight: bold; font-size: 16px; border-top: 2px solid #0f172a; color: #0f172a;">Total Amount</td>
                     <td style="padding: 12px 0 0 0; text-align: right; font-weight: bold; font-size: 16px; border-top: 2px solid #0f172a; font-family: monospace; color: #2563eb;">${total_amount} kr</td>
                 </tr>
             </table>
@@ -145,7 +140,7 @@ module.exports = async (req, res) => {
             from: `"Emendion" <${mailUser}>`,
             to: customer.email,
             bcc: mailUser,
-            subject: `Orderbekräftelse #${finalOrderId} - Emendion`,
+            subject: `Orderbekräftelse #${finalOrderId} Emendion`,
             html: mailHtml
         });
 
