@@ -1,5 +1,3 @@
-// api/create-stripes-order.js
-
 function toFormUrlEncoded(obj, prefix = '') {
     const str = [];
     for (const p in obj) {
@@ -34,7 +32,7 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Varukorgen är tom.' });
     }
 
-    // Hämtar dina miljövariabler från Vercel
+    // Måste skriva in variablar från loopia
     const stripe_endpoint   = "https://api.stripe.com/v1/checkout/sessions";
     const stripe_secret_key = process.env.EMENDION_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
     const stripe_public_key = process.env.EMENDION_STRIPE_PUBLIC_KEY || process.env.STRIPE_PUBLIC_KEY;
@@ -90,7 +88,6 @@ module.exports = async (req, res) => {
     const host = req.headers.host;
     const base_url = `${protocol}://${host}`;
 
-    // Stöd för både 'embedded' och 'embedded_page'
     const isEmbedded = data.ui_mode === 'embedded' || data.ui_mode === 'embedded_page';
 
     const payload = {

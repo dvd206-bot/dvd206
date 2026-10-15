@@ -7,7 +7,6 @@
 
     <link rel="icon" type="image/svg+xml" href="https://emendion.com/wp-content/uploads/2026/04/Emendion-Main-Menue-Icon-white.svg">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Stripe JS SDK för inbäddad kassa -->
     <script src="https://js.stripe.com/v3/"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -54,11 +53,10 @@
                     </a>
                 </div>
 
-                <!-- Stripe Checkout Container -->
+                <!-- Stripe Checkout box -->
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm">
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                         <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Payment</h2>
-                        <span class="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200">Stripe</span>
                     </div>
 
                     <div id="stripe-checkout-container" class="min-h-[300px] flex items-center justify-center">
@@ -213,7 +211,7 @@
                     throw new Error(data.error || 'Could not initialize Stripe session.');
                 }
 
-                // 1. Inbäddad Stripe Checkout (om både client_secret och giltig public_key finns)
+                // Stripe Checkout 
                 if (data.client_secret && data.public_key && data.public_key !== "EMENDION_STRIPE_PUBLIC_KEY" && window.Stripe) {
                     container.innerHTML = '';
                     container.classList.remove('flex', 'items-center', 'justify-center');
@@ -228,11 +226,9 @@
                     });
                     embeddedCheckoutInstance.mount('#stripe-checkout-container');
                 }
-                // 2. Fallback till Hosted Redirect om STRIPE_PUBLIC_KEY saknas men STRIPE_SECRET_KEY finns
                 else if (data.client_secret && (!data.public_key || data.public_key === "EMENDION_STRIPE_PUBLIC_KEY")) {
                     return initStripeOrder('hosted');
                 }
-                // 3. Hosted Redirect-läge (knapp som skickar till Stripes betalsida)
                 else if (data.url) {
                     container.innerHTML = `
                         <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center w-full">
@@ -244,7 +240,6 @@
                         </div>
                     `;
                 }
-                // 4. Testläge (Mock) när API-nycklar inte är inlagda än
                 else if (data.mock) {
                     container.innerHTML = `
                         <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center w-full">

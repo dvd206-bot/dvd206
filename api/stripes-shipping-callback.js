@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
     const isNordic = isSweden || ['DK', 'DENMARK', 'DANMARK', 'FI', 'FINLAND', 'NO', 'NORWAY', 'NORGE'].includes(dest_country);
     const isEurope = ['DE', 'GERMANY', 'TYSKLAND', 'FR', 'FRANCE', 'FRANKRIKE', 'NL', 'NETHERLANDS', 'NEDERLÄNDERNA', 'GB', 'UK', 'UNITED KINGDOM', 'STORBRITANNIEN', 'ES', 'SPAIN', 'SPANIEN', 'IT', 'ITALY', 'ITALIEN', 'AT', 'AUSTRIA', 'ÖSTERRIKE', 'BE', 'BELGIUM', 'BELGIEN', 'PL', 'POLAND', 'POLEN'].includes(dest_country);
 
-    // beräknande av baspris (PORTOTABELL - 250g)
+    // beräknande av baspris (250g)
     let home_minor = 0;
     let collect_minor = 0;
 
@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
         preselected: true
     });
 
-    // Leverans till utlämningsställe (generellt utan API-uppslag)
+    // Leverans till utlämningsställe
     shipping_options.push({
         id: "postnord_parcel_collect",
         type: "pickup_point",

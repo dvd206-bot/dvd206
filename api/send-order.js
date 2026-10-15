@@ -1,8 +1,7 @@
-// api/send-order.js
 const nodemailer = require('nodemailer');
 const mysql = require('mysql2/promise');
 
-// Gör om långa Stripe-session-ID:n (cs_test_...) till ett snyggt 6-siffrigt ordernummer
+
 function formatOrderNumber(rawId) {
     if (!rawId || String(rawId).toUpperCase().includes('TEST-ORD')) {
         return String(Math.floor(100000 + Math.random() * 900000));
@@ -11,7 +10,7 @@ function formatOrderNumber(rawId) {
     if (/^\d{5,8}$/.test(str)) {
         return str;
     }
-    // Skapa ett konsekvent 6-siffrigt nummer utifrån Stripe-sessionens ID
+    // skapar 6 siffrig ordernummer baserat på stripes
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
         hash = (hash * 31 + str.charCodeAt(i)) % 900000;
@@ -34,10 +33,9 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Kunduppgifter eller e-post saknas.' });
     }
 
-    // Generera snyggt 6-siffrigt ordernummer
     const finalOrderId = formatOrderNumber(order_id);
 
-    // Spara ordern i Loopia MariaDB (matchar dina variabelnamn i Vercel)
+    // Spara ordern i Loopia MariaDB 
     let dbSuccess = false;
     let dbError = null;
 
@@ -84,7 +82,7 @@ module.exports = async (req, res) => {
         dbError = err.message;
     }
 
-    // Orderbekräftelsemejl via Loopia (läser LOOPIA_EMAIL_ADRESS från Vercel)
+    // Orderbekräftelsemejl via Loopia
     const mailUser = (process.env.LOOPIA_EMAIL_ADRESS || process.env.LOOPIA_EMAIL_ADDRESS || process.env.LOOPIA_EMAIL || '').trim();
     const mailPass = (process.env.LOOPIA_EMAIL_PASS || '').trim();
 
@@ -136,7 +134,7 @@ module.exports = async (req, res) => {
             <table style="width: 100%; font-size: 14px; border-collapse: collapse; margin-bottom: 12px;">
                 ${itemsHtml}
                 <tr>
-                    <td style="padding: 10px 0 6px 0; color: #64748b;">Frakt</td>
+                    <td style="padding: 10px 0 6px 0; color: #64748b;">Shipping</td>
                     <td style="padding: 10px 0 6px 0; text-align: right; font-family: monospace; font-weight: 600; color: #0f172a;">${shippingPrice} kr</td>
                 </tr>
                 <tr>
