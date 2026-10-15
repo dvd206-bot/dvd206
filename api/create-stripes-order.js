@@ -90,7 +90,8 @@ module.exports = async (req, res) => {
     const host = req.headers.host;
     const base_url = `${protocol}://${host}`;
 
-    const ui_mode = data.ui_mode === 'embedded' ? 'embedded' : 'hosted';
+    // Stöd för både 'embedded' och 'embedded_page'
+    const isEmbedded = data.ui_mode === 'embedded' || data.ui_mode === 'embedded_page';
 
     const payload = {
         mode: 'payment',
@@ -121,8 +122,8 @@ module.exports = async (req, res) => {
         }
     };
 
-    if (ui_mode === 'embedded') {
-        payload.ui_mode = 'embedded';
+    if (isEmbedded) {
+        payload.ui_mode = 'embedded_page';
         payload.return_url = `${base_url}/success.html?order_id={CHECKOUT_SESSION_ID}`;
     } else {
         payload.success_url = `${base_url}/success.html?order_id={CHECKOUT_SESSION_ID}`;
