@@ -200,7 +200,7 @@
                 <span>Proceed to Checkout</span>
             </button>
             <p class="text-center text-[10px] sm:text-[11px] font-mono text-slate-400 mt-2.5 sm:mt-3">
-                Encrypted via Klarna Checkout
+                Encrypted via Stripe Checkout
             </p>
         </div>
     </div>
@@ -218,7 +218,7 @@
         function formatPrice(amountInSek) {
             if (typeof amountInSek !== 'number' || isNaN(amountInSek)) {
                 return amountInSek;
-    }
+            }
 
             const config = currencies[currentCurrency] || currencies.SEK;
             const converted = Math.round(amountInSek * config.rate);
@@ -226,9 +226,9 @@
             
             if (config.position === 'prefix') {
                 return `${config.symbol}${formattedNum}`;
-        }
+            }
             return `${formattedNum} ${config.symbol}`;
-}
+        }
 
         function changeCurrency(newCurrency) {
             if (!currencies[newCurrency]) return;
@@ -659,15 +659,15 @@
             }
         }
 
-        // Kopplad direkt till kassan
+        // Steg 1 --> Skickar kunden först till shipping.html där man fyller i sin info
         function handleCheckout() {
             const cart = getCart();
             if (cart.length === 0) return;
 
-            window.location.href = 'checkout.html';
+            window.location.href = 'shipping.html';
         }
 
-        // synka valutor/varugor näör man byter fil
+        // synka valutor/varukorg när man byter flik
         window.addEventListener('storage', () => {
             currentCurrency = localStorage.getItem('emendion_currency') || 'SEK';
             const selectEl = document.getElementById('currency-select');

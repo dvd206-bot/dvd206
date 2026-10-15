@@ -172,7 +172,7 @@
                 <span>Proceed to Checkout</span>
             </button>
             <p class="text-center text-[10px] sm:text-[11px] font-mono text-slate-400 mt-2.5 sm:mt-3">
-                Encrypted via Klarna Checkout
+                Encrypted via Stripe Checkout
             </p>
         </div>
     </div>
@@ -200,7 +200,7 @@
                 return `${config.symbol}${formattedNum}`;
             }
             return `${formattedNum} ${config.symbol}`;
-}
+        }
 
         function changeCurrency(newCurrency) {
             if (!currencies[newCurrency]) return;
@@ -292,7 +292,6 @@
                 price: "Contact for pricing",
                 images: ["picture/Module_USB.png"]
             },
-
         ];
 
         // hämta alla bilder och skapa array
@@ -306,8 +305,7 @@
             return [];
         }
 
-
-        //  LocalStorage Varukorgshantering 
+        // LocalStorage Varukorgshantering 
         function getCart() {
             try {
                 return JSON.parse(localStorage.getItem('emendion_cart')) || [];
@@ -483,12 +481,12 @@
             }
         }
 
-        // skickar kunden  till checkout.html
+        // Steg 1 --> Skickar kunden först till shipping.html där man fyller i sin info
         function handleCheckout() {
             const cart = getCart();
             if (cart.length === 0) return;
 
-            window.location.href = 'checkout.html';
+            window.location.href = 'shipping.html';
         }
 
         // Synka valutaval och varukorg mellan flikar

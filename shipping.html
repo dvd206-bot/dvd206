@@ -25,11 +25,9 @@
                          class="h-6 sm:h-7 w-auto object-contain brightness-0 transition-opacity duration-200 group-hover:opacity-70">
                 </a>
                 <div class="flex items-center gap-2 text-xs font-mono font-semibold">
-1.                     
-<span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Delivery & Pickup
-</span>
+                    <span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">1. Delivery & Pickup</span>
                     <span class="text-slate-300">───</span>
-                    <span class="text-slate-400">2. Payment </span>
+                    <span class="text-slate-400">2. Payment</span>
                 </div>
             </div>
         </div>
@@ -195,8 +193,32 @@
             } catch(e) { cart = []; }
 
             if (cart.length === 0) {
-                cart = [{ id: "item-001", name: "Emendion LE-Node Mic", price: 1890, quantity: 1 }];
+                window.location.href = 'index.html';
+                return;
             }
+
+            // Återfyll sparade kunduppgifter om kunden går tillbaka från betalsidan
+            try {
+                const savedCustomer = JSON.parse(localStorage.getItem('emendion_customer_address'));
+                if (savedCustomer) {
+                    if (savedCustomer.country) document.getElementById('country').value = savedCustomer.country;
+                    if (savedCustomer.firstName) document.getElementById('firstname').value = savedCustomer.firstName;
+                    if (savedCustomer.lastName) document.getElementById('lastname').value = savedCustomer.lastName;
+                    if (savedCustomer.email) document.getElementById('email').value = savedCustomer.email;
+                    if (savedCustomer.street) document.getElementById('street').value = savedCustomer.street;
+                    if (savedCustomer.zip) document.getElementById('zip').value = savedCustomer.zip;
+                    if (savedCustomer.city) document.getElementById('city').value = savedCustomer.city;
+                    if (savedCustomer.phone) {
+                        const parts = savedCustomer.phone.split(' ');
+                        if (parts.length > 1 && parts[0].startsWith('+')) {
+                            document.getElementById('phone-prefix').value = parts[0];
+                            document.getElementById('phone-number').value = parts.slice(1).join(' ');
+                        } else {
+                            document.getElementById('phone-number').value = savedCustomer.phone;
+                        }
+                    }
+                }
+            } catch (e) {}
 
             renderCart();
             calculateShipping();
@@ -326,7 +348,7 @@
                 return;
             }
 
-            // Spara kund & uträknad frakt inför nästa steg
+            // Spara kund & uträknad frakt inför nästa steg (Steg 2: Betalning i checkout.html)
             localStorage.setItem('emendion_customer_address', JSON.stringify(customer));
             localStorage.setItem('emendion_selected_shipping', JSON.stringify(currentShippingOption));
 
